@@ -1,0 +1,18 @@
+#!/usr/bin/env perl
+#
+# OPI - openSUSE Build Service Package Installer
+#
+# Version:    0.1.0
+# Author:     Guo Yunhe
+# Website:    https://github.com/openSUSE-zh/opi
+# License:    GPL-3.0
+#
+# Created at: 2019-04-25
+# Updated at: 2019-04-25
+
+use 5.010;
+use strict;
+use warnings;
+
+my $query  = $ARGV;
+
