@@ -13,6 +13,63 @@
 use 5.010;
 use strict;
 use warnings;
+use LWP::UserAgent;
+use XML::LibXML;
+use URI::Escape;
+use Config::Tiny;
 
-my $query  = $ARGV;
+unless (scalar @ARGV) {
+    say 'Please specify query keywords. For example:';
+    say '    opi pcsx2';
+    exit 1;
+}
 
+my $distribution = get_distribution();
+
+
+# API configuration
+my $server = 'https://wiki_hermes:w_h_p1@api.opensuse.org';
+
+search_published_binary(@ARGV);
+
+sub get_distribution {
+    my $config = Config::Tiny->read('/etc/os-release');
+    my $name = $config->{_}->{NAME};
+    my $version = $config->{_}->{VERSION};
+    $name = substr $name, 1, -1; # Remove quotes
+    if ($name eq 'openSUSE Tumbleweed') {
+        return 'openSUSE:Factory';
+    } elsif ($name eq 'openSUSE Leap') {
+        return 'openSUSE:Leap:' . $version;
+    } else {
+        say "Your distribution $name $version is not supported.";
+        exit 1;
+    }
+}
+
+sub search_published_binary {
+    my @query = @_;
+    my $endpoint = '/search/published/binary/id';
+
+    my $query_string = join "', '", @query;
+    $query_string = "'" . $query_string . "'";
+    my $xpath = "contains-ic(\@name, $query_string) and path/project='$distribution'";
+
+    my $url = $server . $endpoint . '?match=' . uri_escape($xpath);
+
+    my $req = HTTP::Request->new(GET => $url);
+    my $ua = LWP::UserAgent->new;
+    my $resp = $ua->request($req);
+    if ($resp->is_success) {
+        my $message = $resp->decoded_content;
+        my $dom = XML::LibXML->load_xml(string => $message);
+
+        foreach my $binary ($dom->findnodes('/collection/binary')) {
+            say $binary->getAttribute('name');
+        }
+    }
+    else {
+        print "HTTP GET error code: ", $resp->code, "\n";
+        print "HTTP GET error message: ", $resp->message, "\n";
+    }
+}
