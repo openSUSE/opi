@@ -9,6 +9,7 @@
 - perl-libwww-perl
 - perl-XML-LibXML
 - perl-URI
+- perl-Config
 - perl-Config-Tiny
 
 ## Install

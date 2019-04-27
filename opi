@@ -10,18 +10,18 @@
 # Created at: 2019-04-25
 # Updated at: 2019-04-25
 
-use 5.010;
 use strict;
 use warnings;
 use LWP::UserAgent;
 use XML::LibXML;
 use URI::Escape;
+use Config;
 use Config::Tiny;
 
 # Check command line arguments
 unless (scalar @ARGV) {
-    say 'Please specify query keywords. For example:';
-    say '    opi pcsx2';
+    print 'Please specify query keywords. For example:\n';
+    print '    opi pcsx2\n';
     exit 1;
 }
 
@@ -35,8 +35,30 @@ my $server = "https://$username:$password\@api.opensuse.org";
 my @bins = search_published_binary(@ARGV);
 my @ns = get_binary_names(@bins);
 
+my $i = 1;
 foreach my $n (@ns) {
-    say $n;
+    print "$i. $n\n";
+    $i++;
+}
+
+print "Choose a number: ";
+my $selected_name_number = <STDIN>;
+chomp $selected_name_number;
+$selected_name_number += 0; # Convert string to number
+
+my $selected_name = $ns[$selected_name_number - 1];
+
+print "You have selected package: $selected_name\n";
+
+my @binary_options = get_binary_by_name($selected_name, @bins);
+
+$i = 1;
+foreach my $b (@binary_options) {
+    my $bin_project = $b->{project};
+    my $bin_version = $b->{version};
+    my $bin_arch = $b->{arch};
+    print "$i. $bin_project | $bin_version | $bin_arch\n";
+    $i++;
 }
 
 sub get_distribution {
@@ -49,9 +71,21 @@ sub get_distribution {
     } elsif ($name eq 'openSUSE Leap') {
         return 'openSUSE:Leap:' . $version;
     } else {
-        say "Your distribution $name $version is not supported.";
+        print "Your distribution $name $version is not supported.\n";
         exit 1;
     }
+}
+
+sub get_architecture {
+    my $perl_arch = $Config{'archname'};
+
+    if (substr($perl_arch, 0, 4) eq 'i386') {
+        return 'i586';
+    }
+
+    $perl_arch =~ m/^([a-z0-9_]+)/;
+
+    return $&;
 }
 
 sub search_published_binary {
@@ -77,6 +111,8 @@ sub search_published_binary {
 
         my @collection = ();
 
+        my $arch = get_architecture();
+
         foreach my $binary ($dom->findnodes('/collection/binary')) {
             my %binary_data;
             $binary_data{'name'} = $binary->getAttribute('name');
@@ -91,18 +127,32 @@ sub search_published_binary {
             $binary_data{'baseproject'} = $binary->getAttribute('baseproject');
             $binary_data{'type'} = $binary->getAttribute('type');
             # Filter out ghost binary (package has been deleted, but binary still exists)
-            if ( $binary_data{'package'} ) {
-                # Filter out debuginfo, debugsource, buildsymbols packages
-                if ( substr($binary->{'name'}, -10) eq '-debuginfo' ) {
-                    #
-                } elsif ( substr($binary->{'name'}, -12) eq '-debugsource' ) {
-                    #
-                } elsif ( substr($binary->{'name'}, -13) eq '-buildsymbols' ) {
-                    #
-                } else {
-                    push @collection, \%binary_data;
+            if ( ! $binary_data{'package'} ) {
+                next;
+            }
+
+            # Filter out debuginfo, debugsource, buildsymbols packages
+            if ( substr($binary->{'name'}, -10) eq '-debuginfo' ) {
+                next;
+            } elsif ( substr($binary->{'name'}, -12) eq '-debugsource' ) {
+                next;
+            } elsif ( substr($binary->{'name'}, -13) eq '-buildsymbols' ) {
+                next;
+            }
+
+            # Filter out source packages
+            if ( $binary->{'arch'} eq 'src' ) {
+                next;
+            }
+
+            # Filter architecture
+            unless ( $binary->{'arch'} eq $arch ) {
+                unless ( $binary->{'arch'} eq 'i586' && $arch eq 'x86_64' ) {
+                    next;
                 }
             }
+
+            push @collection, \%binary_data;
         }
 
         return sort { -get_binary_weight($a) <=> -get_binary_weight($b) } @collection;
@@ -130,6 +180,7 @@ sub get_binary_weight {
         official => 0,
         main => 0,
         dashes => 0,
+        arch => 0,
     };
 
     if ( substr($binary->{'project'}, 0, 9) eq 'openSUSE:' ) {
@@ -147,5 +198,23 @@ sub get_binary_weight {
     my $dash_count = () = $binary->{'name'} =~ /-/g;
     $weights->{dashes} = 100 * (0.5**$dash_count);
 
-    return $weights->{official} + $weights->{main} + $weights->{dashes};
+    if ($binary->{'arch'} eq 'x86_64') {
+        $weights->{arch} = 10;
+    }
+
+    return $weights->{official} + $weights->{main} + $weights->{dashes} + $weights->{arch};
+}
+
+sub get_binary_by_name {
+    my $name = $_[0];
+    my @binary_list = splice @_, 1;
+    my @filtered_binary_list = ();
+
+    foreach my $bin (@binary_list) {
+        if ($name eq $bin->{'name'}) {
+            push @filtered_binary_list, $bin;
+        }
+    }
+
+    return @filtered_binary_list;
 }
