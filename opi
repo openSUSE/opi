@@ -18,6 +18,7 @@ use XML::LibXML;
 use URI::Escape;
 use Config::Tiny;
 
+# Check command line arguments
 unless (scalar @ARGV) {
     say 'Please specify query keywords. For example:';
     say '    opi pcsx2';
@@ -26,11 +27,17 @@ unless (scalar @ARGV) {
 
 my $distribution = get_distribution();
 
-
 # API configuration
-my $server = 'https://wiki_hermes:w_h_p1@api.opensuse.org';
+my $username = 'wiki_hermes';
+my $password = 'w_h_p1';
+my $server = "https://$username:$password\@api.opensuse.org";
 
-search_published_binary(@ARGV);
+my @bins = search_published_binary(@ARGV);
+my @ns = get_binary_names(@bins);
+
+foreach my $n (@ns) {
+    say $n;
+}
 
 sub get_distribution {
     my $config = Config::Tiny->read('/etc/os-release');
@@ -48,10 +55,9 @@ sub get_distribution {
 }
 
 sub search_published_binary {
-    my @query = @_;
     my $endpoint = '/search/published/binary/id';
 
-    my $query_string = join "', '", @query;
+    my $query_string = join "', '", @_;
     $query_string = "'" . $query_string . "'";
     my $xpath = "contains-ic(\@name, $query_string) and path/project='$distribution'";
 
@@ -62,14 +68,84 @@ sub search_published_binary {
     my $resp = $ua->request($req);
     if ($resp->is_success) {
         my $message = $resp->decoded_content;
+
+        open(my $fh, '>', 'search.xml');
+        print $fh $message;
+        close $fh;
+
         my $dom = XML::LibXML->load_xml(string => $message);
 
+        my @collection = ();
+
         foreach my $binary ($dom->findnodes('/collection/binary')) {
-            say $binary->getAttribute('name');
+            my %binary_data;
+            $binary_data{'name'} = $binary->getAttribute('name');
+            $binary_data{'project'} = $binary->getAttribute('project');
+            $binary_data{'package'} = $binary->getAttribute('package');
+            $binary_data{'repository'} = $binary->getAttribute('repository');
+            $binary_data{'version'} = $binary->getAttribute('version');
+            $binary_data{'release'} = $binary->getAttribute('release');
+            $binary_data{'arch'} = $binary->getAttribute('arch');
+            $binary_data{'filename'} = $binary->getAttribute('filename');
+            $binary_data{'filepath'} = $binary->getAttribute('filepath');
+            $binary_data{'baseproject'} = $binary->getAttribute('baseproject');
+            $binary_data{'type'} = $binary->getAttribute('type');
+            # Filter out ghost binary (package has been deleted, but binary still exists)
+            if ( $binary_data{'package'} ) {
+                # Filter out debuginfo, debugsource, buildsymbols packages
+                if ( substr($binary->{'name'}, -10) eq '-debuginfo' ) {
+                    #
+                } elsif ( substr($binary->{'name'}, -12) eq '-debugsource' ) {
+                    #
+                } elsif ( substr($binary->{'name'}, -13) eq '-buildsymbols' ) {
+                    #
+                } else {
+                    push @collection, \%binary_data;
+                }
+            }
         }
+
+        return sort { -get_binary_weight($a) <=> -get_binary_weight($b) } @collection;
     }
     else {
         print "HTTP GET error code: ", $resp->code, "\n";
         print "HTTP GET error message: ", $resp->message, "\n";
     }
+}
+
+sub get_binary_names {
+    my @names = ();
+    foreach my $bin (@_) {
+        my $name = $bin->{'name'};
+        if (! grep /($name)/, @names) {
+            push @names, $name;
+        }
+    }
+    return @names;
+}
+
+sub get_binary_weight {
+    my $binary = $_[0];
+    my $weights = {
+        official => 0,
+        main => 0,
+        dashes => 0,
+    };
+
+    if ( substr($binary->{'project'}, 0, 9) eq 'openSUSE:' ) {
+        $weights->{official} = 20000;
+    } elsif ( substr($binary->{'project'}, 0, 5) eq 'home:' ) {
+        $weights->{official} = 0;
+    } else {
+        $weights->{official} = 10000;
+    }
+
+    if ( $binary->{'name'} eq $binary->{'package'} ) {
+        $weights->{main} = 1000;
+    }
+
+    my $dash_count = () = $binary->{'name'} =~ /-/g;
+    $weights->{dashes} = 100 * (0.5**$dash_count);
+
+    return $weights->{official} + $weights->{main} + $weights->{dashes};
 }
