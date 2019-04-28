@@ -59,7 +59,7 @@ foreach my $n (@binary_names) {
 # Select a package name option
 #
 print "Choose a number: ";
-my $selected_name_number = type_a_number();
+my $selected_name_number = type_a_number(1, scalar(@binary_names));
 my $selected_name = $binary_names[$selected_name_number - 1];
 
 print "You have selected package name: $selected_name\n";
@@ -82,7 +82,7 @@ foreach my $b (@binary_options) {
 # Select a binary package option
 #
 print "Choose a number: ";
-my $selected_binary_number = type_a_number();
+my $selected_binary_number = type_a_number(1, scalar(@binary_options));
 
 my $selected_binary = $binary_options[$selected_binary_number - 1];
 
@@ -124,10 +124,19 @@ sub get_architecture {
 }
 
 sub type_a_number {
+    my $min = $_[0];
+    my $max = $_[1];
     my $typed_number = <STDIN>;
     chomp $typed_number;
-    $typed_number += 0; # Convert string to number
-    return $typed_number;
+    if ($typed_number =~ /^(\d+)$/) {
+        $typed_number += 0; # Convert string to number
+        if ($typed_number >= $min && $typed_number <= $max) {
+            return $typed_number;
+        }
+    }
+
+    print "Number must be between $min and $max. Please try again: ";
+    return type_a_number(@_);
 }
 
 sub print_binary_option {
