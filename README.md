@@ -14,9 +14,9 @@
 ## Install
 
 ```
-sudo zypper install perl perl-libwww-perl perl-XML-LibXML perl-URI perl-Config-Tiny
-wget https://github.com/openSUSE-zh/opi/raw/master/opi
-install opi ~/bin
+sudo zypper addrepo https://download.opensuse.org/repositories/home:guoyunhe/openSUSE_Tumbleweed/home:guoyunhe.repo
+sudo zypper refresh
+sudo zypper install opi
 ```
 
 ## Use
