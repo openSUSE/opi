@@ -17,49 +17,84 @@ use XML::LibXML;
 use URI::Escape;
 use Config;
 use Config::Tiny;
+use Term::ANSIColor;
 
+
+#
 # Check command line arguments
+#
 unless (scalar @ARGV) {
     print 'Please specify query keywords. For example:\n';
     print '    opi pcsx2\n';
     exit 1;
 }
 
-my $distribution = get_distribution();
 
+#
 # API configuration
+#
 my $username = 'wiki_hermes';
 my $password = 'w_h_p1';
 my $server = "https://$username:$password\@api.opensuse.org";
 
-my @bins = search_published_binary(@ARGV);
-my @ns = get_binary_names(@bins);
 
+#
+# Search packages
+#
+my @bins = search_published_binary(@ARGV);
+my @binary_names = get_binary_names(@bins);
+
+
+#
+# Print package name options
+#
 my $i = 1;
-foreach my $n (@ns) {
+foreach my $n (@binary_names) {
     print "$i. $n\n";
     $i++;
 }
 
+
+#
+# Select a package name option
+#
 print "Choose a number: ";
-my $selected_name_number = <STDIN>;
-chomp $selected_name_number;
-$selected_name_number += 0; # Convert string to number
+my $selected_name_number = type_a_number();
+my $selected_name = $binary_names[$selected_name_number - 1];
 
-my $selected_name = $ns[$selected_name_number - 1];
-
-print "You have selected package: $selected_name\n";
+print "You have selected package name: $selected_name\n";
 
 my @binary_options = get_binary_by_name($selected_name, @bins);
 
+
+#
+# Print binary package options
+#
 $i = 1;
 foreach my $b (@binary_options) {
-    my $bin_project = $b->{project};
-    my $bin_version = $b->{version};
-    my $bin_arch = $b->{arch};
-    print "$i. $bin_project | $bin_version | $bin_arch\n";
+    print_binary_option($b, $i);
+    print "\n";
     $i++;
 }
+
+
+#
+# Select a binary package option
+#
+print "Choose a number: ";
+my $selected_binary_number = type_a_number();
+
+my $selected_binary = $binary_options[$selected_binary_number - 1];
+
+print "You have selected binary package: ";
+print_binary_option($selected_binary);
+print "\n";
+
+
+#
+# Install selected package
+#
+install_binary($selected_binary);
 
 sub get_distribution {
     my $config = Config::Tiny->read('/etc/os-release');
@@ -88,7 +123,40 @@ sub get_architecture {
     return $&;
 }
 
+sub type_a_number {
+    my $typed_number = <STDIN>;
+    chomp $typed_number;
+    $typed_number += 0; # Convert string to number
+    return $typed_number;
+}
+
+sub print_binary_option {
+    my $binary = $_[0];
+    my $number = $_[1];
+    my $color;
+    my $symbol;
+    if (is_official_project($binary->{project})) {
+        $color = 'green';
+        $symbol = '✓';
+    } elsif (is_personal_project($binary->{project})) {
+        $color = 'red';
+        $symbol = '?';
+    } else {
+        $color = 'cyan';
+        $symbol = '+';
+    }
+
+    if ($number) {
+        print "$number. ";
+    }
+
+    print colored($binary->{project} . ' ' . $symbol, $color);
+    print " | $binary->{version} | $binary->{arch}";
+}
+
 sub search_published_binary {
+    my $distribution = get_distribution();
+
     my $endpoint = '/search/published/binary/id';
 
     my $query_string = join "', '", @_;
@@ -183,9 +251,9 @@ sub get_binary_weight {
         arch => 0,
     };
 
-    if ( substr($binary->{'project'}, 0, 9) eq 'openSUSE:' ) {
+    if ( is_official_project($binary->{'project'}) ) {
         $weights->{official} = 20000;
-    } elsif ( substr($binary->{'project'}, 0, 5) eq 'home:' ) {
+    } elsif ( is_personal_project($binary->{'project'}) ) {
         $weights->{official} = 0;
     } else {
         $weights->{official} = 10000;
@@ -205,6 +273,18 @@ sub get_binary_weight {
     return $weights->{official} + $weights->{main} + $weights->{dashes} + $weights->{arch};
 }
 
+sub is_official_project {
+    return substr($_[0], 0, 9) eq 'openSUSE:';
+}
+
+sub is_experimental_project {
+    return !is_official_project(@_) && !is_personal_project(@_);
+}
+
+sub is_personal_project {
+    return substr($_[0], 0, 5) eq 'home:' || substr($_[0], 0, 4) eq 'isv:';
+}
+
 sub get_binary_by_name {
     my $name = $_[0];
     my @binary_list = splice @_, 1;
@@ -217,4 +297,27 @@ sub get_binary_by_name {
     }
 
     return @filtered_binary_list;
+}
+
+sub install_binary {
+    my $binary = $_[0];
+    my $name = $binary->{name};
+    my $arch = $binary->{arch};
+    my $project = $binary->{project};
+    my $repository = $binary->{repository};
+
+    # Install official packages. Don't add repositories
+    if (is_official_project($project)) {
+        system "sudo zypper install $name.$arch";
+    }
+    # Install experimental and personal packages
+    else {
+        my $repo_url = "https://download.opensuse.org/repositories/$project/$repository/";
+        my $repo_file = "$repo_url/$project.repo";
+        system "sudo zypper addrepo --refresh $repo_file";
+        system "sudo zypper refresh";
+        my $install_options = "--allow-vendor-change --allow-arch-change --allow-downgrade --allow-name-change";
+        $project =~ s/:/_/ig;
+        system "sudo zypper install $install_options --repo $project $name.$arch";
+    }
 }
