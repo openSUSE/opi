@@ -340,7 +340,8 @@ sub install_binary {
         print "Do you want to keep these repositories(Y/n)? ";
         my $yes_no = <STDIN>;
         chomp $yes_no;
-        unless ($yes_no eq 'Y' || $yes_no eq 'y') {
+        $yes_no = lc(substr($yes_no, 0, 1));
+        if ($yes_no eq 'n') {
             system "sudo zypper removerepo $project";
         }
     }
