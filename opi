@@ -239,8 +239,12 @@ sub search_published_binary {
         return sort { -get_binary_weight($a) <=> -get_binary_weight($b) } @collection;
     }
     else {
-        print "HTTP GET error code: ", $resp->code, "\n";
-        print "HTTP GET error message: ", $resp->message, "\n";
+        if ($resp->code == 413) {
+            print "Please use different search keywords. Some short keywords cause OBS timeout.";
+        } else {
+            print "Network error. Please try later. (Error message: ", $resp->message, ")\n";
+        }
+        exit 1;
     }
 }
 
