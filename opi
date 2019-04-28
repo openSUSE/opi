@@ -44,6 +44,10 @@ my $server = "https://$username:$password\@api.opensuse.org";
 my @bins = search_published_binary(@ARGV);
 my @binary_names = get_binary_names(@bins);
 
+if (!scalar(@bins)) {
+    print "No package found.\n";
+    exit;
+}
 
 #
 # Print package name options
