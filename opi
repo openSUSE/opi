@@ -24,8 +24,8 @@ use Term::ANSIColor;
 # Check command line arguments
 #
 unless (scalar @ARGV) {
-    print 'Please specify query keywords. For example:\n';
-    print '    opi pcsx2\n';
+    print "Please specify query keywords. For example:\n";
+    print "    opi pcsx2\n";
     exit 1;
 }
 
