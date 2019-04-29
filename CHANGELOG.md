@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - Fixed lost of "noarch" packages [#3](https://github.com/openSUSE-zh/opi/issues/3)
+- Be able to search with dashes in keywords [#2](https://github.com/openSUSE-zh/opi/issues/3)
 
 ## [0.1.1]
 

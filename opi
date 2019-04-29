@@ -167,13 +167,19 @@ sub print_binary_option {
     print " | $binary->{version} | $binary->{arch}";
 }
 
+sub prepare_query_string {
+    my $query_string = join "', '", @_;
+    $query_string = "'" . $query_string . "'";
+    $query_string =~ s/-/', '/ig;
+    return $query_string;
+}
+
 sub search_published_binary {
     my $distribution = get_distribution();
 
     my $endpoint = '/search/published/binary/id';
 
-    my $query_string = join "', '", @_;
-    $query_string = "'" . $query_string . "'";
+    my $query_string = prepare_query_string(@_);
     my $xpath = "contains-ic(\@name, $query_string) and path/project='$distribution'";
 
     my $url = $server . $endpoint . '?match=' . uri_escape($xpath);
