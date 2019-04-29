@@ -223,7 +223,7 @@ sub search_published_binary {
             }
 
             # Filter architecture
-            unless ( $binary->{'arch'} eq $arch ) {
+            unless ( $binary->{'arch'} eq $arch || $binary->{'arch'} eq 'noarch') {
                 unless ( $binary->{'arch'} eq 'i586' && $arch eq 'x86_64' ) {
                     next;
                 }
