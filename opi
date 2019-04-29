@@ -184,10 +184,6 @@ sub search_published_binary {
     if ($resp->is_success) {
         my $message = $resp->decoded_content;
 
-        open(my $fh, '>', 'search.xml');
-        print $fh $message;
-        close $fh;
-
         my $dom = XML::LibXML->load_xml(string => $message);
 
         my @collection = ();
