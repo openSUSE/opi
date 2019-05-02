@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Install VS Code with `opi vs code` [#6](https://github.com/openSUSE-zh/opi/issues/6)
+
 ## [0.1.2]
 
 ### Fixed

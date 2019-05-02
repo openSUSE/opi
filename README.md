@@ -30,3 +30,11 @@ opi filezilla
 Output:
 
 ![Screenshot](screenshot.png)
+
+### Packages from Other Repositories
+
+**Visual Studio Code**
+
+```
+opi vs code
+```

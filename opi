@@ -17,6 +17,7 @@ use XML::LibXML;
 use URI::Escape;
 use Config;
 use Config::Tiny;
+use File::Temp qw/ tempfile tempdir /;
 use Term::ANSIColor;
 
 
@@ -27,6 +28,13 @@ unless (scalar @ARGV) {
     print "Please specify query keywords. For example:\n";
     print "    opi pcsx2\n";
     exit 1;
+}
+
+#
+# Check VS Code
+#
+if (join('', @ARGV) eq 'vscode' || join('', @ARGV) eq 'visualstudiocode' || join('', @ARGV) eq 'vsc') {
+    install_vs_code();
 }
 
 
@@ -242,7 +250,7 @@ sub search_published_binary {
     }
     else {
         if ($resp->code == 413) {
-            print "Please use different search keywords. Some short keywords cause OBS timeout.";
+            print "Please use different search keywords. Some short keywords cause OBS timeout.\n";
         } else {
             print "Network error. Please try later. (Error message: ", $resp->message, ")\n";
         }
@@ -347,4 +355,24 @@ sub install_binary {
             system "sudo zypper removerepo $project";
         }
     }
+}
+
+sub install_vs_code {
+    print "Do you want install VS Code from Microsoft reposiroty(Y/n)?";
+    my $yes_no = <STDIN>;
+    chomp $yes_no;
+    $yes_no = lc(substr($yes_no, 0, 1));
+    if ($yes_no eq 'n') {
+        print "Continue searching on OBS...\n";
+        return;
+    }
+
+    my $tmp_fh = new File::Temp( UNLINK => 1 );
+    print $tmp_fh "[code]\nname=Visual Studio Code\nbaseurl=https://packages.microsoft.com/yumrepos/vscode\nenabled=1\ntype=rpm-md\ngpgcheck=1\ngpgkey=https://packages.microsoft.com/keys/microsoft.asc\n";
+    system "sudo rpm --import https://packages.microsoft.com/keys/microsoft.asc";
+    system "sudo mv $tmp_fh /etc/zypp/repos.d/vscode.repo";
+    system "sudo zypper refresh";
+    system "sudo zypper install code";
+
+    exit;
 }
