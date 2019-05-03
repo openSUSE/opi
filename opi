@@ -31,10 +31,26 @@ unless (scalar @ARGV) {
 }
 
 #
-# Check VS Code
+# Check for packages not from OBS
 #
-if (join('', @ARGV) eq 'vscode' || join('', @ARGV) eq 'visualstudiocode' || join('', @ARGV) eq 'vsc') {
+my $serialized_query = lc(join('', @ARGV));
+
+# Check Packman Codecs
+if ( $serialized_query =~ m/(packman|codec)/ ) {
+    install_packman_codecs();
+    exit;
+}
+
+# Check VS Code
+if ( $serialized_query =~ m/(visualstudiocode|vscode|vsc)/ ) {
     install_vs_code();
+    exit;
+}
+
+# Check Skype
+if ($serialized_query =~ m/skype/ ) {
+    install_skype();
+    exit;
 }
 
 
@@ -326,6 +342,34 @@ sub get_binary_by_name {
     return @filtered_binary_list;
 }
 
+
+sub ask_yes_or_no {
+    print $_[0];
+
+    if (lc($_[1]) eq 'y') {
+        print '(Y/n) ';
+    } else {
+        print '(y/N) ';
+    }
+
+    my $yes_no = <STDIN>;
+    chomp $yes_no;
+    $yes_no = lc(substr($yes_no, 0, 1));
+
+    if (lc($_[1]) eq 'y') {
+        return $yes_no ne 'n';
+    } else {
+        return $yes_no eq 'y';
+    }
+}
+
+sub ask_keep_repo {
+    my $repo = $_[0];
+    unless ( ask_yes_or_no("Do you want to keep these repositories? ", 'y') ) {
+        system "sudo zypper removerepo $repo";
+    }
+}
+
 sub install_binary {
     my $binary = $_[0];
     my $name = $binary->{name};
@@ -347,23 +391,55 @@ sub install_binary {
         $project =~ s/:/_/ig;
         system "sudo zypper install $install_options --repo $project $name.$arch";
 
-        print "Do you want to keep these repositories(Y/n)? ";
-        my $yes_no = <STDIN>;
-        chomp $yes_no;
-        $yes_no = lc(substr($yes_no, 0, 1));
-        if ($yes_no eq 'n') {
-            system "sudo zypper removerepo $project";
-        }
+        ask_keep_repo( $project );
     }
 }
 
+sub install_packman_codecs {
+    unless ( ask_yes_or_no("Do you want install codecs from Packman reposiroty? ", 'y') ) {
+        return;
+    }
+
+    add_packman_essentials_repo();
+
+    install_packman_essentials_packages(
+        'ffmpeg',
+        'gstreamer-plugins-bad',
+        'gstreamer-plugins-libav',
+        'gstreamer-plugins-ugly',
+        'libavcodec58',
+        'libavdevice58',
+        'libavfilter7',
+        'libavformat58',
+        'libavresample4',
+        'libavutil56',
+        'vlc-codecs',
+    );
+
+    exit;
+}
+
+sub add_packman_essentials_repo {
+
+    my $prefix = get_distribution();
+    $prefix =~ s/:/_/ig;
+
+    if ($prefix eq 'openSUSE_Factory') {
+        $prefix = 'openSUSE_Tumbleweed';
+    }
+
+    system "sudo zypper addrepo --refresh --priority 90 https://ftp.gwdg.de/pub/linux/misc/packman/suse/$prefix/Essentials/packman-essentials.repo";
+    system "sudo zypper refresh";
+    system "sudo zypper dist-upgrade --from packman-essentials --allow-downgrade --allow-vendor-change";
+}
+
+sub install_packman_essentials_packages {
+    my $packages = join ' ', @_;
+    system "sudo zypper install --repo packman-essentials $packages";
+}
+
 sub install_vs_code {
-    print "Do you want install VS Code from Microsoft reposiroty(Y/n)?";
-    my $yes_no = <STDIN>;
-    chomp $yes_no;
-    $yes_no = lc(substr($yes_no, 0, 1));
-    if ($yes_no eq 'n') {
-        print "Continue searching on OBS...\n";
+    unless ( ask_yes_or_no("Do you want install VS Code from Microsoft reposiroty? ", 'y') ) {
         return;
     }
 
@@ -373,6 +449,22 @@ sub install_vs_code {
     system "sudo mv $tmp_fh /etc/zypp/repos.d/vscode.repo";
     system "sudo zypper refresh";
     system "sudo zypper install code";
+
+    ask_keep_repo( 'code' );
+
+    exit;
+}
+
+sub install_skype {
+    unless ( ask_yes_or_no("Do you want install Skype from Microsoft reposiroty? ", 'y') ) {
+        return;
+    }
+
+    system "sudo zypper addrepo --refresh https://repo.skype.com/rpm/stable/skype-stable.repo";
+    system "sudo zypper refresh";
+    system "sudo zypper install skypeforlinux";
+
+    ask_keep_repo( 'skype-stable' );
 
     exit;
 }

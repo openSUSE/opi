@@ -33,6 +33,22 @@ Output:
 
 ### Packages from Other Repositories
 
+**Packman Codecs** (enable you to play MP4 videos and YouTube)
+
+```
+opi packman
+
+# or
+
+opi codecs
+```
+
+**Skype**
+
+```
+opi skype
+```
+
 **Visual Studio Code**
 
 ```
