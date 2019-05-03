@@ -6,9 +6,6 @@
 # Author:     Guo Yunhe
 # Website:    https://github.com/openSUSE-zh/opi
 # License:    GPL-3.0
-#
-# Created at: 2019-04-25
-# Updated at: 2019-04-29
 
 use strict;
 use warnings;

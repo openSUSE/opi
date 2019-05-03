@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.0]
+
 ### Added
 
 - Install Packman Codecs with `opi packman` or `opi codecs` [#6](https://github.com/openSUSE-zh/opi/issues/6)
@@ -36,7 +38,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Choose package and install
 - Keep or remove repository after installation
 
-[Unreleased]: https://github.com/openSUSE-zh/opi/compare/v0.1.2...HEAD
+[Unreleased]: https://github.com/openSUSE-zh/opi/compare/v0.2.0...HEAD
+[0.1.2]: https://github.com/openSUSE-zh/opi/compare/v0.1.2...v0.2.0
 [0.1.2]: https://github.com/openSUSE-zh/opi/compare/v0.1.1...v0.1.2
 [0.1.1]: https://github.com/openSUSE-zh/opi/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/openSUSE-zh/opi/releases/tag/v0.1.0
