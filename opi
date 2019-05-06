@@ -393,7 +393,7 @@ sub install_binary {
 }
 
 sub install_packman_codecs {
-    unless ( ask_yes_or_no("Do you want install codecs from Packman reposiroty? ", 'y') ) {
+    unless ( ask_yes_or_no("Do you want to install codecs from Packman repository? ", 'y') ) {
         return;
     }
 
@@ -436,7 +436,7 @@ sub install_packman_essentials_packages {
 }
 
 sub install_vs_code {
-    unless ( ask_yes_or_no("Do you want install VS Code from Microsoft reposiroty? ", 'y') ) {
+    unless ( ask_yes_or_no("Do you want to install VS Code from Microsoft repository? ", 'y') ) {
         return;
     }
 
@@ -453,7 +453,7 @@ sub install_vs_code {
 }
 
 sub install_skype {
-    unless ( ask_yes_or_no("Do you want install Skype from Microsoft reposiroty? ", 'y') ) {
+    unless ( ask_yes_or_no("Do you want to install Skype from Microsoft repository? ", 'y') ) {
         return;
     }
 
