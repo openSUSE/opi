@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Support SLE [#8](https://github.com/openSUSE-zh/opi/issues/8)
 
+### Changed
+
+- Better print column alignment
+
 ## [0.2.0]
 
 ### Added

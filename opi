@@ -73,17 +73,12 @@ if (!scalar(@bins)) {
 #
 # Print package name options
 #
-my $i = 1;
-foreach my $n (@binary_names) {
-    print "$i. $n\n";
-    $i++;
-}
+print_package_names(@binary_names);
 
 
 #
 # Select a package name option
 #
-print "Choose a number: ";
 my $selected_name_number = type_a_number(1, scalar(@binary_names));
 my $selected_name = $binary_names[$selected_name_number - 1];
 
@@ -95,18 +90,12 @@ my @binary_options = get_binary_by_name($selected_name, @bins);
 #
 # Print binary package options
 #
-$i = 1;
-foreach my $b (@binary_options) {
-    print_binary_option($b, $i);
-    print "\n";
-    $i++;
-}
+print_binary_options(@binary_options);
 
 
 #
 # Select a binary package option
 #
-print "Choose a number: ";
 my $selected_binary_number = type_a_number(1, scalar(@binary_options));
 
 my $selected_binary = $binary_options[$selected_binary_number - 1];
@@ -120,6 +109,13 @@ print "\n";
 # Install selected package
 #
 install_binary($selected_binary);
+
+
+=begin functions
+
+Get system information
+
+=cut
 
 sub get_distribution {
     my $config = Config::Tiny->read('/etc/os-release');
@@ -150,9 +146,18 @@ sub get_architecture {
     return $&;
 }
 
+
+=begin functions
+
+Receive user inputs
+
+=cut
+
 sub type_a_number {
-    my $min = $_[0];
-    my $max = $_[1];
+    my $min = shift;
+    my $max = shift;
+    my $message = shift;
+    print $message || "Choose a number: ";
     my $typed_number = <STDIN>;
     chomp $typed_number;
     if ($typed_number =~ /^(\d+)$/) {
@@ -162,33 +167,88 @@ sub type_a_number {
         }
     }
 
-    print "Number must be between $min and $max. Please try again: ";
-    return type_a_number(@_);
+    return type_a_number($min, $max, "Number must be between $min and $max. Please try again: ");
+}
+
+sub ask_yes_or_no {
+    print $_[0];
+
+    if (lc($_[1]) eq 'y') {
+        print '(Y/n) ';
+    } else {
+        print '(y/N) ';
+    }
+
+    my $yes_no = <STDIN>;
+    chomp $yes_no;
+    $yes_no = lc(substr($yes_no, 0, 1));
+
+    if (lc($_[1]) eq 'y') {
+        return $yes_no ne 'n';
+    } else {
+        return $yes_no eq 'y';
+    }
+}
+
+sub ask_keep_repo {
+    my $repo = $_[0];
+    unless ( ask_yes_or_no("Do you want to keep these repositories? ", 'y') ) {
+        system "sudo zypper removerepo $repo";
+    }
+}
+
+=begin functions
+
+Print package lists
+
+=cut
+
+sub print_package_names {
+    my $i = 1;
+    foreach my $n (@_) {
+        printf("%2d. %s\n", $i, $n);
+        $i++;
+    }
+}
+
+sub print_binary_options {
+    my $i = 1;
+    foreach my $b (@_) {
+        print_binary_option($b, $i);
+        $i++;
+    }
 }
 
 sub print_binary_option {
-    my $binary = $_[0];
-    my $number = $_[1];
+    my $binary = shift;
+    my $number = shift;
     my $color;
     my $symbol;
     if (is_official_project($binary->{project})) {
         $color = 'green';
-        $symbol = '✓';
+        $symbol = '+';
     } elsif (is_personal_project($binary->{project})) {
         $color = 'red';
-        $symbol = '?';
+        $symbol = '!';
     } else {
         $color = 'cyan';
-        $symbol = '+';
+        $symbol = '?';
     }
+
+    my $colored_name = colored(substr($binary->{project}, 0, 39) . ' ' . $symbol, $color);
 
     if ($number) {
-        print "$number. ";
+        printf("%2d. %-50s | %-10s | %-10s\n", $number, $colored_name, $binary->{version}, $binary->{arch});
+    } else {
+        print $colored_name, " | ", $binary->{version}, " | ", $binary->{arch};
     }
-
-    print colored($binary->{project} . ' ' . $symbol, $color);
-    print " | $binary->{version} | $binary->{arch}";
 }
+
+=begin functions
+
+Search OBS API
+
+=cut
 
 sub prepare_query_string {
     my $query_string = join "', '", @_;
@@ -237,6 +297,11 @@ sub search_published_binary {
                 next;
             }
 
+            # Filter out branch projects
+            if ( $binary->{project} =~ /:branches:/m ) {
+                next;
+            }
+
             # Filter out debuginfo, debugsource, buildsymbols packages
             if ( substr($binary->{'name'}, -10) eq '-debuginfo' ) {
                 next;
@@ -272,6 +337,12 @@ sub search_published_binary {
         exit 1;
     }
 }
+
+=begin functions
+
+Handle binary data
+
+=cut
 
 sub get_binary_names {
     my @names = ();
@@ -341,33 +412,11 @@ sub get_binary_by_name {
     return @filtered_binary_list;
 }
 
+=begin functions
 
-sub ask_yes_or_no {
-    print $_[0];
+Add repository and install packages
 
-    if (lc($_[1]) eq 'y') {
-        print '(Y/n) ';
-    } else {
-        print '(y/N) ';
-    }
-
-    my $yes_no = <STDIN>;
-    chomp $yes_no;
-    $yes_no = lc(substr($yes_no, 0, 1));
-
-    if (lc($_[1]) eq 'y') {
-        return $yes_no ne 'n';
-    } else {
-        return $yes_no eq 'y';
-    }
-}
-
-sub ask_keep_repo {
-    my $repo = $_[0];
-    unless ( ask_yes_or_no("Do you want to keep these repositories? ", 'y') ) {
-        system "sudo zypper removerepo $repo";
-    }
-}
+=cut
 
 sub install_binary {
     my $binary = $_[0];
