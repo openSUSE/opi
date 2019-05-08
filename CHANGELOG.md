@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Support SLE [#8](https://github.com/openSUSE-zh/opi/issues/8)
+
 ## [0.2.0]
 
 ### Added

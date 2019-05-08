@@ -130,6 +130,8 @@ sub get_distribution {
         return 'openSUSE:Factory';
     } elsif ($name eq 'openSUSE Leap') {
         return 'openSUSE:Leap:' . $version;
+    } elsif (substr($name, 0, 3) eq 'SLE') {
+        return 'SLE' . $version;
     } else {
         print "Your distribution $name $version is not supported.\n";
         exit 1;
