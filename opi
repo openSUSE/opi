@@ -351,7 +351,7 @@ sub get_binary_names {
     my @names = ();
     foreach my $bin (@_) {
         my $name = $bin->{'name'};
-        if (! grep /($name)/, @names) {
+        if (! grep /^$name$/, @names) {
             push @names, $name;
         }
     }
@@ -359,34 +359,31 @@ sub get_binary_names {
 }
 
 sub get_binary_weight {
-    my $binary = $_[0];
-    my $weights = {
-        official => 0,
-        main => 0,
-        dashes => 0,
-        arch => 0,
-    };
+    my $binary = shift;
+    my $weight = 0;
 
     if ( is_official_project($binary->{'project'}) ) {
-        $weights->{official} = 20000;
+        $weight += 20000;
     } elsif ( is_personal_project($binary->{'project'}) ) {
-        $weights->{official} = 0;
+        $weight += 0;
     } else {
-        $weights->{official} = 10000;
+        $weight += 10000;
     }
 
     if ( $binary->{'name'} eq $binary->{'package'} ) {
-        $weights->{main} = 1000;
+        $weight += 1000;
     }
 
     my $dash_count = () = $binary->{'name'} =~ /-/g;
-    $weights->{dashes} = 100 * (0.5**$dash_count);
+    $weight += 100 * (0.5**$dash_count);
 
-    if ($binary->{'arch'} eq 'x86_64') {
-        $weights->{arch} = 10;
+    unless (get_architecture() eq 'x86_64' && $binary->{'arch'} eq 'i586') {
+        $weight += 10;
     }
 
-    return $weights->{official} + $weights->{main} + $weights->{dashes} + $weights->{arch};
+    $weight += - length $binary->{name};
+
+    return $weight;
 }
 
 sub is_official_project {
