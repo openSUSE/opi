@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- PMBS (Packman Build Service) support [#5](https://github.com/openSUSE-zh/opi/issues/5)
+
 ## [0.3.2]
 
 ### Fixed

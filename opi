@@ -54,15 +54,20 @@ if ($serialized_query =~ m/skype/ ) {
 #
 # API configuration
 #
-my $username = 'wiki_hermes';
-my $password = 'w_h_p1';
-my $server = "https://$username:$password\@api.opensuse.org";
+my $obs_username = 'wiki_hermes';
+my $obs_password = 'w_h_p1';
+my $obs_apiroot = "https://$obs_username:$obs_password\@api.opensuse.org";
 
+my $pmbs_username = 'opi';
+my $pmbs_password = 'please_dont_abuse';
+my $pmbs_apiroot = "https://$pmbs_username:$pmbs_password\@pmbs.links2linux.de";
 
 #
 # Search packages
 #
-my @bins = search_published_binary(@ARGV);
+my @obs = search_published_binary('openSUSE', $obs_apiroot, @ARGV);
+my @pmbs = search_published_binary('Packman', $pmbs_apiroot, @ARGV);
+my @bins = sort_binaries(@obs, @pmbs);
 my @binary_names = get_binary_names(@bins);
 
 if (!scalar(@bins)) {
@@ -118,6 +123,7 @@ Get system information
 =cut
 
 sub get_distribution {
+    my $prefix = shift;
     my $config = Config::Tiny->read('/etc/os-release');
     my $name = $config->{_}->{NAME};
     my $version = $config->{_}->{VERSION};
@@ -126,15 +132,19 @@ sub get_distribution {
         $version = substr $version, 1, -1; # Remove quotes
     }
     if ($name eq 'openSUSE Tumbleweed') {
-        return 'openSUSE:Factory';
+        $name = 'openSUSE:Factory';
     } elsif ($name eq 'openSUSE Leap') {
-        return 'openSUSE:Leap:' . $version;
+        $name = 'openSUSE:Leap:' . $version;
     } elsif (substr($name, 0, 3) eq 'SLE') {
-        return 'SLE' . $version;
+        $name = 'SLE' . $version;
     } else {
         print "Your distribution $name $version is not supported.\n";
         exit 1;
     }
+    if ($prefix) {
+        $name = 'openSUSE.org:' . $name;
+    }
+    return $name;
 }
 
 sub get_architecture {
@@ -238,10 +248,16 @@ sub print_binary_option {
         $symbol = '?';
     }
 
-    my $colored_name = colored(substr($binary->{project}, 0, 39) . ' ' . $symbol, $color);
+    my $project = $binary->{project};
+    my $obs_instance = $binary->{obs_instance};
+    if ($obs_instance ne 'openSUSE') {
+        $project = "$obs_instance $project";
+    }
+
+    my $colored_name = colored(substr($project, 0, 39) . ' ' . $symbol, $color);
 
     if ($number) {
-        printf("%2d. %-50s | %-10s | %-10s\n", $number, $colored_name, $binary->{version}, $binary->{arch});
+        printf("%2d. %-50s | %-10s | %-10s\n", $number, $colored_name, substr($binary->{version}, 0, 10), $binary->{arch});
     } else {
         print $colored_name, " | ", $binary->{version}, " | ", $binary->{arch};
     }
@@ -261,14 +277,17 @@ sub prepare_query_string {
 }
 
 sub search_published_binary {
-    my $distribution = get_distribution();
+    my $obs_instance = shift;
+    my $obs_apiroot = shift;
+
+    my $distribution = get_distribution($obs_instance ne 'openSUSE');
 
     my $endpoint = '/search/published/binary/id';
 
     my $query_string = prepare_query_string(@_);
     my $xpath = "contains-ic(\@name, $query_string) and path/project='$distribution'";
 
-    my $url = $server . $endpoint . '?match=' . uri_escape($xpath);
+    my $url = $obs_apiroot . $endpoint . '?match=' . uri_escape($xpath);
 
     my $req = HTTP::Request->new(GET => $url);
     my $ua = LWP::UserAgent->new;
@@ -284,6 +303,7 @@ sub search_published_binary {
 
         foreach my $binary ($dom->findnodes('/collection/binary')) {
             my %binary_data;
+            $binary_data{'obs_instance'} = $obs_instance;
             $binary_data{'name'} = $binary->getAttribute('name');
             $binary_data{'project'} = $binary->getAttribute('project');
             $binary_data{'package'} = $binary->getAttribute('package');
@@ -295,33 +315,43 @@ sub search_published_binary {
             $binary_data{'filepath'} = $binary->getAttribute('filepath');
             $binary_data{'baseproject'} = $binary->getAttribute('baseproject');
             $binary_data{'type'} = $binary->getAttribute('type');
-            # Filter out ghost binary (package has been deleted, but binary still exists)
+
+            # Filter out ghost binary
+            # (package has been deleted, but binary still exists)
             if ( ! $binary_data{'package'} ) {
                 next;
             }
 
             # Filter out branch projects
-            if ( $binary->{project} =~ /:branches:/m ) {
+            if ( $binary_data{'project'} =~ /:branches:/m ) {
+                next;
+            }
+
+            # Filter out Packman personal projects
+            if (
+                $binary_data{'obs_instance'} ne 'openSUSE'
+                && is_personal_project($binary_data{'project'})
+            ) {
                 next;
             }
 
             # Filter out debuginfo, debugsource, buildsymbols packages
-            if ( substr($binary->{'name'}, -10) eq '-debuginfo' ) {
+            if ( substr($binary_data{'name'}, -10) eq '-debuginfo' ) {
                 next;
-            } elsif ( substr($binary->{'name'}, -12) eq '-debugsource' ) {
+            } elsif ( substr($binary_data{'name'}, -12) eq '-debugsource' ) {
                 next;
-            } elsif ( substr($binary->{'name'}, -13) eq '-buildsymbols' ) {
+            } elsif ( substr($binary_data{'name'}, -13) eq '-buildsymbols' ) {
                 next;
             }
 
             # Filter out source packages
-            if ( $binary->{'arch'} eq 'src' ) {
+            if ( $binary_data{'arch'} eq 'src' ) {
                 next;
             }
 
             # Filter architecture
-            unless ( $binary->{'arch'} eq $arch || $binary->{'arch'} eq 'noarch') {
-                unless ( $binary->{'arch'} eq 'i586' && $arch eq 'x86_64' ) {
+            unless ( $binary_data{'arch'} eq $arch || $binary_data{'arch'} eq 'noarch') {
+                unless ( $binary_data{'arch'} eq 'i586' && $arch eq 'x86_64' ) {
                     next;
                 }
             }
@@ -329,7 +359,7 @@ sub search_published_binary {
             push @collection, \%binary_data;
         }
 
-        return sort { -get_binary_weight($a) <=> -get_binary_weight($b) } @collection;
+        return @collection;
     }
     else {
         if ($resp->code == 413) {
@@ -356,6 +386,10 @@ sub get_binary_names {
         }
     }
     return @names;
+}
+
+sub sort_binaries {
+    return sort { -get_binary_weight($a) <=> -get_binary_weight($b) } @_;
 }
 
 sub get_binary_weight {
@@ -419,14 +453,21 @@ Add repository and install packages
 =cut
 
 sub install_binary {
-    my $binary = $_[0];
+    my $binary = shift;
     my $name = $binary->{name};
+    my $obs_instance = $binary->{obs_instance};
     my $arch = $binary->{arch};
     my $project = $binary->{project};
     my $repository = $binary->{repository};
 
+    # Install Packman packages
+    if ($obs_instance eq 'Packman') {
+        add_packman_repo();
+
+        install_packman_packages("$name.$arch");
+    }
     # Install official packages. Don't add repositories
-    if (is_official_project($project)) {
+    elsif (is_official_project($project)) {
         system "sudo zypper install $name.$arch";
     }
     # Install experimental and personal packages
@@ -448,9 +489,9 @@ sub install_packman_codecs {
         return;
     }
 
-    add_packman_essentials_repo();
+    add_packman_repo(1);
 
-    install_packman_essentials_packages(
+    install_packman_packages(
         'ffmpeg',
         'gstreamer-plugins-bad',
         'gstreamer-plugins-libav',
@@ -467,7 +508,8 @@ sub install_packman_codecs {
     exit;
 }
 
-sub add_packman_essentials_repo {
+sub add_packman_repo {
+    my $dup = shift;
 
     my $prefix = get_distribution();
     $prefix =~ s/:/_/ig;
@@ -476,14 +518,17 @@ sub add_packman_essentials_repo {
         $prefix = 'openSUSE_Tumbleweed';
     }
 
-    system "sudo zypper addrepo --refresh --priority 90 https://ftp.gwdg.de/pub/linux/misc/packman/suse/$prefix/Essentials/packman-essentials.repo";
+    system "sudo zypper addrepo --refresh --priority 90 https://ftp.gwdg.de/pub/linux/misc/packman/suse/$prefix/packman.repo";
     system "sudo zypper refresh";
-    system "sudo zypper dist-upgrade --from packman-essentials --allow-downgrade --allow-vendor-change";
+
+    if ($dup) {
+        system "sudo zypper dist-upgrade --from packman --allow-downgrade --allow-vendor-change";
+    }
 }
 
-sub install_packman_essentials_packages {
+sub install_packman_packages {
     my $packages = join ' ', @_;
-    system "sudo zypper install --repo packman-essentials $packages";
+    system "sudo zypper install --repo packman $packages";
 }
 
 sub install_vs_code {
