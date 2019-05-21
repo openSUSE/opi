@@ -2,6 +2,11 @@
 
 **O**BS **P**ackage **I**nstaller
 
+Search and install almost all packages available for openSUSE and SLE:
+
+1. openSUSE Build Service
+2. Packman
+
 ## System Requirements
 
 - openSUSE Tumbleweed, openSUSE Leap 42.1+, SLE 12+
@@ -13,8 +18,24 @@
 
 ## Install
 
+### openSUSE Tumbleweed
+
 ```
-sudo zypper addrepo https://download.opensuse.org/repositories/home:guoyunhe/openSUSE_Tumbleweed/home:guoyunhe.repo
+sudo zypper install opi
+```
+
+## Leap and SLE
+
+```
+# Leap 15.0
+sudo zypper addrepo https://download.opensuse.org/repositories/home:guoyunhe/openSUSE_Leap_15.0/home:guoyunhe.repo
+# Leap 15.1
+sudo zypper addrepo https://download.opensuse.org/repositories/home:guoyunhe/openSUSE_Leap_15.1/home:guoyunhe.repo
+# Leap 42.3
+sudo zypper addrepo https://download.opensuse.org/repositories/home:guoyunhe/openSUSE_Leap_42.3/home:guoyunhe.repo
+# SLE 15
+sudo zypper addrepo https://download.opensuse.org/repositories/home:guoyunhe/SLE_15/home:guoyunhe.repo
+
 sudo zypper refresh
 sudo zypper install opi
 ```
