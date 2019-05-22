@@ -54,13 +54,8 @@ if ($serialized_query =~ m/skype/ ) {
 #
 # API configuration
 #
-my $obs_username = 'wiki_hermes';
-my $obs_password = 'w_h_p1';
-my $obs_apiroot = "https://$obs_username:$obs_password\@api.opensuse.org";
-
-my $pmbs_username = 'opi';
-my $pmbs_password = 'please_dont_abuse';
-my $pmbs_apiroot = "https://$pmbs_username:$pmbs_password\@pmbs.links2linux.de";
+my $obs_apiroot = 'https://api.opensuse.org';
+my $pmbs_apiroot = 'https://pmbs.links2linux.de';
 
 #
 # Search packages
@@ -282,6 +277,8 @@ sub search_published_binary {
 
     my $distribution = get_distribution($obs_instance ne 'openSUSE');
 
+    my $proxy_root = 'https://guoyunhe.me/opi/proxy/index.php';
+
     my $endpoint = '/search/published/binary/id';
 
     my $query_string = prepare_query_string(@_);
@@ -289,7 +286,9 @@ sub search_published_binary {
 
     my $url = $obs_apiroot . $endpoint . '?match=' . uri_escape($xpath);
 
-    my $req = HTTP::Request->new(GET => $url);
+    my $prox_url = $proxy_root . '?obs_api_link=' . uri_escape($url) . '&obs_instance=' . $obs_instance;
+
+    my $req = HTTP::Request->new(GET => $prox_url);
     my $ua = LWP::UserAgent->new;
     my $resp = $ua->request($req);
     if ($resp->is_success) {

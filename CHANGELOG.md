@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- API proxy server to prevent hard-coded passwords in the script [#4](https://github.com/openSUSE-zh/opi/issues/4)
+
 ## [0.4.0]
 
 ### Added
