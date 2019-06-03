@@ -477,7 +477,7 @@ sub install_binary {
         system "sudo zypper refresh";
         my $install_options = "--allow-vendor-change --allow-arch-change --allow-downgrade --allow-name-change";
         $project =~ s/:/_/ig;
-        system "sudo zypper install $install_options --repo $project $name.$arch";
+        system "sudo zypper install $install_options --from $project $name.$arch";
 
         ask_keep_repo( $project );
     }
@@ -527,7 +527,7 @@ sub add_packman_repo {
 
 sub install_packman_packages {
     my $packages = join ' ', @_;
-    system "sudo zypper install --repo packman $packages";
+    system "sudo zypper install --from packman $packages";
 }
 
 sub install_vs_code {
