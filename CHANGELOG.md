@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.5.2]
+
+### Fixed
+
+- Trim "NAME" and "VERSION" string [#13](https://github.com/openSUSE-zh/opi/issues/13)
+
 ## [0.5.1]
 
 ### Fixed
@@ -78,7 +84,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Choose package and install
 - Keep or remove repository after installation
 
-[Unreleased]: https://github.com/openSUSE-zh/opi/compare/v0.5.1...HEAD
+[Unreleased]: https://github.com/openSUSE-zh/opi/compare/v0.5.2...HEAD
+[0.5.2]: https://github.com/openSUSE-zh/opi/compare/v0.5.1...v0.5.2
 [0.5.1]: https://github.com/openSUSE-zh/opi/compare/v0.5.0...v0.5.1
 [0.5.0]: https://github.com/openSUSE-zh/opi/compare/v0.4.0...v0.5.0
 [0.4.0]: https://github.com/openSUSE-zh/opi/compare/v0.3.2...v0.4.0

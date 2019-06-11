@@ -117,14 +117,20 @@ Get system information
 
 =cut
 
+sub trim {
+    my $s = shift;
+    $s =~ s/^\s+|\s+$//g;
+    return $s
+}
+
 sub get_distribution {
     my $prefix = shift;
     my $config = Config::Tiny->read('/etc/os-release');
     my $name = $config->{_}->{NAME};
     my $version = $config->{_}->{VERSION};
-    $name = substr $name, 1, -1; # Remove quotes
+    $name = trim(substr($name, 1, -1)); # Remove quotes and trailing spaces
     if ($version) {
-        $version = substr $version, 1, -1; # Remove quotes
+        $version = trim(substr($version, 1, -1)); # Remove quotes
     }
     if ($name eq 'openSUSE Tumbleweed') {
         $name = 'openSUSE:Factory';
