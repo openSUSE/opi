@@ -7,6 +7,8 @@
 # Website:    https://github.com/openSUSE-zh/opi
 # License:    GPL-3.0
 
+require 5.8.1;
+
 use strict;
 use warnings;
 use LWP::UserAgent;
@@ -14,9 +16,10 @@ use XML::LibXML;
 use URI::Escape;
 use Config;
 use Config::Tiny;
-use File::Temp qw/ tempfile tempdir /;
 use Term::ANSIColor;
+use List::Util qw/ first /;
 
+our $VERSION = 0.5.2;
 
 #
 # Check command line arguments
@@ -54,13 +57,13 @@ if ($serialized_query =~ m/skype/ ) {
 #
 # API configuration
 #
-my $obs_apiroot = 'https://api.opensuse.org';
+my $_obs_apiroot = 'https://api.opensuse.org';
 my $pmbs_apiroot = 'https://pmbs.links2linux.de';
 
 #
 # Search packages
 #
-my @obs = search_published_binary('openSUSE', $obs_apiroot, @ARGV);
+my @obs  = search_published_binary('openSUSE', $_obs_apiroot, @ARGV);
 my @pmbs = search_published_binary('Packman', $pmbs_apiroot, @ARGV);
 my @bins = sort_binaries(@obs, @pmbs);
 my @binary_names = get_binary_names(@bins);
@@ -120,7 +123,7 @@ Get system information
 sub trim {
     my $s = shift;
     $s =~ s/^\s+|\s+$//g;
-    return $s
+    return $s;
 }
 
 sub get_distribution {
@@ -139,8 +142,7 @@ sub get_distribution {
     } elsif (substr($name, 0, 3) eq 'SLE') {
         $name = 'SLE' . $version;
     } else {
-        print "Your distribution $name $version is not supported.\n";
-        exit 1;
+        die "Your distribution $name $version is not supported.\n";
     }
     if ($prefix) {
         $name = 'openSUSE.org:' . $name;
@@ -155,9 +157,11 @@ sub get_architecture {
         return 'i586';
     }
 
-    $perl_arch =~ m/^([a-z0-9_]+)/;
+    if ($perl_arch =~ m/^([a-z0-9_]+)/) {
+        return $1;
+    }
 
-    return $&;
+    return;
 }
 
 
@@ -199,9 +203,8 @@ sub ask_yes_or_no {
 
     if (lc($_[1]) eq 'y') {
         return $yes_no ne 'n';
-    } else {
-        return $yes_no eq 'y';
     }
+    return $yes_no eq 'y';
 }
 
 sub ask_keep_repo {
@@ -227,8 +230,8 @@ sub print_package_names {
 
 sub print_binary_options {
     my $i = 1;
-    foreach my $b (@_) {
-        print_binary_option($b, $i);
+    foreach my $bo (@_) {
+        print_binary_option($bo, $i);
         $i++;
     }
 }
@@ -302,7 +305,7 @@ sub search_published_binary {
 
         my $dom = XML::LibXML->load_xml(string => $message);
 
-        my @collection = ();
+        my @collection;
 
         my $arch = get_architecture();
 
@@ -366,14 +369,12 @@ sub search_published_binary {
 
         return @collection;
     }
-    else {
-        if ($resp->code == 413) {
-            print "Please use different search keywords. Some short keywords cause OBS timeout.\n";
-        } else {
-            print "Network error. Please try later. (Error message: ", $resp->message, ")\n";
-        }
-        exit 1;
+    if ($resp->code == 413) {
+        print "Please use different search keywords. Some short keywords cause OBS timeout.\n";
+    } else {
+        print "Network error. Please try later. (Error message: ", $resp->message, ")\n";
     }
+    exit 1;
 }
 
 =begin functions
@@ -383,10 +384,10 @@ Handle binary data
 =cut
 
 sub get_binary_names {
-    my @names = ();
+    my @names;
     foreach my $bin (@_) {
         my $name = $bin->{'name'};
-        if (! grep /^$name$/, @names) {
+        if (! first { /^$name$/ } @names) {
             push @names, $name;
         }
     }
@@ -394,7 +395,7 @@ sub get_binary_names {
 }
 
 sub sort_binaries {
-    return sort { -get_binary_weight($a) <=> -get_binary_weight($b) } @_;
+    return ( sort { -get_binary_weight($a) <=> -get_binary_weight($b) } @_);
 }
 
 sub get_binary_weight {
@@ -440,7 +441,7 @@ sub is_personal_project {
 sub get_binary_by_name {
     my $name = $_[0];
     my @binary_list = splice @_, 1;
-    my @filtered_binary_list = ();
+    my @filtered_binary_list;
 
     foreach my $bin (@binary_list) {
         if ($name eq $bin->{'name'}) {
@@ -541,7 +542,7 @@ sub install_vs_code {
         return;
     }
 
-    my $tmp_fh = new File::Temp( UNLINK => 1 );
+    my $tmp_fh = File::Temp->new( UNLINK => 1 );
     print $tmp_fh "[code]\nname=Visual Studio Code\nbaseurl=https://packages.microsoft.com/yumrepos/vscode\nenabled=1\ntype=rpm-md\ngpgcheck=1\ngpgkey=https://packages.microsoft.com/keys/microsoft.asc\n";
     system "sudo rpm --import https://packages.microsoft.com/keys/microsoft.asc";
     system "sudo mv $tmp_fh /etc/zypp/repos.d/vscode.repo";
