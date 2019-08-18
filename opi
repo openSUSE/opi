@@ -292,9 +292,9 @@ sub search_published_binary {
 
     my $url = $obs_apiroot . $endpoint . '?match=' . uri_escape($xpath);
 
-    my $prox_url = $proxy_root . '?obs_api_link=' . uri_escape($url) . '&obs_instance=' . $obs_instance;
+    my $proxy_url = $proxy_root . '?obs_api_link=' . uri_escape($url) . '&obs_instance=' . $obs_instance;
 
-    my $req = HTTP::Request->new(GET => $prox_url);
+    my $req = HTTP::Request->new(GET => $proxy_url);
     my $ua = LWP::UserAgent->new;
     my $resp = $ua->request($req);
     if ($resp->is_success) {
@@ -523,7 +523,7 @@ sub add_packman_repo {
         $prefix = 'openSUSE_Tumbleweed';
     }
 
-    system "sudo zypper addrepo --refresh --priority 90 https://ftp.gwdg.de/pub/linux/misc/packman/suse/$prefix/packman.repo";
+    system "sudo zypper addrepo --refresh --priority 90 --name Packman https://ftp.gwdg.de/pub/linux/misc/packman/suse/$prefix/ packman";
     system "sudo zypper refresh";
 
     if ($dup) {
