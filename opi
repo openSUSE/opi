@@ -60,8 +60,27 @@ my $pmbs_apiroot = 'https://pmbs.links2linux.de';
 #
 # Search packages
 #
-my @obs = search_published_binary('openSUSE', $obs_apiroot, @ARGV);
-my @pmbs = search_published_binary('Packman', $pmbs_apiroot, @ARGV);
+my @obs;
+my @pmbs;
+my $pid = fork();
+die if not defined $pid;
+if (not $pid) {
+    # child process prints spinner
+    print 'Searching';
+    for (;;) {
+        print '.';
+        system 'sleep 1';
+    }
+}
+else {
+    # parent process do request
+    @obs = search_published_binary('openSUSE', $obs_apiroot, @ARGV);
+    @pmbs = search_published_binary('Packman', $pmbs_apiroot, @ARGV);
+    # kill child process to stop spinner
+    kill 'KILL', $pid;
+    print "\n";
+}
+
 my @bins = sort_binaries(@obs, @pmbs);
 my @binary_names = get_binary_names(@bins);
 

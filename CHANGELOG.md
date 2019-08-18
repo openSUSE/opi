@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Search spinner [#21](https://github.com/openSUSE-zh/opi/issues/21)
+
 ### Fixed
 
 - Packman repo doesn't have *.repo file [#19](https://github.com/openSUSE-zh/opi/issues/19)
