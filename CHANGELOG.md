@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - Packman repo doesn't have *.repo file [#19](https://github.com/openSUSE-zh/opi/issues/19)
+- Long version numbers are cutted [#17](https://github.com/openSUSE-zh/opi/issues/17)
 
 ## [0.5.2]
 

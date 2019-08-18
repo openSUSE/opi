@@ -258,7 +258,7 @@ sub print_binary_option {
     my $colored_name = colored(substr($project, 0, 39) . ' ' . $symbol, $color);
 
     if ($number) {
-        printf("%2d. %-50s | %-10s | %-10s\n", $number, $colored_name, substr($binary->{version}, 0, 10), $binary->{arch});
+        printf("%2d. %-50s | %-25s | %s\n", $number, $colored_name, substr($binary->{version}, 0, 25), $binary->{arch});
     } else {
         print $colored_name, " | ", $binary->{version}, " | ", $binary->{arch};
     }
