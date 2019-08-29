@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Force repo URL to HTTPS [#22](https://github.com/openSUSE-zh/opi/issues/22)
 
+### Fixed
+
+- Ctrl + C handling of spinner
+
 ## [0.6.0]
 
 ### Added

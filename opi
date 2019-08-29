@@ -74,6 +74,8 @@ if (not $pid) {
     }
 }
 else {
+    # kill child process when pressing ctrl + c
+    $SIG{'INT'} = sub { kill 'KILL', $pid; exit; };
     # parent process do request
     @obs = search_published_binary('openSUSE', $obs_apiroot, @ARGV);
     @pmbs = search_published_binary('Packman', $pmbs_apiroot, @ARGV);
