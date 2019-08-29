@@ -14,7 +14,6 @@ use XML::LibXML;
 use URI::Escape;
 use Config;
 use Config::Tiny;
-use File::Temp qw/ tempfile tempdir /;
 use Term::ANSIColor;
 
 
@@ -23,13 +22,15 @@ use Term::ANSIColor;
 #
 unless (scalar @ARGV) {
     print "Please specify query keywords. For example:\n";
-    print "    opi pcsx2\n";
+    print "\topi pcsx2\n";
     exit 1;
 }
 
 #
 # Check for packages not from OBS
 #
+
+# 'vs code' --> 'vscode'
 my $serialized_query = lc(join('', @ARGV));
 
 # Check Packman Codecs
@@ -499,6 +500,8 @@ sub install_binary {
         my $repo_url = "https://download.opensuse.org/repositories/$project/$repository/";
         my $repo_file = "$repo_url/$project.repo";
         system "sudo zypper addrepo --refresh $repo_file";
+        # Change http:// to https://
+        system "sudo sed -i 's~http://download.opensuse.org~https://download.opensuse.org~g' /etc/zypp/repos.d/*";
         system "sudo zypper refresh";
         my $install_options = "--allow-vendor-change --allow-arch-change --allow-downgrade --allow-name-change";
         $project =~ s/:/_/ig;

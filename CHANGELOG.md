@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Force repo URL to HTTPS [#22](https://github.com/openSUSE-zh/opi/issues/22)
+
 ## [0.6.0]
 
 ### Added
