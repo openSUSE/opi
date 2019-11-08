@@ -2,7 +2,6 @@
 #
 # OPI - openSUSE Build Service Package Installer
 #
-# Version:    0.1.0
 # Author:     Guo Yunhe
 # Website:    https://github.com/openSUSE-zh/opi
 # License:    GPL-3.0
@@ -15,7 +14,7 @@ use URI::Escape;
 use Config;
 use Config::Tiny;
 use Term::ANSIColor;
-
+use File::Temp;
 
 #
 # Check command line arguments
