@@ -2,7 +2,6 @@
 
 # Test it with `php -S localhost:8000 index.php`
 
-require __DIR__ . '/vendor/autoload.php';
 require __DIR__ . '/config.php';
 
 # TODO add API rate limits.
