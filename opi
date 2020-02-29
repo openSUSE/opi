@@ -192,7 +192,7 @@ sub type_a_number {
     my $min = shift;
     my $max = shift;
     my $message = shift;
-    print $message || "Choose a number: ";
+    print $message || "Choose a number(0 to quit): ";
     my $typed_number = <STDIN>;
     chomp $typed_number;
     if ($typed_number =~ /^(\d+)$/) {
@@ -201,7 +201,9 @@ sub type_a_number {
             return $typed_number;
         }
     }
-
+    if ($typed_number eq 0) {
+            exit;
+    }
     return type_a_number($min, $max, "Number must be between $min and $max. Please try again: ");
 }
 
