@@ -313,7 +313,8 @@ sub search_published_binary {
     my $query_string = prepare_query_string(@_);
     my $xpath = "contains-ic(\@name, $query_string) and path/project='$distribution'";
 
-    my $url = $obs_apiroot . $endpoint . '?match=' . uri_escape($xpath);
+    # NOTE limit=0 fix 413 errors when searching php, test, etc.
+    my $url = $obs_apiroot . $endpoint . '?match=' . uri_escape($xpath) . '&limit=0';
 
     my $proxy_url = $proxy_root . '?obs_api_link=' . uri_escape($url) . '&obs_instance=' . $obs_instance;
 
