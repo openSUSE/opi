@@ -60,28 +60,10 @@ my $pmbs_apiroot = 'https://pmbs.links2linux.de';
 #
 # Search packages
 #
-my @obs;
-my @pmbs;
-my $pid = fork();
-die if not defined $pid;
-if (not $pid) {
-    # child process prints spinner
-    print 'Searching';
-    for (;;) {
-        print '.';
-        system 'sleep 1';
-    }
-}
-else {
-    # kill child process when pressing ctrl + c
-    $SIG{'INT'} = sub { kill 'KILL', $pid; exit; };
-    # parent process do request
-    @obs = search_published_binary('openSUSE', $obs_apiroot, @ARGV);
-    @pmbs = search_published_binary('Packman', $pmbs_apiroot, @ARGV);
-    # kill child process to stop spinner
-    kill 'KILL', $pid;
-    print "\n";
-}
+print "Searching...\n";
+
+my @obs = search_published_binary('openSUSE', $obs_apiroot, @ARGV);
+my @pmbs = search_published_binary('Packman', $pmbs_apiroot, @ARGV);
 
 my @bins = sort_binaries(@obs, @pmbs);
 my @binary_names = get_binary_names(@bins);
@@ -323,10 +305,13 @@ sub search_published_binary {
     my $resp = $ua->request($req);
     if ($resp->is_success) {
         my $message = $resp->decoded_content;
+        my @collection = ();
+
+        if ($message =~ /^\s*$/) {
+            return @collection;
+        }
 
         my $dom = XML::LibXML->load_xml(string => $message);
-
-        my @collection = ();
 
         my $arch = get_architecture();
 
