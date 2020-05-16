@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.8.2] - 2020-05-16
+
+### Fixed
+
+- Ghost process on XML parsing failure [#27](https://github.com/openSUSE-zh/opi/pulls/27)
+
 ## [0.8.1] - 2020-04-03
 
 ### Fixed
