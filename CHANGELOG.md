@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.8.3] - 2020-07-25
+
 ### Fixed
 
 - ffmpeg/libav packages due to Packman update
@@ -133,7 +135,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Choose package and install
 - Keep or remove repository after installation
 
-[Unreleased]: https://github.com/openSUSE-zh/opi/compare/v0.8.2...HEAD
+[Unreleased]: https://github.com/openSUSE-zh/opi/compare/v0.8.3...HEAD
+[0.8.3]: https://github.com/openSUSE-zh/opi/compare/v0.8.2...v0.8.3
 [0.8.2]: https://github.com/openSUSE-zh/opi/compare/v0.8.1...v0.8.2
 [0.8.1]: https://github.com/openSUSE-zh/opi/compare/v0.8.0...v0.8.1
 [0.8.0]: https://github.com/openSUSE-zh/opi/compare/v0.7.1...v0.8.0
