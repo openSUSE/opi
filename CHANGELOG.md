@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- ffmpeg/libav packages due to Packman update
+
 ## [0.8.2] - 2020-05-16
 
 ### Fixed

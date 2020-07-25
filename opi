@@ -3,7 +3,7 @@
 # OPI - openSUSE Build Service Package Installer
 #
 # Author:     Guo Yunhe
-# Website:    https://github.com/openSUSE-zh/opi
+# Website:    https://github.com/openSUSE/opi
 # License:    GPL-3.0
 
 use strict;
@@ -512,12 +512,7 @@ sub install_packman_codecs {
         'gstreamer-plugins-bad',
         'gstreamer-plugins-libav',
         'gstreamer-plugins-ugly',
-        'libavcodec58',
-        'libavdevice58',
-        'libavfilter7',
-        'libavformat58',
-        'libavresample4',
-        'libavutil56',
+        'libavcodec-full',
         'vlc-codecs',
     );
 
