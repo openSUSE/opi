@@ -17,7 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- Ghost process on XML parsing failure [#27](https://github.com/openSUSE-zh/opi/pulls/27)
+- Ghost process on XML parsing failure [#27](https://github.com/openSUSE/opi/pulls/27)
 
 ## [0.8.1] - 2020-04-03
 
@@ -29,19 +29,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- Type number `0` to exit [#26](https://github.com/openSUSE-zh/opi/pulls/26)
+- Type number `0` to exit [#26](https://github.com/openSUSE/opi/pulls/26)
 
 ## [0.7.1]
 
 ### Fixed
 
-- Missing `use File::Temp;` [#24](https://github.com/openSUSE-zh/opi/issues/24)
+- Missing `use File::Temp;` [#24](https://github.com/openSUSE/opi/issues/24)
 
 ## [0.7.0]
 
 ### Changed
 
-- Force repo URL to HTTPS [#22](https://github.com/openSUSE-zh/opi/issues/22)
+- Force repo URL to HTTPS [#22](https://github.com/openSUSE/opi/issues/22)
 
 ### Fixed
 
@@ -51,42 +51,42 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Search spinner [#21](https://github.com/openSUSE-zh/opi/issues/21)
+- Search spinner [#21](https://github.com/openSUSE/opi/issues/21)
 
 ### Fixed
 
-- Packman repo doesn't have *.repo file [#19](https://github.com/openSUSE-zh/opi/issues/19)
-- Long version numbers are cutted [#17](https://github.com/openSUSE-zh/opi/issues/17)
+- Packman repo doesn't have *.repo file [#19](https://github.com/openSUSE/opi/issues/19)
+- Long version numbers are cutted [#17](https://github.com/openSUSE/opi/issues/17)
 
 ## [0.5.2]
 
 ### Fixed
 
-- Trim "NAME" and "VERSION" string [#13](https://github.com/openSUSE-zh/opi/issues/13)
+- Trim "NAME" and "VERSION" string [#13](https://github.com/openSUSE/opi/issues/13)
 
 ## [0.5.1]
 
 ### Fixed
 
-- Fix dependency not found issue [#11](https://github.com/openSUSE-zh/opi/issues/11)
+- Fix dependency not found issue [#11](https://github.com/openSUSE/opi/issues/11)
 
 ## [0.5.0]
 
 ### Added
 
-- API proxy server to prevent hard-coded passwords in the script [#4](https://github.com/openSUSE-zh/opi/issues/4)
+- API proxy server to prevent hard-coded passwords in the script [#4](https://github.com/openSUSE/opi/issues/4)
 
 ## [0.4.0]
 
 ### Added
 
-- PMBS (Packman Build Service) support [#5](https://github.com/openSUSE-zh/opi/issues/5)
+- PMBS (Packman Build Service) support [#5](https://github.com/openSUSE/opi/issues/5)
 
 ## [0.3.2]
 
 ### Fixed
 
-- `opi opi` cannot find `opi` [#9](https://github.com/openSUSE-zh/opi/issues/9)
+- `opi opi` cannot find `opi` [#9](https://github.com/openSUSE/opi/issues/9)
 
 ## [0.3.1]
 
@@ -98,7 +98,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Support SLE [#8](https://github.com/openSUSE-zh/opi/issues/8)
+- Support SLE [#8](https://github.com/openSUSE/opi/issues/8)
 
 ### Changed
 
@@ -108,16 +108,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Install Packman Codecs with `opi packman` or `opi codecs` [#6](https://github.com/openSUSE-zh/opi/issues/6)
-- Install Skype with `opi skype` [#6](https://github.com/openSUSE-zh/opi/issues/6)
-- Install VS Code with `opi vs code` [#6](https://github.com/openSUSE-zh/opi/issues/6)
+- Install Packman Codecs with `opi packman` or `opi codecs` [#6](https://github.com/openSUSE/opi/issues/6)
+- Install Skype with `opi skype` [#6](https://github.com/openSUSE/opi/issues/6)
+- Install VS Code with `opi vs code` [#6](https://github.com/openSUSE/opi/issues/6)
 
 ## [0.1.2]
 
 ### Fixed
 
-- Fixed lost of "noarch" packages [#3](https://github.com/openSUSE-zh/opi/issues/3)
-- Be able to search with dashes in keywords [#2](https://github.com/openSUSE-zh/opi/issues/3)
+- Fixed lost of "noarch" packages [#3](https://github.com/openSUSE/opi/issues/3)
+- Be able to search with dashes in keywords [#2](https://github.com/openSUSE/opi/issues/3)
 
 ## [0.1.1]
 
@@ -135,22 +135,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Choose package and install
 - Keep or remove repository after installation
 
-[Unreleased]: https://github.com/openSUSE-zh/opi/compare/v0.8.3...HEAD
-[0.8.3]: https://github.com/openSUSE-zh/opi/compare/v0.8.2...v0.8.3
-[0.8.2]: https://github.com/openSUSE-zh/opi/compare/v0.8.1...v0.8.2
-[0.8.1]: https://github.com/openSUSE-zh/opi/compare/v0.8.0...v0.8.1
-[0.8.0]: https://github.com/openSUSE-zh/opi/compare/v0.7.1...v0.8.0
-[0.7.1]: https://github.com/openSUSE-zh/opi/compare/v0.7.0...v0.7.1
-[0.7.0]: https://github.com/openSUSE-zh/opi/compare/v0.6.0...v0.7.0
-[0.6.0]: https://github.com/openSUSE-zh/opi/compare/v0.5.2...v0.6.0
-[0.5.2]: https://github.com/openSUSE-zh/opi/compare/v0.5.1...v0.5.2
-[0.5.1]: https://github.com/openSUSE-zh/opi/compare/v0.5.0...v0.5.1
-[0.5.0]: https://github.com/openSUSE-zh/opi/compare/v0.4.0...v0.5.0
-[0.4.0]: https://github.com/openSUSE-zh/opi/compare/v0.3.2...v0.4.0
-[0.3.2]: https://github.com/openSUSE-zh/opi/compare/v0.3.1...v0.3.2
-[0.3.1]: https://github.com/openSUSE-zh/opi/compare/v0.3.0...v0.3.1
-[0.3.0]: https://github.com/openSUSE-zh/opi/compare/v0.2.0...v0.3.0
-[0.2.0]: https://github.com/openSUSE-zh/opi/compare/v0.1.2...v0.2.0
-[0.1.2]: https://github.com/openSUSE-zh/opi/compare/v0.1.1...v0.1.2
-[0.1.1]: https://github.com/openSUSE-zh/opi/compare/v0.1.0...v0.1.1
-[0.1.0]: https://github.com/openSUSE-zh/opi/releases/tag/v0.1.0
+[Unreleased]: https://github.com/openSUSE/opi/compare/v0.8.3...HEAD
+[0.8.3]: https://github.com/openSUSE/opi/compare/v0.8.2...v0.8.3
+[0.8.2]: https://github.com/openSUSE/opi/compare/v0.8.1...v0.8.2
+[0.8.1]: https://github.com/openSUSE/opi/compare/v0.8.0...v0.8.1
+[0.8.0]: https://github.com/openSUSE/opi/compare/v0.7.1...v0.8.0
+[0.7.1]: https://github.com/openSUSE/opi/compare/v0.7.0...v0.7.1
+[0.7.0]: https://github.com/openSUSE/opi/compare/v0.6.0...v0.7.0
+[0.6.0]: https://github.com/openSUSE/opi/compare/v0.5.2...v0.6.0
+[0.5.2]: https://github.com/openSUSE/opi/compare/v0.5.1...v0.5.2
+[0.5.1]: https://github.com/openSUSE/opi/compare/v0.5.0...v0.5.1
+[0.5.0]: https://github.com/openSUSE/opi/compare/v0.4.0...v0.5.0
+[0.4.0]: https://github.com/openSUSE/opi/compare/v0.3.2...v0.4.0
+[0.3.2]: https://github.com/openSUSE/opi/compare/v0.3.1...v0.3.2
+[0.3.1]: https://github.com/openSUSE/opi/compare/v0.3.0...v0.3.1
+[0.3.0]: https://github.com/openSUSE/opi/compare/v0.2.0...v0.3.0
+[0.2.0]: https://github.com/openSUSE/opi/compare/v0.1.2...v0.2.0
+[0.1.2]: https://github.com/openSUSE/opi/compare/v0.1.1...v0.1.2
+[0.1.1]: https://github.com/openSUSE/opi/compare/v0.1.0...v0.1.1
+[0.1.0]: https://github.com/openSUSE/opi/releases/tag/v0.1.0
