@@ -349,12 +349,8 @@ sub search_published_binary {
                 next;
             }
 
-            # Filter out debuginfo, debugsource, buildsymbols packages
-            if ( substr($binary_data{'name'}, -10) eq '-debuginfo' ) {
-                next;
-            } elsif ( substr($binary_data{'name'}, -12) eq '-debugsource' ) {
-                next;
-            } elsif ( substr($binary_data{'name'}, -13) eq '-buildsymbols' ) {
+            # Filter out debuginfo, debugsource, devel, buildsymbols, lang and docs packages
+            if ( $binary_data{'name'} =~ /-(debuginfo|debugsource|buildsymbols|devel|lang|l10n|trans|doc|docs)(-.+)$/m ) {
                 next;
             }
 
