@@ -365,9 +365,7 @@ sub search_published_binary {
 
             # Filter architecture
             unless ( $binary_data{'arch'} eq $arch || $binary_data{'arch'} eq 'noarch') {
-                unless ( $binary_data{'arch'} eq 'i586' && $arch eq 'x86_64' ) {
-                    next;
-                }
+                next;
             }
 
             push @collection, \%binary_data;
