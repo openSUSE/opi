@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Filter out -devel, -docs and -lang packages
+- Don't show i586 packages on x86_64 system
+
 ## [0.8.3] - 2020-07-25
 
 ### Fixed
