@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="console-application">
+  <id>org.openSUSE.opi</id>
+  <metadata_license>CC0-1.0</metadata_license>
+  <name>OPI</name>
+  <summary>openSUSE Package Installer</summary>
+  <description>
+    <p>
+      Search and install almost all packages available for openSUSE and SLE:
+    </p>
+    <ol>
+        <li>openSUSE Build Service</li>
+        <li>Packman Build Service</li>
+    </ol>
+  </description>
+  <url type="homepage">https://github.com/openSUSE/opi</url>
+  <url type="bugtracker">https://github.com/openSUSE/opi/issues</url>
+  <url type="donation">https://www.patreon.com/guoyunhe/creators</url>
+  <url type="help">https://github.com/openSUSE/opi</url>
+</component>
