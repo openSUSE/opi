@@ -16,14 +16,37 @@ use Config::Tiny;
 use Term::ANSIColor;
 use File::Temp;
 
+my $version_number = '0.9.0';
+
+my $help_text = <<'END_HELP';
+
+Usage:
+    opi [OPTION]... KEYWORDS...
+
+Options:
+    -h, --help      Show help text.
+    -v, --version   Show version number.
+
+END_HELP
+
 #
 # Check command line arguments
 #
 unless (scalar @ARGV) {
-    print "Please specify query keywords. For example:\n";
-    print "\topi pcsx2\n";
+    print $help_text;
     exit 1;
 }
+
+if ($ARGV[0] eq '--help' || $ARGV[0] eq '-h') {
+    print $help_text;
+    exit;
+}
+
+if ($ARGV[0] eq '--version' || $ARGV[0] eq '-v') {
+    print $version_number . "\n";
+    exit;
+}
+
 
 #
 # Check for packages not from OBS
@@ -350,7 +373,7 @@ sub search_published_binary {
             }
 
             # Filter out debuginfo, debugsource, devel, buildsymbols, lang and docs packages
-            if ( $binary_data{'name'} =~ /-(debuginfo|debugsource|buildsymbols|devel|lang|l10n|trans|doc|docs)(-.+)$/m ) {
+            if ( $binary_data{'name'} =~ /-(debuginfo|debugsource|buildsymbols|devel|lang|l10n|trans|doc|docs)(-.+)?$/m ) {
                 next;
             }
 
