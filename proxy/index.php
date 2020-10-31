@@ -19,4 +19,6 @@ if ($obs_instance === 'openSUSE') {
 
 $obs_api_link = str_replace('://', "://$username:$password@", $obs_api_link);
 
+header("Access-Control-Allow-Origin: *");
+
 echo file_get_contents($obs_api_link);
