@@ -429,7 +429,8 @@ sub get_binary_names {
 
 sub filter_binaries {
     return @_ if $with_home;
-    return grep {!is_personal_project($_->{project})} @_;
+    my @ret = grep {!is_personal_project($_->{project})} @_;
+    return @ret ? @ret : @_;
 }
 
 sub sort_binaries {
