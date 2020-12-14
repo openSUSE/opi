@@ -17,6 +17,7 @@ use Term::ANSIColor;
 use File::Temp;
 
 my $version_number = '0.9.0';
+my $with_home = 0; # determinses if we want to show home: repos
 
 my $help_text = <<'END_HELP';
 
@@ -26,6 +27,7 @@ Usage:
 Options:
     -h, --help      Show help text.
     -v, --version   Show version number.
+    -H, --with-home include (often low-quality) home: repos in output
 
 END_HELP
 
@@ -45,6 +47,11 @@ if ($ARGV[0] eq '--help' || $ARGV[0] eq '-h') {
 if ($ARGV[0] eq '--version' || $ARGV[0] eq '-v') {
     print $version_number . "\n";
     exit;
+}
+
+if ($ARGV[0] eq '--with-home' || $ARGV[0] eq '-H') {
+    shift;
+    $with_home = 1;
 }
 
 
@@ -89,6 +96,7 @@ my @obs = search_published_binary('openSUSE', $obs_apiroot, @ARGV);
 my @pmbs = search_published_binary('Packman', $pmbs_apiroot, @ARGV);
 
 my @bins = sort_binaries(@obs, @pmbs);
+@bins = filter_binaries(@bins);
 my @binary_names = get_binary_names(@bins);
 
 if (!scalar(@bins)) {
@@ -417,6 +425,11 @@ sub get_binary_names {
         }
     }
     return @names;
+}
+
+sub filter_binaries {
+    return @_ if $with_home;
+    return grep {!is_personal_project($_->{project})} @_;
 }
 
 sub sort_binaries {
