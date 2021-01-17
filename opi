@@ -1,10 +1,14 @@
 #!/usr/bin/perl
-#
+# ==============================================================================
 # OPI - openSUSE Build Service Package Installer
 #
-# Author:     Guo Yunhe
+# Authors:    Guo Yunhe <i@guoyunhe.me>
 # Website:    https://github.com/openSUSE/opi
 # License:    GPL-3.0
+# ==============================================================================
+
+# import packages
+# ------------------------------------------------------------------------------
 
 use strict;
 use warnings;
@@ -15,6 +19,8 @@ use Config;
 use Config::Tiny;
 use Term::ANSIColor;
 use File::Temp;
+
+# define global variables
 
 my $version_number = '0.9.0';
 
@@ -29,9 +35,7 @@ Options:
 
 END_HELP
 
-#
-# Check command line arguments
-#
+# if no arguments given, show help
 unless (scalar @ARGV) {
     print $help_text;
     exit 1;
