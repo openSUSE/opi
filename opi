@@ -7,6 +7,8 @@
 # License:    GPL-3.0
 # ==============================================================================
 
+
+# ------------------------------------------------------------------------------
 # import packages
 # ------------------------------------------------------------------------------
 
@@ -20,7 +22,10 @@ use Config::Tiny;
 use Term::ANSIColor;
 use File::Temp;
 
+
+# ------------------------------------------------------------------------------
 # define global variables
+# ------------------------------------------------------------------------------
 
 my $version_number = '0.9.0';
 
@@ -35,54 +40,56 @@ Options:
 
 END_HELP
 
+my $obs_apiroot = 'https://api.opensuse.org';
+my $pmbs_apiroot = 'https://pmbs.links2linux.de';
+
+
+# ------------------------------------------------------------------------------
+# parse command arguments
+# ------------------------------------------------------------------------------
+
 # if no arguments given, show help
 unless (scalar @ARGV) {
     print $help_text;
     exit 1;
 }
 
+# show help text
 if ($ARGV[0] eq '--help' || $ARGV[0] eq '-h') {
     print $help_text;
     exit;
 }
 
+# show version number
 if ($ARGV[0] eq '--version' || $ARGV[0] eq '-v') {
     print $version_number . "\n";
     exit;
 }
 
-
-#
 # Check for packages not from OBS
-#
 
 # 'vs code' --> 'vscode'
 my $serialized_query = lc(join('', @ARGV));
 
-# Check Packman Codecs
 if ( $serialized_query =~ m/(packman|codec)/ ) {
     install_packman_codecs();
     exit;
 }
 
-# Check VS Code
 if ( $serialized_query =~ m/(visualstudiocode|vscode|vsc)/ ) {
     install_vs_code();
     exit;
 }
 
-# Check Skype
 if ($serialized_query =~ m/skype/ ) {
     install_skype();
     exit;
 }
 
-
-#
-# API configuration
-#
-my $obs_apiroot = 'https://api.opensuse.org';
-my $pmbs_apiroot = 'https://pmbs.links2linux.de';
+if ( $serialized_query =~ m/(microsoftteams|msteams|teams)/ ) {
+    install_ms_teams();
+    exit;
+}
 
 #
 # Search packages
@@ -590,6 +597,23 @@ sub install_skype {
     system "sudo zypper install skypeforlinux";
 
     ask_keep_repo( 'skype-stable' );
+
+    exit;
+}
+
+sub install_ms_teams {
+    unless ( ask_yes_or_no("Do you want to install Teams from Microsoft repository? ", 'y') ) {
+        return;
+    }
+
+    my $tmp_fh = new File::Temp( UNLINK => 1 );
+    print $tmp_fh "[ms-teams]\nname=Microsoft Teams\nbaseurl=https://packages.microsoft.com/yumrepos/ms-teams\nenabled=1\ntype=rpm-md\ngpgcheck=1\ngpgkey=https://packages.microsoft.com/keys/microsoft.asc\n";
+    system "sudo rpm --import https://packages.microsoft.com/keys/microsoft.asc";
+    system "sudo mv $tmp_fh /etc/zypp/repos.d/ms-teams.repo";
+    system "sudo zypper refresh";
+    system "sudo zypper install teams";
+
+    ask_keep_repo( 'ms-teams' );
 
     exit;
 }

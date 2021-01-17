@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Microsoft Teams installer [#34](https://github.com/openSUSE/opi/pulls/34)
+
 ## [0.9.0]
 
 ### Added
@@ -15,7 +19,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- Filter out -devel, -docs and -lang packages [#30](https://github.com/openSUSE/opi/pulls/27)
+- Filter out -devel, -docs and -lang packages [#30](https://github.com/openSUSE/opi/pulls/30)
 - Don't show i586 packages on x86_64 system
 
 ## [0.8.3] - 2020-07-25
@@ -128,7 +132,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - Fixed lost of "noarch" packages [#3](https://github.com/openSUSE/opi/issues/3)
-- Be able to search with dashes in keywords [#2](https://github.com/openSUSE/opi/issues/3)
+- Be able to search with dashes in keywords [#2](https://github.com/openSUSE/opi/issues/2)
 
 ## [0.1.1]
 
