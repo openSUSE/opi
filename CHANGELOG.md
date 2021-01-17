@@ -7,12 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.10.0] - 2021-01-17
+
 ### Added
 
 - Microsoft Teams installer [#34](https://github.com/openSUSE/opi/pulls/34)
 - Warning for personal repository [#35](https://github.com/openSUSE/opi/pulls/35)
 
-## [0.9.0]
+## [0.9.0] - 2020-10-03
 
 ### Added
 
@@ -151,7 +153,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Choose package and install
 - Keep or remove repository after installation
 
-[Unreleased]: https://github.com/openSUSE/opi/compare/v0.9.0...HEAD
+[Unreleased]: https://github.com/openSUSE/opi/compare/v0.10.0...HEAD
+[0.10.0]: https://github.com/openSUSE/opi/compare/v0.9.0...v0.10.0
 [0.9.0]: https://github.com/openSUSE/opi/compare/v0.8.3...v0.9.0
 [0.8.3]: https://github.com/openSUSE/opi/compare/v0.8.2...v0.8.3
 [0.8.2]: https://github.com/openSUSE/opi/compare/v0.8.1...v0.8.2
