@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Microsoft Teams installer [#34](https://github.com/openSUSE/opi/pulls/34)
+- Warning for personal repository [#35](https://github.com/openSUSE/opi/pulls/35)
 
 ## [0.9.0]
 
