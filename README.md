@@ -6,6 +6,7 @@ Search and install almost all packages available for openSUSE and SLE:
 
 1. openSUSE Build Service
 2. Packman
+3. Popular packages for Microsoft and other vendors
 
 ## System Requirements
 
@@ -74,4 +75,10 @@ opi skype
 
 ```
 opi vs code
+```
+
+**Miscrosoft Teams**
+
+```
+opi teams
 ```
