@@ -81,6 +81,11 @@ if ( $serialized_query =~ m/(visualstudiocode|vscode|vsc)/ ) {
     exit;
 }
 
+if ( $serialized_query =~ m/(visualstudiocodium|vscodium|codium)/ ) {
+    install_vs_codium();
+    exit;
+}
+
 if ($serialized_query =~ m/skype/ ) {
     install_skype();
     exit;
@@ -584,6 +589,23 @@ sub install_vs_code {
     system "sudo zypper install code";
 
     ask_keep_repo( 'code' );
+
+    exit;
+}
+
+sub install_vs_codium {
+    unless ( ask_yes_or_no("Do you want to install VS Codium from paulcarroty_vscodium repository? ", 'y') ) {
+        return;
+    }
+
+    my $tmp_fh = new File::Temp( UNLINK => 1 );
+    print $tmp_fh "[codium]\nname=Visual Studio Codium\nbaseurl=https://paulcarroty.gitlab.io/vscodium-deb-rpm-repo/rpms\nenabled=1\ntype=rpm-md\ngpgcheck=1\ngpgkey=https://gitlab.com/paulcarroty/vscodium-deb-rpm-repo/raw/master/pub.gpg\n";
+    system "sudo rpm --import https://gitlab.com/paulcarroty/vscodium-deb-rpm-repo/raw/master/pub.gpg";
+    system "sudo mv $tmp_fh /etc/zypp/repos.d/vscodium.repo";
+    system "sudo zypper refresh";
+    system "sudo zypper install codium";
+
+    ask_keep_repo( 'codium' );
 
     exit;
 }
