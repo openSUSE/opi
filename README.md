@@ -82,3 +82,9 @@ opi vs code
 ```
 opi teams
 ```
+
+**Plex Mediaserver**
+
+```
+opi plex
+```

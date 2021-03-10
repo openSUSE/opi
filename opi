@@ -96,6 +96,11 @@ if ( $serialized_query =~ m/(microsoftteams|msteams|teams)/ ) {
     exit;
 }
 
+if ( $serialized_query =~ m/(plex|plexmedia|plextheater|plexmediaserver)/ ) {
+    install_plex();
+    exit;
+}
+
 #
 # Search packages
 #
@@ -637,6 +642,24 @@ sub install_ms_teams {
     system "sudo zypper install teams";
 
     ask_keep_repo( 'ms-teams' );
+
+    exit;
+}
+
+sub install_plex {
+    unless ( ask_yes_or_no("Do you want to install plexmediaserver from Plex repository? ", 'y') ) {
+        return;
+    }
+
+    my $tmp_fh = new File::Temp( UNLINK => 1 );
+    print $tmp_fh "[PlexRepo]\nname=PlexRepo\nbaseurl=https://downloads.plex.tv/repo/rpm/\$basearch/\ntype=rpm-md\ngpgcheck=1\ngpgkey=https://downloads.plex.tv/plex-keys/PlexSign.key\n";
+    system "sudo rpm --import https://downloads.plex.tv/plex-keys/PlexSign.key";
+    system "sudo mv $tmp_fh /etc/zypp/repos.d/plex.repo";
+    system "sudo zypper refresh";
+    system "sudo zypper install plexmediaserver";
+    system "sudo rm /etc/zypp/repos.d/plex.repo.rpmnew";
+
+    ask_keep_repo( 'PlexRepo' );
 
     exit;
 }
