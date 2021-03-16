@@ -96,6 +96,11 @@ if ( $serialized_query =~ m/(microsoftteams|msteams|teams)/ ) {
     exit;
 }
 
+if ( $serialized_query =~ m/zoom/ ) {
+    install_zoom();
+    exit;
+}
+
 #
 # Search packages
 #
@@ -637,6 +642,17 @@ sub install_ms_teams {
     system "sudo zypper install teams";
 
     ask_keep_repo( 'ms-teams' );
+
+    exit;
+}
+
+sub install_zoom {
+    unless ( ask_yes_or_no("Do you want to install zoom from zoom.us? ", 'y') ) {
+        return;
+    }
+
+    system "sudo rpm --import https://zoom.us/linux/download/pubkey";
+    system "sudo zypper install https://zoom.us/client/latest/zoom_openSUSE_x86_64.rpm";
 
     exit;
 }
