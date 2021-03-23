@@ -11,11 +11,10 @@ Search and install almost all packages available for openSUSE and SLE:
 ## System Requirements
 
 - openSUSE Tumbleweed, openSUSE Leap 42.1+, SLE 12+
-- perl
-- perl-libwww-perl
-- perl-XML-LibXML
-- perl-URI
-- perl-Config-Tiny
+- python3
+- python3-requests
+- python3-lxml
+- python3-termcolor
 
 ## Install
 
@@ -65,20 +64,27 @@ opi packman
 opi codecs
 ```
 
-**Skype**
-
 ```
-opi skype
-```
+openSUSE Package Installer
+==========================
 
-**Visual Studio Code**
+Search and install almost all packages available for openSUSE and SLE:
+ 1. openSUSE Build Service
+ 2. Packman
+ 2. Popular packages for various vendors
 
-```
-opi vs code
-```
+Usage: opi <query>
 
-**Miscrosoft Teams**
+  <query> can be any package name or part of it and will be searched for
+  both at the openSUSE Build Service and Packman.
 
-```
-opi teams
+Also this queries can be used to install packages from various other vendors:
+
+  chrome            Google Chrome webbrowser
+  codecs            Media Codecs from Packman Repo
+  msteams           Microsoft Teams
+  skype             Microsoft Skype
+  teamviewer        Teamviewer remote access
+  vscode            Microsoft Visual Studio Code
+  vscodium          Visual Studio Codium
 ```
