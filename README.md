@@ -24,7 +24,7 @@ Search and install almost all packages available for openSUSE and SLE:
 sudo zypper install opi
 ```
 
-## Leap and SLE
+### Leap and SLE
 
 ```
 # Leap 15.0
