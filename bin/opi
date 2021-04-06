@@ -1,0 +1,72 @@
+#!/usr/bin/python3
+
+import os
+import sys
+sys.path.insert(0, os.path.abspath(os.path.dirname(__file__) + '/..'))
+
+import opi
+from opi.plugins import PluginManager
+
+try:
+	query = ' '.join(sys.argv[1:])
+
+	pm = PluginManager()
+	if query in ('', '-h', '--help'):
+		print("openSUSE Package Installer")
+		print("==========================\n")
+
+		print("Search and install almost all packages available for openSUSE and SLE:")
+		print(" 1. openSUSE Build Service")
+		print(" 2. Packman")
+		print(" 2. Popular packages for various vendors\n")
+
+		print("Usage: opi <query>\n")
+		print("  <query> can be any package name or part of it and will be searched for")
+		print("  both at the openSUSE Build Service and Packman.\n")
+
+		print("Also this queries can be used to install packages from various other vendors:\n")
+		pm.show_plugins(' '*2)
+		print()
+		sys.exit()
+
+	# Try to find a matching plugin for the query (and run it and exit afterwards)
+	pm.run(query)
+
+	binaries = []
+	binaries.extend(opi.search_published_binary('openSUSE', query))
+	binaries.extend(opi.search_published_binary('Packman', query))
+	binaries = opi.sort_binaries(binaries)
+	if len(binaries) == 0:
+		print("No package found.")
+		sys.exit()
+	binary_names = opi.get_binary_names(binaries)
+
+	# Print package name options
+	opi.print_package_names(binary_names)
+
+	# Select a package name option
+	selected_name_num = opi.ask_number(1, len(binary_names))
+	selected_name = binary_names[selected_name_num-1]
+	print("You have selected package name: %s" % selected_name)
+	binary_options = opi.get_binaries_by_name(selected_name, binaries)
+
+	# Print binary package options
+	opi.print_binary_options(binary_options)
+
+	# Select a binary package option
+	selected_binary_num = opi.ask_number(1, len(binary_options))
+	selected_binary = binary_options[selected_binary_num-1]
+	print("You have selected binary package: ", end='')
+	opi.print_binary_option(selected_binary)
+	if opi.is_personal_project(selected_binary['project']):
+		print(opi.colored(
+			"BE CAREFUL! The package is from a personal repository and NOT reviewed by others.\n"
+			"You can ask the author to submit the package to development projects and openSUSE:Factory.\n"
+			"Learn more at https://en.opensuse.org/openSUSE:How_to_contribute_to_Factory",
+			'red'
+		))
+
+	# Install selected package
+	opi.install_binary(selected_binary)
+except KeyboardInterrupt:
+	print()
