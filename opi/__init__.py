@@ -82,6 +82,12 @@ def install_packman_packages(packages):
 ### ZYPP ###
 ############
 
+def install_packages(packages):
+    args = ['sudo', 'zypper', 'in']
+    args.extend(packages)
+    subprocess.call(args)
+
+
 def add_repo(filename, name, url, enabled=True, gpgcheck=True, gpgkey=None, repo_type='rpm-md', auto_import_key=False):
 	tf = tempfile.NamedTemporaryFile('w')
 	tf.file.write("[%s]\n" % filename)

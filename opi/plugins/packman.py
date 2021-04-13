@@ -21,3 +21,6 @@ class PackmanCodecsPlugin(BasePlugin):
 			'libavcodec-full',
 			'vlc-codecs',
 		])
+		# Install other codecs
+		opi.install_packages(['gstreamer-plugins-good'])
+		opi.install_packages(['gstreamer-plugins-good-extra'])
