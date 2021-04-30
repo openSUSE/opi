@@ -95,6 +95,7 @@ def add_repo(filename, name, url, enabled=True, gpgcheck=True, gpgkey=None, repo
 		tf.file.write("gpgkey=%s\n" % gpgkey)
 	tf.file.flush()
 	subprocess.call(['sudo', 'cp', tf.name, '/etc/zypp/repos.d/%s.repo' % filename])
+	subprocess.call(['sudo', 'chmod', '644', '/etc/zypp/repos.d/%s.repo' % filename])
 	tf.file.close()
 	refresh_cmd = ['sudo', 'zypper']
 	if auto_import_key:
