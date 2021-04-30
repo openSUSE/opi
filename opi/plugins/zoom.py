@@ -13,4 +13,4 @@ class Zoom(BasePlugin):
 			return
 
 		subprocess.call(['sudo', 'rpm', '--import', 'https://zoom.us/linux/download/pubkey'])
-		subprocess.call(['sudo', 'zypper', 'in', 'https://zoom.us/client/latest/zoom_openSUSE_x86_64.rpm'])
+		opi.install_packages(['https://zoom.us/client/latest/zoom_openSUSE_x86_64.rpm'])

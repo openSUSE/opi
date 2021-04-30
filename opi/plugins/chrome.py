@@ -19,5 +19,5 @@ class GoogleChrome(BasePlugin):
 			gpgkey = 'https://dl.google.com/linux/linux_signing_key.pub'
 		)
 
-		subprocess.call(['sudo', 'zypper', 'in', 'google-chrome-stable'])
+		opi.install_packages(['google-chrome-stable'])
 		opi.ask_keep_repo('google-chrome')

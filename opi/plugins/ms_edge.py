@@ -23,5 +23,5 @@ class MSEdge(BasePlugin):
 		subprocess.call(['sudo', 'rm', '-f', '/etc/default/microsoft-edge-dev'])
 		subprocess.call(['sudo', 'touch', '/etc/default/microsoft-edge-dev'])
 
-		subprocess.call(['sudo', 'zypper', 'in', 'microsoft-edge-dev'])
+		opi.install_packages(['microsoft-edge-dev'])
 		opi.ask_keep_repo('microsoft-edge')
