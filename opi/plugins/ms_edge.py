@@ -20,4 +20,4 @@ class MSEdge(BasePlugin):
 		)
 
 		subprocess.call(['sudo', 'zypper', 'in', 'microsoft-edge-dev'])
-		opi.ask_keep_repo('edge')
+		opi.ask_keep_repo('microsoft-edge')
