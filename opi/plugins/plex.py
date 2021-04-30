@@ -19,5 +19,5 @@ class PlexMediaServer(BasePlugin):
 			gpgkey = 'https://downloads.plex.tv/plex-keys/PlexSign.key'
 		)
 
-		subprocess.call(['sudo', 'zypper', 'in', 'plexmediaserver'])
+		opi.install_packages(['plexmediaserver'])
 		opi.ask_keep_repo('PlexRepo')

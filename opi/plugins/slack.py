@@ -23,5 +23,5 @@ class Slack(BasePlugin):
 		subprocess.call(['sudo', 'rm', '-f', '/etc/default/slack'])
 		subprocess.call(['sudo', 'touch', '/etc/default/slack'])
 
-		subprocess.call(['sudo', 'zypper', 'in', 'slack'])
+		opi.install_packages(['slack'])
 		opi.ask_keep_repo('slack')

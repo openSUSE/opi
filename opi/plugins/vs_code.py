@@ -19,5 +19,5 @@ class VSCode(BasePlugin):
 			gpgkey = 'https://packages.microsoft.com/keys/microsoft.asc'
 		)
 
-		subprocess.call(['sudo', 'zypper', 'in', 'code'])
+		opi.install_packages(['code'])
 		opi.ask_keep_repo('vscode')
