@@ -19,5 +19,5 @@ class Vivaldi(BasePlugin):
 			gpgkey = 'https://repo.vivaldi.com/archive/linux_signing_key.pub'
 		)
 
-		subprocess.call(['sudo', 'zypper', 'in', 'vivaldi-stable'])
+		opi.install_packages(['vivaldi-stable'])
 		opi.ask_keep_repo('vivaldi')

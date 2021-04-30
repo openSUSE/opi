@@ -19,5 +19,5 @@ class VSCodium(BasePlugin):
 			gpgkey = 'https://gitlab.com/paulcarroty/vscodium-deb-rpm-repo/raw/master/pub.gpg'
 		)
 
-		subprocess.call(['sudo', 'zypper', 'in', 'codium'])
+		opi.install_packages(['codium'])
 		opi.ask_keep_repo('vscodium')

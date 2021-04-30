@@ -19,5 +19,5 @@ class MSEdge(BasePlugin):
 			gpgkey = 'https://packages.microsoft.com/keys/microsoft.asc'
 		)
 
-		subprocess.call(['sudo', 'zypper', 'in', 'microsoft-edge-dev'])
+		opi.install_packages(['microsoft-edge-dev'])
 		opi.ask_keep_repo('microsoft-edge')

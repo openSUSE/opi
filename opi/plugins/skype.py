@@ -19,5 +19,5 @@ class VSCode(BasePlugin):
 			gpgkey = 'https://repo.skype.com/data/SKYPE-GPG-KEY'
 		)
 
-		subprocess.call(['sudo', 'zypper', 'in', 'skypeforlinux'])
+		opi.install_packages(['skypeforlinux'])
 		opi.ask_keep_repo('skype-stable')

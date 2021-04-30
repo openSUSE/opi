@@ -19,5 +19,5 @@ class MSTeams(BasePlugin):
 			gpgkey = 'https://packages.microsoft.com/keys/microsoft.asc'
 		)
 
-		subprocess.call(['sudo', 'zypper', 'in', 'teams'])
+		opi.install_packages(['teams'])
 		opi.ask_keep_repo('teams')

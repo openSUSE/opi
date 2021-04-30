@@ -72,10 +72,8 @@ def add_packman_repo(dup=False):
 	if dup:
 		subprocess.call(['sudo', 'zypper', 'dist-upgrade', '--from', 'packman', '--allow-downgrade', '--allow-vendor-change'])
 
-def install_packman_packages(packages):
-	args = ['sudo', 'zypper', 'in', '--from', 'packman']
-	args.extend(packages)
-	subprocess.call(args)
+def install_packman_packages(packages, **kwargs):
+	install_packages(packages, from_repo='packman', **kwargs)
 
 
 ############
@@ -101,6 +99,15 @@ def add_repo(filename, name, url, enabled=True, gpgcheck=True, gpgkey=None, repo
 		refresh_cmd.append('--gpg-auto-import-keys')
 	refresh_cmd.append('ref')
 	subprocess.call(refresh_cmd)
+
+def install_packages(packages, from_repo=None, flags=None):
+	args = ['sudo', 'zypper', 'in']
+	if from_repo:
+		args.extend(['--from', from_repo])
+	if flags:
+		args.extend(flags)
+	args.extend(packages)
+	subprocess.call(args)
 
 
 ###########
@@ -219,10 +226,10 @@ def install_binary(binary):
 	if obs_instance == 'Packman':
 		# Install from Packman Repo
 		add_packman_repo()
-		install_packman_packages(name_with_arch)
+		install_packman_packages([name_with_arch])
 	elif is_official_project(project):
 		# Install from official repos (don't add a repo)
-		subprocess.call(['sudo', 'zypper', 'in', name_with_arch])
+		install_packages([name_with_arch])
 	else:
 		repo_url = "https://download.opensuse.org/repositories/%s/%s/" % (project, repository)
 		repo_file = "%s/%s.repo" % (repo_url, project)
@@ -232,10 +239,7 @@ def install_binary(binary):
 		# Change http to https
 		subprocess.call(['sudo', 'sed', '-i', 's~http://download.opensuse.org~https://download.opensuse.org~g', repo_file_local])
 		subprocess.call(['sudo', 'zypper', 'refresh'])
-		install_cmd = ['sudo', 'zypper', 'in']
-		install_cmd.extend(['--allow-vendor-change', '--allow-arch-change', '--allow-downgrade', '--allow-name-change'])
-		install_cmd.extend(['--from', project, name_with_arch])
-		subprocess.call(install_cmd)
+		install_packages([name_with_arch], from_repo=project, flags=['--allow-vendor-change', '--allow-arch-change', '--allow-downgrade', '--allow-name-change'])
 		ask_keep_repo(project)
 
 
