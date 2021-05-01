@@ -18,21 +18,15 @@ Search and install almost all packages available for openSUSE and SLE:
 
 ## Install
 
-### openSUSE Tumbleweed
+### openSUSE Tumbleweed and Leap
 
 ```
 sudo zypper install opi
 ```
 
-## Leap and SLE
+### SLE
 
 ```
-# Leap 15.0
-sudo zypper addrepo --refresh https://download.opensuse.org/repositories/home:guoyunhe/openSUSE_Leap_15.0/home:guoyunhe.repo
-# Leap 15.1
-sudo zypper addrepo --refresh https://download.opensuse.org/repositories/home:guoyunhe/openSUSE_Leap_15.1/home:guoyunhe.repo
-# Leap 42.3
-sudo zypper addrepo --refresh https://download.opensuse.org/repositories/home:guoyunhe/openSUSE_Leap_42.3/home:guoyunhe.repo
 # SLE 15
 sudo zypper addrepo --refresh https://download.opensuse.org/repositories/home:guoyunhe/SLE_15/home:guoyunhe.repo
 
