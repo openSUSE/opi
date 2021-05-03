@@ -19,5 +19,9 @@ class MSEdge(BasePlugin):
 			gpgkey = 'https://packages.microsoft.com/keys/microsoft.asc'
 		)
 
+		# tell rpm post script not to mess with our repos
+		subprocess.call(['sudo', 'rm', '-f', '/etc/default/microsoft-edge-dev'])
+		subprocess.call(['sudo', 'touch', '/etc/default/microsoft-edge-dev'])
+
 		opi.install_packages(['microsoft-edge-dev'])
 		opi.ask_keep_repo('microsoft-edge')
