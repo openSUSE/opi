@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.0.0] - 2021-05-03
+
+### Added
+
+- [Automated tests](https://github.com/openSUSE/opi/actions)
+- Extensible Plugin interface for plugins (eg. [this one](https://github.com/openSUSE/opi/blob/master/opi/plugins/vivaldi.py))
+- Added plugins for chrome, dotnet, edge, teams, packman, plex, skype, slack, teamviewer, vivaldi, vscode, vscodium, zoom
+
+### Changed
+
+- Rewrote the complete tool in python3
+
 ## [0.10.0] - 2021-01-17
 
 ### Added
