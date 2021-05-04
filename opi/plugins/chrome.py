@@ -4,7 +4,7 @@ import subprocess
 
 class GoogleChrome(BasePlugin):
 	main_query = "chrome"
-	description = "Google Chrome webbrowser"
+	description = "Google Chrome web browser"
 	queries = ('chrome', 'google-chrome')
 
 	@classmethod

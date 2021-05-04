@@ -4,7 +4,7 @@ import subprocess
 
 class Teamviewer(BasePlugin):
 	main_query = "teamviewer"
-	description = "Teamviewer remote access"
+	description = "TeamViewer remote access"
 	queries = ('teamviewer')
 
 	@classmethod

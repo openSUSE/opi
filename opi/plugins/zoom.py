@@ -4,12 +4,12 @@ import subprocess
 
 class Zoom(BasePlugin):
 	main_query = "zoom"
-	description = "ZOOM Video Conference"
+	description = "Zoom Video Conference"
 	queries = ('zoom')
 
 	@classmethod
 	def run(cls, query):
-		if not opi.ask_yes_or_no("Do you want to install zoom from zoom.us?", 'y'):
+		if not opi.ask_yes_or_no("Do you want to install Zoom from zoom.us?", 'y'):
 			return
 
 		subprocess.call(['sudo', 'rpm', '--import', 'https://zoom.us/linux/download/pubkey'])
