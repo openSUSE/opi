@@ -74,17 +74,11 @@ Usage: opi <query>
 
 Also this queries can be used to install packages from various other vendors:
 
-  chrome            Google Chrome
-  codecs            Media Codecs from Packman and official repo
-  dotnet            .NET
-  msedge            Microsoft Edge Dev
+  chrome            Google Chrome webbrowser
+  codecs            Media Codecs from Packman Repo
   msteams           Microsoft Teams
-  plex              Plex Media Server
-  skype             Skype
-  slack             Slack
-  teamviewer        TeamViewer
-  vivaldi           Vivaldi
-  vscode            Visual Studio Code
-  vscodium          VSCodium
-  zoom              Zoom
+  skype             Microsoft Skype
+  teamviewer        Teamviewer remote access
+  vscode            Microsoft Visual Studio Code
+  vscodium          Visual Studio Codium
 ```
