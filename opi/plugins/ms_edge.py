@@ -4,7 +4,7 @@ import subprocess
 
 class MSEdge(BasePlugin):
 	main_query = "msedge"
-	description = "Microsoft Edge"
+	description = "Microsoft Edge Dev"
 	queries = ('microsoftedge', 'msedge', 'edge')
 
 	@classmethod
