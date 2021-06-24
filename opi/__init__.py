@@ -238,16 +238,18 @@ def install_binary(binary):
 		# Install from official repos (don't add a repo)
 		install_packages([name_with_arch])
 	else:
-		repo_url = "https://download.opensuse.org/repositories/%s/%s/" % (project, repository)
-		repo_file = "%s/%s.repo" % (repo_url, project)
-		subprocess.call(['sudo', 'zypper', 'ar', '--refresh', repo_file])
-		project = project.replace(':', '_')
-		repo_file_local = '/etc/zypp/repos.d/%s.repo' % project
-		# Change http to https
-		subprocess.call(['sudo', 'sed', '-i', 's~http://download.opensuse.org~https://download.opensuse.org~g', repo_file_local])
-		subprocess.call(['sudo', 'zypper', 'refresh'])
+		repo_alias = project.replace(':', '_')
+		project_path = project.replace(':', ':/')
+		add_repo(
+			filename = repo_alias,
+			name = project,
+			url = "https://download.opensuse.org/repositories/%s/%s/" % (project_path, repository),
+			gpgkey = "https://download.opensuse.org/repositories/%s/%s/repodata/repomd.xml.key" % (project_path, repository),
+			gpgcheck = True,
+			auto_refresh = True
+		)
 		install_packages([name_with_arch], from_repo=project, flags=['--allow-vendor-change', '--allow-arch-change', '--allow-downgrade', '--allow-name-change'])
-		ask_keep_repo(project)
+		ask_keep_repo(repo_alias)
 
 
 ########################
