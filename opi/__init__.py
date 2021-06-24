@@ -63,9 +63,13 @@ def add_packman_repo(dup=False):
 	project = project.replace(':', '_')
 	project = project.replace('Factory', 'Tumbleweed')
 
-	url = 'https://ftp.gwdg.de/pub/linux/misc/packman/suse/%s/' % project
-	subprocess.call(['sudo', 'zypper', 'ar', '--refresh', '--priority', '90', '--name', 'Packman', url, 'packman'])
-	subprocess.call(['sudo', 'zypper', 'refresh'])
+	add_repo(
+		filename = 'packman',
+		name = 'Packman',
+		url = 'https://ftp.gwdg.de/pub/linux/misc/packman/suse/%s/' % project,
+		auto_refresh = True,
+		priority = 90
+	)
 
 	if dup:
 		subprocess.call(['sudo', 'zypper', 'dist-upgrade', '--from', 'packman', '--allow-downgrade', '--allow-vendor-change'])
@@ -78,7 +82,7 @@ def install_packman_packages(packages, **kwargs):
 ### ZYPP ###
 ############
 
-def add_repo(filename, name, url, enabled=True, gpgcheck=True, gpgkey=None, repo_type='rpm-md', auto_import_key=False):
+def add_repo(filename, name, url, enabled=True, gpgcheck=True, gpgkey=None, repo_type='rpm-md', auto_import_key=False, auto_refresh=False, priority=None):
 	tf = tempfile.NamedTemporaryFile('w')
 	tf.file.write("[%s]\n" % filename)
 	tf.file.write("name=%s\n" % name)
@@ -89,6 +93,10 @@ def add_repo(filename, name, url, enabled=True, gpgcheck=True, gpgkey=None, repo
 	if gpgkey:
 		subprocess.call(['sudo', 'rpm', '--import', gpgkey])
 		tf.file.write("gpgkey=%s\n" % gpgkey)
+	if auto_refresh:
+		tf.file.write("autorefresh=1\n")
+	if priority:
+		tf.file.write("priority=%i\n" % priority)
 	tf.file.flush()
 	subprocess.call(['sudo', 'cp', tf.name, '/etc/zypp/repos.d/%s.repo' % filename])
 	subprocess.call(['sudo', 'chmod', '644', '/etc/zypp/repos.d/%s.repo' % filename])
