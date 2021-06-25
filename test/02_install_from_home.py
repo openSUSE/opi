@@ -13,9 +13,6 @@ c.sendline('1')
 c.expect("2. .*X11:Utilities", timeout=10)
 c.sendline('2')
 
-c.expect("Do you want to reject the key", timeout=10)
-c.sendline('t')
-
 c.expect("new packages to install", timeout=10)
 c.expect("Continue", timeout=10)
 c.sendline('y')

@@ -63,9 +63,13 @@ def add_packman_repo(dup=False):
 	project = project.replace(':', '_')
 	project = project.replace('Factory', 'Tumbleweed')
 
-	url = 'https://ftp.gwdg.de/pub/linux/misc/packman/suse/%s/' % project
-	subprocess.call(['sudo', 'zypper', 'ar', '--refresh', '--priority', '90', '--name', 'Packman', url, 'packman'])
-	subprocess.call(['sudo', 'zypper', 'refresh'])
+	add_repo(
+		filename = 'packman',
+		name = 'Packman',
+		url = 'https://ftp.gwdg.de/pub/linux/misc/packman/suse/%s/' % project,
+		auto_refresh = True,
+		priority = 90
+	)
 
 	if dup:
 		subprocess.call(['sudo', 'zypper', 'dist-upgrade', '--from', 'packman', '--allow-downgrade', '--allow-vendor-change'])
@@ -78,7 +82,7 @@ def install_packman_packages(packages, **kwargs):
 ### ZYPP ###
 ############
 
-def add_repo(filename, name, url, enabled=True, gpgcheck=True, gpgkey=None, repo_type='rpm-md', auto_import_key=False):
+def add_repo(filename, name, url, enabled=True, gpgcheck=True, gpgkey=None, repo_type='rpm-md', auto_import_key=False, auto_refresh=False, priority=None):
 	tf = tempfile.NamedTemporaryFile('w')
 	tf.file.write("[%s]\n" % filename)
 	tf.file.write("name=%s\n" % name)
@@ -89,6 +93,10 @@ def add_repo(filename, name, url, enabled=True, gpgcheck=True, gpgkey=None, repo
 	if gpgkey:
 		subprocess.call(['sudo', 'rpm', '--import', gpgkey])
 		tf.file.write("gpgkey=%s\n" % gpgkey)
+	if auto_refresh:
+		tf.file.write("autorefresh=1\n")
+	if priority:
+		tf.file.write("priority=%i\n" % priority)
 	tf.file.flush()
 	subprocess.call(['sudo', 'cp', tf.name, '/etc/zypp/repos.d/%s.repo' % filename])
 	subprocess.call(['sudo', 'chmod', '644', '/etc/zypp/repos.d/%s.repo' % filename])
@@ -230,16 +238,18 @@ def install_binary(binary):
 		# Install from official repos (don't add a repo)
 		install_packages([name_with_arch])
 	else:
-		repo_url = "https://download.opensuse.org/repositories/%s/%s/" % (project, repository)
-		repo_file = "%s/%s.repo" % (repo_url, project)
-		subprocess.call(['sudo', 'zypper', 'ar', '--refresh', repo_file])
-		project = project.replace(':', '_')
-		repo_file_local = '/etc/zypp/repos.d/%s.repo' % project
-		# Change http to https
-		subprocess.call(['sudo', 'sed', '-i', 's~http://download.opensuse.org~https://download.opensuse.org~g', repo_file_local])
-		subprocess.call(['sudo', 'zypper', 'refresh'])
+		repo_alias = project.replace(':', '_')
+		project_path = project.replace(':', ':/')
+		add_repo(
+			filename = repo_alias,
+			name = project,
+			url = "https://download.opensuse.org/repositories/%s/%s/" % (project_path, repository),
+			gpgkey = "https://download.opensuse.org/repositories/%s/%s/repodata/repomd.xml.key" % (project_path, repository),
+			gpgcheck = True,
+			auto_refresh = True
+		)
 		install_packages([name_with_arch], from_repo=project, flags=['--allow-vendor-change', '--allow-arch-change', '--allow-downgrade', '--allow-name-change'])
-		ask_keep_repo(project)
+		ask_keep_repo(repo_alias)
 
 
 ########################
