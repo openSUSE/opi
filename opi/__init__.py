@@ -7,6 +7,7 @@ import requests
 import lxml.etree
 from termcolor import colored
 
+from opi.backends import get_backend, BackendConstants
 
 OBS_APIROOT = {
 	'openSUSE': 'https://api.opensuse.org',
@@ -72,13 +73,16 @@ def add_packman_repo(dup=False):
 	)
 
 	if dup:
-		subprocess.call(['sudo', 'zypper', 'dist-upgrade', '--from', 'packman', '--allow-downgrade', '--allow-vendor-change'])
+		if get_backend() == BackendConstants.zypp:
+			subprocess.call(['sudo', 'zypper', 'dist-upgrade', '--from', 'packman', '--allow-downgrade', '--allow-vendor-change'])
+		elif get_backend() == BackendConstants.dnf:
+			subprocess.call(['sudo', 'dnf', 'dup', '--setopt=allow_vendor_change=True', '--repo', 'packman'])
 
 def install_packman_packages(packages, **kwargs):
 	install_packages(packages, from_repo='packman', **kwargs)
 
 
-############
+############i
 ### ZYPP ###
 ############
 
@@ -101,16 +105,25 @@ def add_repo(filename, name, url, enabled=True, gpgcheck=True, gpgkey=None, repo
 	subprocess.call(['sudo', 'cp', tf.name, '/etc/zypp/repos.d/%s.repo' % filename])
 	subprocess.call(['sudo', 'chmod', '644', '/etc/zypp/repos.d/%s.repo' % filename])
 	tf.file.close()
-	refresh_cmd = ['sudo', 'zypper']
-	if auto_import_key:
-		refresh_cmd.append('--gpg-auto-import-keys')
-	refresh_cmd.append('ref')
+	refresh_cmd = []
+	if get_backend() == BackendConstants.zypp:
+		refresh_cmd = ['sudo', 'zypper']
+		if auto_import_key:
+			refresh_cmd.append('--gpg-auto-import-keys')
+		refresh_cmd.append('ref')
+	elif get_backend() == BackendConstants.dnf:
+		refresh_cmd = ['sudo', 'dnf', 'ref']
 	subprocess.call(refresh_cmd)
 
 def install_packages(packages, from_repo=None, flags=None):
-	args = ['sudo', 'zypper', 'in']
-	if from_repo:
-		args.extend(['--from', from_repo])
+	if get_backend() == BackendConstants.zypp:
+		args = ['sudo', 'zypper', 'in']
+		if from_repo:
+			args.extend(['--from', from_repo])
+	elif get_backend() == BackendConstants.dnf:
+		args = ['sudo', 'dnf', 'in']
+		if from_repo:
+			args.extend(['--repo', from_repo])
 	if flags:
 		args.extend(flags)
 	args.extend(packages)
@@ -248,7 +261,12 @@ def install_binary(binary):
 			gpgcheck = True,
 			auto_refresh = True
 		)
-		install_packages([name_with_arch], from_repo=project, flags=['--allow-vendor-change', '--allow-arch-change', '--allow-downgrade', '--allow-name-change'])
+		flags = []
+		if get_backend() == BackendConstants.zypp:
+			flags = ['--allow-vendor-change', '--allow-arch-change', '--allow-downgrade', '--allow-name-change']
+		elif get_backend() == BackendConstants.dnf:
+			flags = ['--setopt=allow_vendor_change=True'] # TODO: architecture changes, name changes, downgrades?
+		install_packages([name_with_arch], from_repo=repo_alias, flags=flags)
 		ask_keep_repo(repo_alias)
 
 
@@ -277,8 +295,10 @@ def ask_number(min_num, max_num, question="Choose a number (0 to quit):"):
 
 def ask_keep_repo(repo):
 	if not ask_yes_or_no('Do you want to keep the repo "%s"?' % repo, 'y'):
-		subprocess.call(['sudo', 'zypper', 'rr', repo])
-
+		if get_backend() == BackendConstants.zypp:
+			subprocess.call(['sudo', 'zypper', 'rr', repo])
+		if get_backend() == BackendConstants.dnf:
+			subprocess.call(['sudo', 'rm', '/etc/zypp/repos.d/' + repo + '.repo'])
 
 def print_package_names(package_names):
 	i = 1
