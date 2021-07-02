@@ -82,9 +82,9 @@ def install_packman_packages(packages, **kwargs):
 	install_packages(packages, from_repo='packman', **kwargs)
 
 
-############i
-### ZYPP ###
-############
+################
+### ZYPP/DNF ###
+################
 
 def add_repo(filename, name, url, enabled=True, gpgcheck=True, gpgkey=None, repo_type='rpm-md', auto_import_key=False, auto_refresh=False, priority=None):
 	tf = tempfile.NamedTemporaryFile('w')
@@ -115,7 +115,7 @@ def add_repo(filename, name, url, enabled=True, gpgcheck=True, gpgkey=None, repo
 		refresh_cmd = ['sudo', 'dnf', 'ref']
 	subprocess.call(refresh_cmd)
 
-def install_packages(packages, from_repo=None, flags=None):
+def install_packages(packages, from_repo=None, flags=None, allow_vendor_change=False, allow_arch_change=False, allow_downgrade=False, allow_name_change=False):
 	if get_backend() == BackendConstants.zypp:
 		args = ['sudo', 'zypper', 'in']
 		if from_repo:
@@ -126,6 +126,20 @@ def install_packages(packages, from_repo=None, flags=None):
 			args.extend(['--repo', from_repo])
 	if flags:
 		args.extend(flags)
+	if get_backend() == BackendConstants.zypp:
+		if allow_downgrade:
+			args.extend(['--allow-downgrade'])
+		if allow_arch_change:
+			args.extend(['--allow-arch-change'])
+		if allow_name_change:
+			args.extend(['--allow-name-change'])
+		if allow_vendor_change:
+			args.extend(['--allow-vendor-change'])
+	elif get_backend() == BackendConstants.dnf:
+		# allow_downgrade and allow_name_change are default in DNF
+		# TODO: allow_arch_change needs the target architecture in DNF
+		if allow_vendor_change:
+			args.extend(['--setopt=allow_vendor_change=True'])
 	args.extend(packages)
 	subprocess.call(args)
 
@@ -261,12 +275,7 @@ def install_binary(binary):
 			gpgcheck = True,
 			auto_refresh = True
 		)
-		flags = []
-		if get_backend() == BackendConstants.zypp:
-			flags = ['--allow-vendor-change', '--allow-arch-change', '--allow-downgrade', '--allow-name-change']
-		elif get_backend() == BackendConstants.dnf:
-			flags = ['--setopt=allow_vendor_change=True'] # TODO: architecture changes, name changes, downgrades?
-		install_packages([name_with_arch], from_repo=repo_alias, flags=flags)
+		install_packages([name_with_arch], from_repo=repo_alias, allow_downgrade=True, allow_arch_change=True, allow_name_change=True, allow_vendor_change=True)
 		ask_keep_repo(repo_alias)
 
 
