@@ -115,7 +115,7 @@ def add_repo(filename, name, url, enabled=True, gpgcheck=True, gpgkey=None, repo
 		refresh_cmd = ['sudo', 'dnf', 'ref']
 	subprocess.call(refresh_cmd)
 
-def install_packages(packages, from_repo=None, flags=None, allow_vendor_change=False, allow_arch_change=False, allow_downgrade=False, allow_name_change=False):
+def install_packages(packages, from_repo=None, allow_vendor_change=False, allow_arch_change=False, allow_downgrade=False, allow_name_change=False):
 	if get_backend() == BackendConstants.zypp:
 		args = ['sudo', 'zypper', 'in']
 		if from_repo:
@@ -124,22 +124,19 @@ def install_packages(packages, from_repo=None, flags=None, allow_vendor_change=F
 		args = ['sudo', 'dnf', 'in']
 		if from_repo:
 			args.extend(['--repo', from_repo])
-	if flags:
-		args.extend(flags)
 	if get_backend() == BackendConstants.zypp:
 		if allow_downgrade:
-			args.extend(['--allow-downgrade'])
+			args.append('--allow-downgrade')
 		if allow_arch_change:
-			args.extend(['--allow-arch-change'])
+			args.append('--allow-arch-change')
 		if allow_name_change:
-			args.extend(['--allow-name-change'])
+			args.append('--allow-name-change')
 		if allow_vendor_change:
-			args.extend(['--allow-vendor-change'])
+			args.append('--allow-vendor-change')
 	elif get_backend() == BackendConstants.dnf:
 		# allow_downgrade and allow_name_change are default in DNF
-		# TODO: allow_arch_change needs the target architecture in DNF
 		if allow_vendor_change:
-			args.extend(['--setopt=allow_vendor_change=True'])
+			args.append('--setopt=allow_vendor_change=True')
 	args.extend(packages)
 	subprocess.call(args)
 
