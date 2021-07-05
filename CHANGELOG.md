@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.1.0] - 2021-07-05
+
+### Added
+
+- Support for dnf backend [#58](https://github.com/openSUSE/opi/pull/58)
+
+### Changed
+
+- Deduplicated packman repo creation code
+
 ## [2.0.0] - 2021-05-03
 
 ### Added
