@@ -16,6 +16,10 @@ Search and install almost all packages available for openSUSE and SLE:
 - python3-lxml
 - python3-termcolor
 
+If you want to use dnf instead of zypper, you also need:
+- dnf
+- libdnf-repo-config-zypp
+
 ## Install
 
 ### openSUSE Tumbleweed and Leap
@@ -45,6 +49,18 @@ opi filezilla
 Output:
 
 ![Screenshot](screenshot.png)
+
+### Using DNF instead of Zypper
+If you want to, you can use [DNF](https://en.opensuse.org/SDB:DNF) instead of Zypper.
+To do this, change the content of `~/.config/opi/config.json` so that it looks like this:
+
+```json
+{
+  "backend": "dnf"
+}
+```
+
+If you want to go back to Zypper, just change the value of `backend` back to `zypp`.
 
 ### Packages from Other Repositories
 

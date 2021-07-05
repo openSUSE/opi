@@ -11,9 +11,9 @@ setup(
     version=__version__,
     license='GPLv3',
     description='Tool to Search and install almost all packages available for openSUSE and SLE',
-    author='Guo Yunhe, Dominik Heidler',
-    author_email='i@guoyunhe.me, dheidler@suse.de',
+    author='Guo Yunhe, Dominik Heidler, KaratekHD',
+    author_email='i@guoyunhe.me, dheidler@suse.de, karatek@karatek.net',
     requires=['lxml', 'requests', 'termcolor'],
-    packages=['opi', 'opi.plugins'],
+    packages=['opi', 'opi.plugins', 'opi.config', 'opi.backends'],
     scripts=['bin/opi'],
 )
