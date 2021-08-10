@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.1.1] - 2021-08-10
+
+### Added
+
+- Plugin for Brave Browser [#60](https://github.com/openSUSE/opi/pull/60)
+
 ## [2.1.0] - 2021-07-05
 
 ### Added
