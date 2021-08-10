@@ -12,7 +12,7 @@ c.sendline('y')
 c.expect("Continue")
 c.sendline('y')
 
-c.expect("Do you want to keep", timeout=600)
+c.expect("Do you want to keep", timeout=800)
 c.sendline('y')
 
 c.interact()

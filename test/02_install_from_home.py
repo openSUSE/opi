@@ -13,11 +13,11 @@ c.sendline('1')
 c.expect("2. .*X11:Utilities", timeout=10)
 c.sendline('2')
 
-c.expect("new packages to install", timeout=10)
-c.expect("Continue", timeout=10)
+c.expect("new packages to install", timeout=60)
+c.expect("Continue", timeout=60)
 c.sendline('y')
 
-c.expect("Do you want to keep the repo", timeout=150)
+c.expect("Do you want to keep the repo", timeout=350)
 c.sendline('n')
 
 c.interact()
