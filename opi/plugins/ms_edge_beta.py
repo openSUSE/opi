@@ -14,8 +14,8 @@ class MSEdgeBeta(BasePlugin):
 			return
 
 		opi.add_repo(
-			filename = 'microsoft-edge-beta',
-			name = 'Microsoft Edge Beta',
+			filename = 'microsoft-edge',
+			name = 'Microsoft Edge',
 			url = 'https://packages.microsoft.com/yumrepos/edge',
 			gpgkey = 'https://packages.microsoft.com/keys/microsoft.asc'
 		)
@@ -25,4 +25,4 @@ class MSEdgeBeta(BasePlugin):
 		subprocess.call(['sudo', 'touch', '/etc/default/microsoft-edge-beta'])
 
 		opi.install_packages(['microsoft-edge-beta'])
-		opi.ask_keep_repo('microsoft-edge-beta')
+		opi.ask_keep_repo('microsoft-edge')
