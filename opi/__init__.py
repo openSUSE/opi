@@ -291,13 +291,14 @@ def ask_yes_or_no(question, default_answer):
 	return answer.strip().lower() == 'y'
 
 def ask_number(min_num, max_num, question="Choose a number (0 to quit):"):
-	num = int(input(question + ' ').strip() or '0')
+	input_string = input(question + ' ').strip() or '0'
+	num = int(input_string) if input_string.isdecimal() else -1
 	if num == 0:
 		sys.exit()
 	elif num >= min_num and num <= max_num:
 		return num
 	else:
-		return ask_number(question, min_num, max_num)
+		return ask_number(min_num, max_num, question)
 
 def ask_keep_repo(repo):
 	if not ask_yes_or_no('Do you want to keep the repo "%s"?' % repo, 'y'):
