@@ -312,6 +312,12 @@ def print_package_names(package_names):
 		print("%2d. %s" % (i, package_name))
 		i += 1
 
+def print_package_names_reverse(package_names):
+	i = len(package_names)
+	for package_name in reversed(package_names):
+		print("%2d. %s" % (i, package_name))
+		i -= 1
+
 def print_binary_options(binaries):
 	i = 1
 	for binary in binaries:

@@ -39,3 +39,10 @@ class PluginManager(object):
 		for plugin in self.plugins:
 			description = plugin.description.replace("\n", "\n" + (" "*16) + "  ")
 			print("%s%-16s  %s" % (indent, plugin.main_query, description))
+
+	def get_plugin_string(self, indent=''):
+		plugins = ""
+		for plugin in self.plugins:
+			description = plugin.description.replace("\n", "\n" + (" "*16) + "  ")
+			plugins+=("%s%-16s  %s" % (indent, plugin.main_query, description)) + "\n"
+		return plugins
