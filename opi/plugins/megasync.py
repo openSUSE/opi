@@ -37,5 +37,3 @@ class MEGAsync(BasePlugin):
 		opi.install_packages(packages)
 
 		opi.ask_keep_repo('megasync')
-
-MEGAsync().run("megasync")
