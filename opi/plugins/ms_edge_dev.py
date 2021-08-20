@@ -1,25 +1,26 @@
 import opi
-from opi.plugins import BasePlugin
 import subprocess
 
-class MSEdge(BasePlugin):
-	main_query = "msedge"
+from opi.plugins import BasePlugin
+
+class MSEdgeDev(BasePlugin):
+	main_query = "msedge-dev"
 	description = "Microsoft Edge Dev"
-	queries = ('microsoftedge', 'msedge', 'edge')
+	queries = ('microsoft-edge-dev', 'msedge-dev', 'edge-dev')
 
 	@classmethod
 	def run(cls, query):
-		if not opi.ask_yes_or_no("Do you want to install Edge from Microsoft repository?", 'y'):
+		if not opi.ask_yes_or_no("Do you want to install Microsoft Edge Dev from Microsoft repository?", 'y'):
 			return
 
 		opi.add_repo(
 			filename = 'microsoft-edge',
-			name = 'MS Edge',
+			name = 'Microsoft Edge',
 			url = 'https://packages.microsoft.com/yumrepos/edge',
 			gpgkey = 'https://packages.microsoft.com/keys/microsoft.asc'
 		)
 
-		# tell rpm post script not to mess with our repos
+		# prevent post install script from messing with our repos
 		subprocess.call(['sudo', 'rm', '-f', '/etc/default/microsoft-edge-dev'])
 		subprocess.call(['sudo', 'touch', '/etc/default/microsoft-edge-dev'])
 
