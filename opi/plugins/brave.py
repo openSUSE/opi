@@ -19,5 +19,9 @@ class BraveBrowser(BasePlugin):
 			gpgkey = 'https://brave-browser-rpm-release.s3.brave.com/brave-core.asc'
 		)
 
+		# prevent post install script from messing with our repos
+		subprocess.call(['sudo', 'rm', '-f', '/etc/default/brave-browser'])
+		subprocess.call(['sudo', 'touch', '/etc/default/brave-browser'])
+
 		opi.install_packages(['brave-browser'])
 		opi.ask_keep_repo('brave-browser')
