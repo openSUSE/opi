@@ -307,11 +307,16 @@ def ask_keep_repo(repo):
 		if get_backend() == BackendConstants.dnf:
 			subprocess.call(['sudo', 'rm', '/etc/zypp/repos.d/' + repo + '.repo'])
 
-def print_package_names(package_names):
+def print_package_names(package_names, reverse=False):
+	package_list = []
 	i = 1
 	for package_name in package_names:
-		print("%2d. %s" % (i, package_name))
+		package_list.append("%2d. %s" % (i, package_name))
 		i += 1
+	if reverse:
+		package_list.reverse()
+	for e in package_list:
+		print(e)
 
 def print_binary_options(binaries):
 	i = 1

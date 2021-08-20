@@ -2,6 +2,8 @@
 
 import os
 import sys
+import argparse
+import textwrap
 sys.path.insert(0, os.path.abspath(os.path.dirname(__file__) + '/..'))
 
 import opi
@@ -9,36 +11,41 @@ from opi.plugins import PluginManager
 from opi.version import __version__
 
 try:
-	query = ' '.join(sys.argv[1:])
-
 	pm = PluginManager()
-	if query in ('', '-h', '--help'):
-		print("openSUSE Package Installer")
-		print("==========================\n")
+	ap = argparse.ArgumentParser(
+		formatter_class=argparse.RawDescriptionHelpFormatter,
+		description=textwrap.dedent('''\
+			openSUSE Package Installer
+			==========================
 
-		print("Search and install almost all packages available for openSUSE and SLE:")
-		print(" 1. openSUSE Build Service")
-		print(" 2. Packman")
-		print(" 2. Popular packages for various vendors\n")
+			Search and install almost all packages available for openSUSE and SLE:
+			  1. openSUSE Build Service
+			  2. Packman
+			  2. Popular packages for various vendors
 
-		print("Usage: opi <query>\n")
-		print("  <query> can be any package name or part of it and will be searched for")
-		print("  both at the openSUSE Build Service and Packman.\n")
+		'''),
+		epilog=textwrap.dedent('''\
+			Also these queries can be used to install packages from various other vendors:
+		''') + pm.get_plugin_string(' '*2))
 
-		print("Also this queries can be used to install packages from various other vendors:\n")
-		pm.show_plugins(' '*2)
-		print()
-		sys.exit()
-	elif query in ('-v', '--version'):
-		print('opi version %s' % __version__)
+	ap.add_argument('query', nargs='?', type=str,
+		help='can be any package name or part of it and will be searched for both at the openSUSE Build Service and Packman.'
+	)
+	ap.add_argument('-v', '--version', action='version', version=('opi version ' +  __version__))
+	ap.add_argument('-r', '--reversed-output', action='store_true', help='print the search results in reverse')
+
+	args = ap.parse_args()
+
+	if len(sys.argv) < 2:
+		ap.print_help()
 		sys.exit()
 
 	# Try to find a matching plugin for the query (and run it and exit afterwards)
-	pm.run(query)
+	pm.run(args.query)
 
 	binaries = []
-	binaries.extend(opi.search_published_binary('openSUSE', query))
-	binaries.extend(opi.search_published_binary('Packman', query))
+	binaries.extend(opi.search_published_binary('openSUSE', args.query))
+	binaries.extend(opi.search_published_binary('Packman', args.query))
 	binaries = opi.sort_binaries(binaries)
 	if len(binaries) == 0:
 		print("No package found.")
@@ -46,7 +53,7 @@ try:
 	binary_names = opi.get_binary_names(binaries)
 
 	# Print package name options
-	opi.print_package_names(binary_names)
+	opi.print_package_names(binary_names, reverse=args.reversed_output)
 
 	# Select a package name option
 	selected_name_num = opi.ask_number(1, len(binary_names))
