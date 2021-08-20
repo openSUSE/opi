@@ -1,4 +1,6 @@
 import opi
+import subprocess
+
 from opi.plugins import BasePlugin
 
 class MSEdgeBeta(BasePlugin):
@@ -17,6 +19,10 @@ class MSEdgeBeta(BasePlugin):
 			url = 'https://packages.microsoft.com/yumrepos/edge',
 			gpgkey = 'https://packages.microsoft.com/keys/microsoft.asc'
 		)
+
+		# prevent post install script from messing with our repos
+		subprocess.call(['sudo', 'rm', '-f', '/etc/default/microsoft-edge-beta'])
+		subprocess.call(['sudo', 'touch', '/etc/default/microsoft-edge-beta'])
 
 		opi.install_packages(['microsoft-edge-beta'])
 		opi.ask_keep_repo('microsoft-edge-beta')
