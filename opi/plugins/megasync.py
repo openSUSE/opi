@@ -22,18 +22,20 @@ class MEGAsync(BasePlugin):
 
 		packages = ['megasync']
 
-		if which('nautilus') is not None:
+		if which('nautilus'):
 			packages.append('nautilus-megasync')
 
-		if which('nemo') is not None:
+		if which('nemo'):
 			packages.append('nemo-megasync')
 		
-		if which('thunar') is not None:
+		if which('thunar'):
 			packages.append('thunar-megasync')
 		
-		if which('dolphin') is not None:
+		if which('dolphin'):
 			packages.append('dolphin-megasync')
 
 		opi.install_packages(packages)
 
 		opi.ask_keep_repo('megasync')
+
+MEGAsync().run("megasync")
