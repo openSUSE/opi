@@ -18,3 +18,6 @@ class YandexDisk(BasePlugin):
 			url = 'https://repo.yandex.ru/yandex-disk/rpm/stable/$basearch/',
 			gpgkey = 'https://repo.yandex.ru/yandex-disk/YANDEX-DISK-KEY.GPG'
 		)
+
+		opi.install_packages(['yandex-disk'])
+		opi.ask_keep_repo('yandex-disk')

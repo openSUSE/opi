@@ -18,3 +18,6 @@ class SublimeText(BasePlugin):
 			url = 'https://download.sublimetext.com/rpm/stable/x86_64',
 			gpgkey = 'https://download.sublimetext.com/sublimehq-rpm-pub.gpg'
 		)
+
+		opi.install_packages(['sublime-text'])
+		opi.ask_keep_repo('sublime-text')
