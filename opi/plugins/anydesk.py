@@ -4,7 +4,7 @@ import subprocess
 
 class Anydesk(BasePlugin):
 	main_query = "anydesk"
-	description = "AnyDesk is the fastest remote desktop software on the market. It allows for new usage scenarios and applications that have not been possible with current remote desktop software."
+	description = "AnyDesk remote desktop access"
 	queries = ('anydesk')
 
 	@classmethod

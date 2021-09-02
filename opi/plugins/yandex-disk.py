@@ -4,7 +4,7 @@ import subprocess
 
 class YandexDisk(BasePlugin):
 	main_query = "yandex-disk"
-	description = "Yandex.Disk keeps your files with you at all times. You can access photos, videos, and documents on Disk from any where in the world where there's internet."
+	description = "Yandex.Disk cloud storage client"
 	queries = ('yandex-disk')
 
 	@classmethod
