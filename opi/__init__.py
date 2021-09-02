@@ -93,7 +93,7 @@ def add_repo(filename, name, url, enabled=True, gpgcheck=True, gpgkey=None, repo
 	tf.file.write("baseurl=%s\n" % url)
 	tf.file.write("enabled=%i\n" % enabled)
 	tf.file.write("type=%s\n" % repo_type)
-	tf.file.write("gpgcheck=%i\n" % enabled)
+	tf.file.write("gpgcheck=%i\n" % gpgcheck)
 	if gpgkey:
 		subprocess.call(['sudo', 'rpm', '--import', gpgkey])
 		tf.file.write("gpgkey=%s\n" % gpgkey)
