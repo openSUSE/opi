@@ -290,15 +290,15 @@ def ask_yes_or_no(question, default_answer):
 	answer = input(q) or default_answer
 	return answer.strip().lower() == 'y'
 
-def ask_number(min_num, max_num, question="Choose a number (0 to quit):"):
+def ask_number(selectable_nums, question="Choose a number (0 to quit):"):
 	input_string = input(question + ' ').strip() or '0'
 	num = int(input_string) if input_string.isdecimal() else -1
 	if num == 0:
 		sys.exit()
-	elif num >= min_num and num <= max_num:
+	elif num in selectable_nums:
 		return num
 	else:
-		return ask_number(min_num, max_num, question)
+		return ask_number(selectable_nums, question)
 
 def ask_keep_repo(repo):
 	if not ask_yes_or_no('Do you want to keep the repo "%s"?' % repo, 'y'):
@@ -307,16 +307,20 @@ def ask_keep_repo(repo):
 		if get_backend() == BackendConstants.dnf:
 			subprocess.call(['sudo', 'rm', '/etc/zypp/repos.d/' + repo + '.repo'])
 
-def print_package_names(package_names, reverse=False):
+def print_package_names(package_names, keyword, reverse=False):
 	package_list = []
+	selectable_nums = []
 	i = 1
 	for package_name in package_names:
-		package_list.append("%2d. %s" % (i, package_name))
+		if keyword == "" or (keyword != "" and keyword in package_name):
+			package_list.append("%2d. %s" % (i, package_name))
+			selectable_nums.append(i)
 		i += 1
 	if reverse:
 		package_list.reverse()
 	for e in package_list:
 		print(e)
+	return selectable_nums
 
 def print_binary_options(binaries):
 	i = 1

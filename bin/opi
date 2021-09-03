@@ -33,6 +33,9 @@ try:
 	)
 	ap.add_argument('-v', '--version', action='version', version=('opi version ' +  __version__))
 	ap.add_argument('-r', '--reversed-output', action='store_true', help='print the search results in reverse')
+	ap.add_argument('keyword', nargs='?', type=str,
+		help='filter the search results with this keyword', default=""
+	)
 
 	args = ap.parse_args()
 
@@ -52,11 +55,11 @@ try:
 		sys.exit()
 	binary_names = opi.get_binary_names(binaries)
 
-	# Print package name options
-	opi.print_package_names(binary_names, reverse=args.reversed_output)
+	# Print package name options, returns the package numbers that were printed and can be selected by user
+	selectable_nums = opi.print_package_names(binary_names, args.keyword, reverse=args.reversed_output)
 
 	# Select a package name option
-	selected_name_num = opi.ask_number(1, len(binary_names))
+	selected_name_num = opi.ask_number(selectable_nums)
 	selected_name = binary_names[selected_name_num-1]
 	print("You have selected package name: %s" % selected_name)
 	binary_options = opi.get_binaries_by_name(selected_name, binaries)
@@ -65,7 +68,7 @@ try:
 	opi.print_binary_options(binary_options)
 
 	# Select a binary package option
-	selected_binary_num = opi.ask_number(1, len(binary_options))
+	selected_binary_num = opi.ask_number(selectable_nums)
 	selected_binary = binary_options[selected_binary_num-1]
 	print("You have selected binary package: ", end='')
 	opi.print_binary_option(selected_binary)
