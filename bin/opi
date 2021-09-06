@@ -28,20 +28,21 @@ try:
 			Also these queries can be used to install packages from various other vendors:
 		''') + pm.get_plugin_string(' '*2))
 
-	ap.add_argument('query', nargs='?', type=str,
-		help='can be any package name or part of it and will be searched for both at the openSUSE Build Service and Packman.'
-	)
+	ap.add_argument('query', nargs='*', type=str, help=textwrap.dedent('''\
+		can be any package name or part of it and will be searched for both at the openSUSE Build Service and Packman.
+		If multiple query arguments are provided only results matching all of them are returned.
+	'''))
 	ap.add_argument('-v', '--version', action='version', version=('opi version ' +  __version__))
 	ap.add_argument('-r', '--reversed-output', action='store_true', help='print the search results in reverse')
 
 	args = ap.parse_args()
 
-	if len(sys.argv) < 2:
+	if not args.query:
 		ap.print_help()
 		sys.exit()
 
 	# Try to find a matching plugin for the query (and run it and exit afterwards)
-	pm.run(args.query)
+	pm.run(args.query[0])
 
 	binaries = []
 	binaries.extend(opi.search_published_binary('openSUSE', args.query))
