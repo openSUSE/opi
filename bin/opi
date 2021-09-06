@@ -2,6 +2,7 @@
 
 import os
 import sys
+import re
 import argparse
 import textwrap
 sys.path.insert(0, os.path.abspath(os.path.dirname(__file__) + '/..'))
@@ -10,10 +11,30 @@ import opi
 from opi.plugins import PluginManager
 from opi.version import __version__
 
+
+class PreserveWhiteSpaceWrapRawTextHelpFormatter(argparse.RawTextHelpFormatter):
+	def __add_whitespace(self, idx, iWSpace, text):
+		if idx == 0:
+			return text
+		return (" " * iWSpace) + text
+
+	def _split_lines(self, text, width):
+		textRows = text.splitlines()
+		for idx,line in enumerate(textRows):
+			search = re.search('\s*[0-9\-]{0,}\.?\s*', line)
+			if line.strip() == "":
+				textRows[idx] = " "
+			elif search:
+				lWSpace = search.end()
+				lines = [self.__add_whitespace(i,lWSpace,x) for i,x in enumerate(textwrap.wrap(line, width))]
+				textRows[idx] = lines
+		return [item for sublist in textRows for item in sublist]
+
+
 try:
 	pm = PluginManager()
 	ap = argparse.ArgumentParser(
-		formatter_class=argparse.RawDescriptionHelpFormatter,
+		formatter_class=PreserveWhiteSpaceWrapRawTextHelpFormatter,
 		description=textwrap.dedent('''\
 			openSUSE Package Installer
 			==========================
@@ -28,20 +49,21 @@ try:
 			Also these queries can be used to install packages from various other vendors:
 		''') + pm.get_plugin_string(' '*2))
 
-	ap.add_argument('query', nargs='?', type=str,
-		help='can be any package name or part of it and will be searched for both at the openSUSE Build Service and Packman.'
-	)
+	ap.add_argument('query', nargs='*', type=str, help=textwrap.dedent('''\
+		can be any package name or part of it and will be searched for both at the openSUSE Build Service and Packman.
+		If multiple query arguments are provided only results matching all of them are returned.
+	'''))
 	ap.add_argument('-v', '--version', action='version', version=('opi version ' +  __version__))
 	ap.add_argument('-r', '--reversed-output', action='store_true', help='print the search results in reverse')
 
 	args = ap.parse_args()
 
-	if len(sys.argv) < 2:
+	if not args.query:
 		ap.print_help()
 		sys.exit()
 
 	# Try to find a matching plugin for the query (and run it and exit afterwards)
-	pm.run(args.query)
+	pm.run(args.query[0])
 
 	binaries = []
 	binaries.extend(opi.search_published_binary('openSUSE', args.query))
