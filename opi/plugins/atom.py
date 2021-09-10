@@ -14,7 +14,7 @@ class Atom(BasePlugin):
 
 		opi.add_repo(
 			filename = 'atom',
-			name = 'atom',
+			name = 'Atom',
 			url = 'https://packagecloud.io/AtomEditor/atom/el/7/x86_64/?type=rpm',
 			gpgkey = 'https://packagecloud.io/AtomEditor/atom/gpgkey'
 		)
