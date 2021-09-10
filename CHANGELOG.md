@@ -7,6 +7,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.3.0] - 2021-06-06
+
+### Changed
+
+- Fixed gpgcheck entry in `add_repo()`
+- Allowed using multiple query keywords that are combined using AND
+
+### Added
+
+- Plugin for sublime text
+- Plugin for yandex-disk
+
+## [2.2.0] - 2021-08-20
+
+### Added
+
+- Plugin for MEGA
+- Plugin for Edge Beta
+- Argument parser with option for reverse output order
+
 ## [2.1.1] - 2021-08-10
 
 ### Added

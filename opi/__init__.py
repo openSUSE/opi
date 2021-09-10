@@ -93,7 +93,7 @@ def add_repo(filename, name, url, enabled=True, gpgcheck=True, gpgkey=None, repo
 	tf.file.write("baseurl=%s\n" % url)
 	tf.file.write("enabled=%i\n" % enabled)
 	tf.file.write("type=%s\n" % repo_type)
-	tf.file.write("gpgcheck=%i\n" % enabled)
+	tf.file.write("gpgcheck=%i\n" % gpgcheck)
 	if gpgkey:
 		subprocess.call(['sudo', 'rpm', '--import', gpgkey])
 		tf.file.write("gpgkey=%s\n" % gpgkey)
@@ -291,13 +291,14 @@ def ask_yes_or_no(question, default_answer):
 	return answer.strip().lower() == 'y'
 
 def ask_number(min_num, max_num, question="Choose a number (0 to quit):"):
-	num = int(input(question + ' ').strip() or '0')
+	input_string = input(question + ' ').strip() or '0'
+	num = int(input_string) if input_string.isdecimal() else -1
 	if num == 0:
 		sys.exit()
 	elif num >= min_num and num <= max_num:
 		return num
 	else:
-		return ask_number(question, min_num, max_num)
+		return ask_number(min_num, max_num, question)
 
 def ask_keep_repo(repo):
 	if not ask_yes_or_no('Do you want to keep the repo "%s"?' % repo, 'y'):
@@ -306,11 +307,16 @@ def ask_keep_repo(repo):
 		if get_backend() == BackendConstants.dnf:
 			subprocess.call(['sudo', 'rm', '/etc/zypp/repos.d/' + repo + '.repo'])
 
-def print_package_names(package_names):
+def print_package_names(package_names, reverse=False):
+	package_list = []
 	i = 1
 	for package_name in package_names:
-		print("%2d. %s" % (i, package_name))
+		package_list.append("%2d. %s" % (i, package_name))
 		i += 1
+	if reverse:
+		package_list.reverse()
+	for e in package_list:
+		print(e)
 
 def print_binary_options(binaries):
 	i = 1
