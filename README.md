@@ -75,26 +75,47 @@ opi codecs
 ```
 
 ```
+usage: opi [-h] [-v] [-r] [query [query ...]]
+
 openSUSE Package Installer
 ==========================
 
 Search and install almost all packages available for openSUSE and SLE:
- 1. openSUSE Build Service
- 2. Packman
- 2. Popular packages for various vendors
+  1. openSUSE Build Service
+  2. Packman
+  2. Popular packages for various vendors
 
-Usage: opi <query>
+positional arguments:
+  query                 can be any package name or part of it and will be
+                        searched for both at the openSUSE Build Service and
+                        Packman.
+                        If multiple query arguments are provided only results
+                        matching all of them are returned.
 
-  <query> can be any package name or part of it and will be searched for
-  both at the openSUSE Build Service and Packman.
+optional arguments:
+  -h, --help            show this help message and exit
+  -v, --version         show program's version number and exit
+  -r, --reversed-output
+                        print the search results in reverse
 
-Also this queries can be used to install packages from various other vendors:
-
-  chrome            Google Chrome webbrowser
-  codecs            Media Codecs from Packman Repo
+Also these queries can be used to install packages from various other vendors:
+  atom              Atom Text Editor
+  brave             Brave web browser
+  chrome            Google Chrome web browser
+  codecs            Media Codecs from Packman and official repo
+  dotnet            Microsoft .NET
+  megasync          Mega Desktop App
+  msedge-beta       Microsoft Edge Beta
+  msedge-dev        Microsoft Edge Dev
   msteams           Microsoft Teams
+  plex              Plex Media Server
   skype             Microsoft Skype
-  teamviewer        Teamviewer remote access
+  slack             Slack messenger
+  sublime           Editor for code, markup and prose
+  teamviewer        TeamViewer remote access
+  vivaldi           Vivaldi web browser
   vscode            Microsoft Visual Studio Code
   vscodium          Visual Studio Codium
+  yandex-disk       Yandex.Disk cloud storage client
+  zoom              Zoom Video Conference
 ```
