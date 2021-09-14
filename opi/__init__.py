@@ -5,7 +5,11 @@ import tempfile
 
 import requests
 import lxml.etree
+
 from termcolor import colored
+from shutil import which
+from tempfile import NamedTemporaryFile
+from os import path, remove
 
 from opi.backends import get_backend, BackendConstants
 
@@ -290,7 +294,7 @@ def ask_yes_or_no(question, default_answer):
 	answer = input(q) or default_answer
 	return answer.strip().lower() == 'y'
 
-def ask_number(min_num, max_num, question="Choose a number (0 to quit):"):
+def ask_number(min_num, max_num, question="Pick a number (0 if none):"):
 	input_string = input(question + ' ').strip() or '0'
 	num = int(input_string) if input_string.isdecimal() else -1
 	if num == 0:
@@ -310,13 +314,35 @@ def ask_keep_repo(repo):
 def print_package_names(package_names, reverse=False):
 	package_list = []
 	i = 1
+
 	for package_name in package_names:
 		package_list.append("%2d. %s" % (i, package_name))
 		i += 1
+
 	if reverse:
 		package_list.reverse()
-	for e in package_list:
-		print(e)
+
+	output_text = '\n'.join(package_list)
+
+	tmp_file = None
+
+	if which('less'):
+		try:
+			tmp_file = NamedTemporaryFile(mode='w+t', delete=False)
+			tmp_file.write(output_text)
+
+			tmp_file.close()
+
+			exit_scroller_text = ' - type q to exit the scroller'
+
+			status_text = f'(END){exit_scroller_text}:You\'re at %pB\%{exit_scroller_text}'
+
+			subprocess.call(['less', '-X', f'-P?e{status_text}', '-F', tmp_file.name])
+		finally:
+			if tmp_file and path.exists(tmp_file.name):
+				remove(tmp_file.name)
+	else:
+		print(output_text)
 
 def print_binary_options(binaries):
 	i = 1
