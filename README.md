@@ -40,15 +40,20 @@ sudo zypper install opi
 
 ## Use
 
-Command:
+Run:
 
+```
+opi [package_name]
+```
+
+Example:
 ```
 opi filezilla
 ```
 
-Output:
+Demo:
 
-![Screenshot](screenshot.png)
+![Screenshot](demo.gif)
 
 ### Using DNF instead of Zypper
 If you want to, you can use [DNF](https://en.opensuse.org/SDB:DNF) instead of Zypper.
