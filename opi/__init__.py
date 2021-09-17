@@ -294,7 +294,7 @@ def ask_yes_or_no(question, default_answer):
 	answer = input(q) or default_answer
 	return answer.strip().lower() == 'y'
 
-def ask_number(min_num, max_num, question="Pick a number (0 if none):"):
+def ask_number(min_num, max_num, question="Pick a number (0 to quit):"):
 	input_string = input(question + ' ').strip() or '0'
 	num = int(input_string) if input_string.isdecimal() else -1
 	if num == 0:
