@@ -330,13 +330,9 @@ def print_package_names(package_names, reverse=False):
 		try:
 			tmp_file = NamedTemporaryFile(mode='w+t', delete=False)
 			tmp_file.write(output_text)
-
 			tmp_file.close()
-
 			exit_scroller_text = ' - type q to exit the scroller'
-
 			status_text = f'(END){exit_scroller_text}:You\'re at %pB\%{exit_scroller_text}'
-
 			subprocess.call(['less', '-X', f'-P?e{status_text}', '-F', tmp_file.name])
 		finally:
 			if tmp_file and path.exists(tmp_file.name):
