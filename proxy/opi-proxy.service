@@ -3,7 +3,7 @@ Description=OPI Proxy
 After=syslog.target
 
 [Service]
-ExecStart=/usr/bin/gunicorn -b :80 opi_proxy:app -k gevent -u wwwrun -g wwwrun --log-syslog
+ExecStart=/usr/bin/gunicorn -b :80 opi_proxy:app -k gevent -u nobody -g nogroup --log-syslog
 Environment=CONFIG=/etc/opi-proxy.json
 Restart=always
 Type=simple
