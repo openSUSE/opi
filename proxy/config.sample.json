@@ -1,0 +1,12 @@
+{
+	"openSUSE": {
+		"user": "OBS_USERNAME",
+		"pass": "OBS_PASS",
+		"url": "https://api.opensuse.org/"
+	},
+	"Packman": {
+		"user": "PMBS_USERNAME",
+		"pass": "PMBS_PASS",
+		"url": "https://pmbs.links2linux.de/"
+	}
+}
