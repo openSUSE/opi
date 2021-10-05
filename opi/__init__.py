@@ -1,3 +1,4 @@
+import os
 import sys
 import subprocess
 import re
@@ -5,9 +6,14 @@ import tempfile
 
 import requests
 import lxml.etree
+
 from termcolor import colored
+from shutil import which
+from tempfile import NamedTemporaryFile
+from os import path, remove
 
 from opi.backends import get_backend, BackendConstants
+from opi import pager
 
 OBS_APIROOT = {
 	'openSUSE': 'https://api.opensuse.org',
@@ -290,15 +296,33 @@ def ask_yes_or_no(question, default_answer):
 	answer = input(q) or default_answer
 	return answer.strip().lower() == 'y'
 
-def ask_number(min_num, max_num, question="Choose a number (0 to quit):"):
-	input_string = input(question + ' ').strip() or '0'
+def ask_number(min_num, max_num, question="Pick a number (0 to quit):", text=None):
+	"""
+		Ask the user for a number to pick with defined min and max.
+		Exit if the number is 0.
+		Specify the number with question.
+		If text is defined, this string will be shown above the prompt.
+		If needed, a pager will be used.
+	"""
+	if text:
+		text_len_lines = len(text.split('\n'))
+		if text_len_lines < (os.get_terminal_size().lines-1):
+			# no pager needed
+			print(text)
+			input_string = input(question + ' ')
+		else:
+			input_string = pager.ask_number_with_pager(text, question)
+	else:
+		input_string = input(question + ' ')
+
+	input_string = input_string.strip() or '0'
 	num = int(input_string) if input_string.isdecimal() else -1
 	if num == 0:
 		sys.exit()
 	elif num >= min_num and num <= max_num:
 		return num
 	else:
-		return ask_number(min_num, max_num, question)
+		return ask_number(min_num, max_num, question, text)
 
 def ask_keep_repo(repo):
 	if not ask_yes_or_no('Do you want to keep the repo "%s"?' % repo, 'y'):
@@ -307,7 +331,7 @@ def ask_keep_repo(repo):
 		if get_backend() == BackendConstants.dnf:
 			subprocess.call(['sudo', 'rm', '/etc/zypp/repos.d/' + repo + '.repo'])
 
-def print_package_names(package_names, reverse=False):
+def get_package_name_list(package_names, reverse=False):
 	package_list = []
 	i = 1
 	for package_name in package_names:
@@ -315,8 +339,7 @@ def print_package_names(package_names, reverse=False):
 		i += 1
 	if reverse:
 		package_list.reverse()
-	for e in package_list:
-		print(e)
+	return '\n'.join(package_list)
 
 def print_binary_options(binaries):
 	i = 1
