@@ -75,10 +75,10 @@ try:
 	binary_names = opi.get_binary_names(binaries)
 
 	# Print package name options
-	opi.print_package_names(binary_names, reverse=args.reversed_output)
+	package_name_list = opi.get_package_name_list(binary_names, reverse=args.reversed_output)
 
 	# Select a package name option
-	selected_name_num = opi.ask_number(1, len(binary_names))
+	selected_name_num = opi.ask_number(1, len(binary_names), text=package_name_list)
 	selected_name = binary_names[selected_name_num-1]
 	print("You have selected package name: %s" % selected_name)
 	binary_options = opi.get_binaries_by_name(selected_name, binaries)

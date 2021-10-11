@@ -13,7 +13,7 @@ setup(
     description='Tool to Search and install almost all packages available for openSUSE and SLE',
     author='Guo Yunhe, Dominik Heidler, KaratekHD',
     author_email='i@guoyunhe.me, dheidler@suse.de, karatek@karatek.net',
-    requires=['lxml', 'requests', 'termcolor'],
+    requires=['lxml', 'requests', 'termcolor', 'curses'],
     packages=['opi', 'opi.plugins', 'opi.config', 'opi.backends'],
     scripts=['bin/opi'],
 )
