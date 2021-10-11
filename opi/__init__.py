@@ -306,7 +306,7 @@ def ask_number(min_num, max_num, question="Pick a number (0 to quit):", text=Non
 	"""
 	if text:
 		text_len_lines = len(text.split('\n'))
-		if text_len_lines < (os.get_terminal_size().lines-1):
+		if not sys.stdout.isatty() or text_len_lines < (os.get_terminal_size().lines-1):
 			# no pager needed
 			print(text)
 			input_string = input(question + ' ')
