@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.4.2] - 2021-10-25
+
+## Changed
+
+- Switched to opensuse provided opi proxy
+
 ## [2.4.1] - 2021-10-11
 
 ## Changed
