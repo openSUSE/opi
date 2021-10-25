@@ -19,7 +19,7 @@ OBS_APIROOT = {
 	'openSUSE': 'https://api.opensuse.org',
 	'Packman': 'https://pmbs.links2linux.de'
 }
-PROXY_URL = 'https://guoyunhe.me/opi/proxy/index.php'
+PROXY_URL = 'https://opi-proxy.opensuse.org/'
 
 
 ###################
