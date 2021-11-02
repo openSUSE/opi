@@ -16,6 +16,7 @@ class MSEdge(BasePlugin):
 
 		print("Which version do you want to install?")
 		option = opi.ask_for_option(options=[
+			'microsoft-edge-stable',
 			'microsoft-edge-beta',
 			'microsoft-edge-dev',
 		])
@@ -28,8 +29,9 @@ class MSEdge(BasePlugin):
 		)
 
 		# prevent post install script from messing with our repos
-		subprocess.call(['sudo', 'rm', '-f', '/etc/default/%s' % option])
-		subprocess.call(['sudo', 'touch', '/etc/default/%s' % option])
+		defaults_file = option.replace('-stable', '')
+		subprocess.call(['sudo', 'rm', '-f', '/etc/default/%s' % defaults_file])
+		subprocess.call(['sudo', 'touch', '/etc/default/%s' % defaults_file])
 
 		opi.install_packages([option])
 		opi.ask_keep_repo('microsoft-edge')
