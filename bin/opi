@@ -54,7 +54,6 @@ try:
 		If multiple query arguments are provided only results matching all of them are returned.
 	'''))
 	ap.add_argument('-v', '--version', action='version', version=('opi version ' +  __version__))
-	ap.add_argument('-r', '--reversed-output', action='store_true', help='print the search results in reverse')
 
 	args = ap.parse_args()
 
@@ -74,23 +73,15 @@ try:
 		sys.exit()
 	binary_names = opi.get_binary_names(binaries)
 
-	# Print package name options
-	package_name_list = opi.get_package_name_list(binary_names, reverse=args.reversed_output)
-
-	# Select a package name option
-	selected_name_num = opi.ask_number(1, len(binary_names), text=package_name_list)
-	selected_name = binary_names[selected_name_num-1]
+	# Print and select a package name option
+	selected_name = opi.ask_for_option(binary_names)
 	print("You have selected package name: %s" % selected_name)
+
 	binary_options = opi.get_binaries_by_name(selected_name, binaries)
 
-	# Print binary package options
-	opi.print_binary_options(binary_options)
-
-	# Select a binary package option
-	selected_binary_num = opi.ask_number(1, len(binary_options))
-	selected_binary = binary_options[selected_binary_num-1]
-	print("You have selected binary package: ", end='')
-	opi.print_binary_option(selected_binary)
+	# Print and select a binary package option
+	selected_binary = opi.ask_for_option(binary_options, option_filter=opi.format_binary_option, disable_pager=True)
+	print("You have selected binary package: %s" % opi.format_binary_option(selected_binary, table=False))
 	if opi.is_personal_project(selected_binary['project']):
 		print(opi.colored(
 			"BE CAREFUL! The package is from a personal repository and NOT reviewed by others.\n"

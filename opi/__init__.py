@@ -3,6 +3,7 @@ import sys
 import subprocess
 import re
 import tempfile
+import math
 
 import requests
 import lxml.etree
@@ -296,33 +297,49 @@ def ask_yes_or_no(question, default_answer):
 	answer = input(q) or default_answer
 	return answer.strip().lower() == 'y'
 
-def ask_number(min_num, max_num, question="Pick a number (0 to quit):", text=None):
+def ask_for_option(options, question="Pick a number (0 to quit):", option_filter=lambda a: a, disable_pager=False):
 	"""
-		Ask the user for a number to pick with defined min and max.
+		Ask the user for a number to pick in order to select an option.
 		Exit if the number is 0.
-		Specify the number with question.
-		If text is defined, this string will be shown above the prompt.
-		If needed, a pager will be used.
+		Specify the number with question and the corresponding option will be returned.
+		Via option_filter a callback function to format option entries can be supplied,
+		but this doesn't work with the pager.
+		If needed, a pager will be used, unless disable_pager is True.
 	"""
-	if text:
-		text_len_lines = len(text.split('\n'))
-		if not sys.stdout.isatty() or text_len_lines < (os.get_terminal_size().lines-1):
-			# no pager needed
-			print(text)
-			input_string = input(question + ' ')
-		else:
-			input_string = pager.ask_number_with_pager(text, question)
-	else:
+
+	padding_len = math.floor(math.log(len(options), 10))
+	i = 1
+	numbered_options = []
+	terminal_width = os.get_terminal_size().columns-1 if sys.stdout.isatty() else 0
+	for option in options:
+		number = "%%%id. " % (padding_len+1) % i
+		numbered_option = number + option_filter(option)
+		if terminal_width and not disable_pager:
+			# break too long lines:
+			# if pager is disabled this might mean that we get terminal sequences here
+			# which might get broken by some spaces and newlines.
+			# also too long lines are not fatal outside of the pager
+			while len(numbered_option) > terminal_width:
+				numbered_options.append(numbered_option[:terminal_width])
+				numbered_option = ' '*len(number) + numbered_option[terminal_width:]
+		numbered_options.append(numbered_option)
+		i += 1
+	text = '\n'.join(numbered_options)
+	if not sys.stdout.isatty() or len(numbered_options) < (os.get_terminal_size().lines-1) or disable_pager:
+		# no pager needed
+		print(text)
 		input_string = input(question + ' ')
+	else:
+		input_string = pager.ask_number_with_pager(text, question)
 
 	input_string = input_string.strip() or '0'
 	num = int(input_string) if input_string.isdecimal() else -1
 	if num == 0:
 		sys.exit()
-	elif num >= min_num and num <= max_num:
-		return num
+	elif not (num >= 1 and num <= len(options)):
+		return ask_for_option(options, question, option_filter, disable_pager)
 	else:
-		return ask_number(min_num, max_num, question, text)
+		return options[num-1]
 
 def ask_keep_repo(repo):
 	if not ask_yes_or_no('Do you want to keep the repo "%s"?' % repo, 'y'):
@@ -331,23 +348,7 @@ def ask_keep_repo(repo):
 		if get_backend() == BackendConstants.dnf:
 			subprocess.call(['sudo', 'rm', '/etc/zypp/repos.d/' + repo + '.repo'])
 
-def get_package_name_list(package_names, reverse=False):
-	package_list = []
-	i = 1
-	for package_name in package_names:
-		package_list.append("%2d. %s" % (i, package_name))
-		i += 1
-	if reverse:
-		package_list.reverse()
-	return '\n'.join(package_list)
-
-def print_binary_options(binaries):
-	i = 1
-	for binary in binaries:
-		print_binary_option(binary, i)
-		i += 1
-
-def print_binary_option(binary, number=None):
+def format_binary_option(binary, table=True):
 	if is_official_project(binary['project']):
 		color = 'green'
 		symbol = '+'
@@ -364,7 +365,7 @@ def print_binary_option(binary, number=None):
 
 	colored_name = colored('%s %s' % (project[0:39], symbol), color)
 
-	if number:
-		print('%2d. %-50s | %-25s | %s' % (number, colored_name, binary['version'][0:25], binary['arch']))
+	if table:
+		return '%-50s | %-25s | %s' % (colored_name, binary['version'][0:25], binary['arch'])
 	else:
-		print('%s | %s | %s' % (colored_name, binary['version'], binary['arch']))
+		return '%s | %s | %s' % (colored_name, binary['version'], binary['arch'])
