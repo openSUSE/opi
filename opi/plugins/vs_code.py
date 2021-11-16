@@ -12,6 +12,12 @@ class VSCode(BasePlugin):
 		if not opi.ask_yes_or_no("Do you want to install VS Code from Microsoft repository?", 'y'):
 			return
 
+		option = opi.ask_for_option(options=[
+			'code',
+			'code-exploration',
+			'code-insiders',
+		])
+
 		opi.add_repo(
 			filename = 'vscode',
 			name = 'Visual Studio Code',
@@ -19,5 +25,5 @@ class VSCode(BasePlugin):
 			gpgkey = 'https://packages.microsoft.com/keys/microsoft.asc'
 		)
 
-		opi.install_packages(['code'])
+		opi.install_packages([option])
 		opi.ask_keep_repo('vscode')
