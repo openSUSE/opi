@@ -12,6 +12,13 @@ class GoogleChrome(BasePlugin):
 		if not opi.ask_yes_or_no("Do you want to install Chrome from Google repository?", 'y'):
 			return
 
+		print("Which version do you want to install?")
+		option = opi.ask_for_option(options=[
+			'google-chrome-stable',
+			'google-chrome-beta',
+			'google-chrome-unstable',
+		])
+
 		opi.add_repo(
 			filename = 'google-chrome',
 			name = 'google-chrome',
@@ -19,5 +26,10 @@ class GoogleChrome(BasePlugin):
 			gpgkey = 'https://dl.google.com/linux/linux_signing_key.pub'
 		)
 
-		opi.install_packages(['google-chrome-stable'])
+		# prevent post install script from messing with our repos
+		defaults_file = option.replace('-stable', '')
+		subprocess.call(['sudo', 'rm', '-f', '/etc/default/%s' % defaults_file])
+		subprocess.call(['sudo', 'touch', '/etc/default/%s' % defaults_file])
+
+		opi.install_packages([option])
 		opi.ask_keep_repo('google-chrome')
