@@ -12,6 +12,11 @@ class Vivaldi(BasePlugin):
 		if not opi.ask_yes_or_no("Do you want to install Vivaldi from Vivaldi repository?", 'y'):
 			return
 
+		option = opi.ask_for_option(options=[
+			'vivaldi-stable',
+			'vivaldi-snapshot',
+		])
+
 		opi.add_repo(
 			filename = 'vivaldi',
 			name = 'vivaldi',
@@ -19,5 +24,5 @@ class Vivaldi(BasePlugin):
 			gpgkey = 'https://repo.vivaldi.com/archive/linux_signing_key.pub'
 		)
 
-		opi.install_packages(['vivaldi-stable'])
+		opi.install_packages([option])
 		opi.ask_keep_repo('vivaldi')
