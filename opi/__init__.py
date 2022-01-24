@@ -51,7 +51,7 @@ def get_distribution(prefix=False):
 			os_release[key] = value
 	name = os_release['NAME']
 	version = os_release.get('VERSION') # VERSION is not set for TW
-	if name == 'openSUSE Tumbleweed':
+	if name == 'openSUSE Tumbleweed' or name == 'openSUSE MicroOS':
 		project = 'openSUSE:Factory'
 	elif name == 'openSUSE Leap':
 		project = 'openSUSE:Leap:' + version
