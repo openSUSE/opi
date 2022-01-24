@@ -1,32 +1,37 @@
-# Changelog
+-------------------------------------------------------------------
+Mon Jan 24 11:23:50 UTC 2022 - Dominik Heidler <dheidler@suse.de>
 
-All notable changes to this project will be documented in this file.
+- Version 2.4.3
+- Fix for tumbleweed based MicroOS
 
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
-and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+-------------------------------------------------------------------
 
-## [Unreleased]
-
-## [2.4.2] - 2021-10-25
+- Version 2.4.2 - 2021-10-25
 
 ## Changed
 
 - Switched to opensuse provided opi proxy
 
-## [2.4.1] - 2021-10-11
+-------------------------------------------------------------------
+
+- Version 2.4.1 - 2021-10-11
 
 ## Changed
 
 - Don't expect output to be a tty
 
-## [2.4.0] - 2021-10-11
+-------------------------------------------------------------------
+
+- Version 2.4.0 - 2021-10-11
 
 ## Added
 
 - Scroll results if they not fit on the screen
 - Plugin for atom editor
 
-## [2.3.0] - 2021-06-06
+-------------------------------------------------------------------
+
+# Version 2.3.0 - 2021-06-06
 
 ### Changed
 
@@ -38,7 +43,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Plugin for sublime text
 - Plugin for yandex-disk
 
-## [2.2.0] - 2021-08-20
+-------------------------------------------------------------------
+
+- Version 2.2.0 - 2021-08-20
 
 ### Added
 
@@ -46,13 +53,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Plugin for Edge Beta
 - Argument parser with option for reverse output order
 
-## [2.1.1] - 2021-08-10
+-------------------------------------------------------------------
+
+- Version 2.1.1 - 2021-08-10
 
 ### Added
 
 - Plugin for Brave Browser [#60](https://github.com/openSUSE/opi/pull/60)
 
-## [2.1.0] - 2021-07-05
+-------------------------------------------------------------------
+
+- Version 2.1.0 - 2021-07-05
 
 ### Added
 
@@ -62,7 +73,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Deduplicated packman repo creation code
 
-## [2.0.0] - 2021-05-03
+-------------------------------------------------------------------
+
+- Version 2.0.0 - 2021-05-03
 
 ### Added
 
@@ -74,14 +87,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Rewrote the complete tool in python3
 
-## [0.10.0] - 2021-01-17
+-------------------------------------------------------------------
+
+- Version 0.10.0 - 2021-01-17
 
 ### Added
 
 - Microsoft Teams installer [#34](https://github.com/openSUSE/opi/pulls/34)
 - Warning for personal repository [#35](https://github.com/openSUSE/opi/pulls/35)
 
-## [0.9.0] - 2020-10-03
+-------------------------------------------------------------------
+
+- Version 0.9.0 - 2020-10-03
 
 ### Added
 
@@ -92,37 +109,49 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Filter out -devel, -docs and -lang packages [#30](https://github.com/openSUSE/opi/pulls/30)
 - Don't show i586 packages on x86_64 system
 
-## [0.8.3] - 2020-07-25
+-------------------------------------------------------------------
+
+- Version 0.8.3 - 2020-07-25
 
 ### Fixed
 
 - ffmpeg/libav packages due to Packman update
 
-## [0.8.2] - 2020-05-16
+-------------------------------------------------------------------
+
+- Version 0.8.2 - 2020-05-16
 
 ### Fixed
 
 - Ghost process on XML parsing failure [#27](https://github.com/openSUSE/opi/pulls/27)
 
-## [0.8.1] - 2020-04-03
+-------------------------------------------------------------------
+
+- Version 0.8.1 - 2020-04-03
 
 ### Fixed
 
 - OBS limit error when searching php, test, etc.
 
-## [0.8.0]
+-------------------------------------------------------------------
+
+- Version 0.8.0
 
 ### Changed
 
 - Type number `0` to exit [#26](https://github.com/openSUSE/opi/pulls/26)
 
-## [0.7.1]
+-------------------------------------------------------------------
+
+- Version 0.7.1
 
 ### Fixed
 
 - Missing `use File::Temp;` [#24](https://github.com/openSUSE/opi/issues/24)
 
-## [0.7.0]
+-------------------------------------------------------------------
+
+- Version 0.7.0
 
 ### Changed
 
@@ -132,7 +161,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Ctrl + C handling of spinner
 
-## [0.6.0]
+-------------------------------------------------------------------
+
+- Version 0.6.0
 
 ### Added
 
@@ -143,43 +174,57 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Packman repo doesn't have *.repo file [#19](https://github.com/openSUSE/opi/issues/19)
 - Long version numbers are cutted [#17](https://github.com/openSUSE/opi/issues/17)
 
-## [0.5.2]
+-------------------------------------------------------------------
+
+- Version 0.5.2
 
 ### Fixed
 
 - Trim "NAME" and "VERSION" string [#13](https://github.com/openSUSE/opi/issues/13)
 
-## [0.5.1]
+-------------------------------------------------------------------
+
+- Version 0.5.1
 
 ### Fixed
 
 - Fix dependency not found issue [#11](https://github.com/openSUSE/opi/issues/11)
 
-## [0.5.0]
+-------------------------------------------------------------------
+
+- Version 0.5.0
 
 ### Added
 
 - API proxy server to prevent hard-coded passwords in the script [#4](https://github.com/openSUSE/opi/issues/4)
 
-## [0.4.0]
+-------------------------------------------------------------------
+
+- Version 0.4.0
 
 ### Added
 
 - PMBS (Packman Build Service) support [#5](https://github.com/openSUSE/opi/issues/5)
 
-## [0.3.2]
+-------------------------------------------------------------------
+
+- Version 0.3.2
 
 ### Fixed
 
 - `opi opi` cannot find `opi` [#9](https://github.com/openSUSE/opi/issues/9)
 
-## [0.3.1]
+-------------------------------------------------------------------
+
+- Version 0.3.1
 
 ### Fixed
 
 - Remove quotes from version number. So Leap and SLE can search packages.
 
-## [0.3.0]
+-------------------------------------------------------------------
+
+- Version 0.3.0
 
 ### Added
 
@@ -189,7 +234,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Better print column alignment
 
-## [0.2.0]
+-------------------------------------------------------------------
+
+- Version 0.2.0
 
 ### Added
 
@@ -197,20 +244,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Install Skype with `opi skype` [#6](https://github.com/openSUSE/opi/issues/6)
 - Install VS Code with `opi vs code` [#6](https://github.com/openSUSE/opi/issues/6)
 
-## [0.1.2]
+-------------------------------------------------------------------
+
+- Version 0.1.2
 
 ### Fixed
 
 - Fixed lost of "noarch" packages [#3](https://github.com/openSUSE/opi/issues/3)
 - Be able to search with dashes in keywords [#2](https://github.com/openSUSE/opi/issues/2)
 
-## [0.1.1]
+-------------------------------------------------------------------
+
+- Version 0.1.1
 
 ### Fixed
 
 - Removed XML dump which may cause problems.
 
-## [0.1.0]
+-------------------------------------------------------------------
+
+- Version 0.1.0
 
 ### Added
 
