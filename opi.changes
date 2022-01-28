@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Fri Jan 28 11:07:25 UTC 2022 - Dominik Heidler <dheidler@suse.de>
+
+- Version 2.4.4
+- Fix for Alpha/Beta dist versions
+
+-------------------------------------------------------------------
 Mon Jan 24 11:23:50 UTC 2022 - Dominik Heidler <dheidler@suse.de>
 
 - Version 2.4.3
