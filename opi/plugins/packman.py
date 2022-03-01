@@ -15,14 +15,17 @@ class PackmanCodecsPlugin(BasePlugin):
 		opi.add_packman_repo(dup=True)
 		opi.install_packman_packages([
 			'ffmpeg',
-			'gstreamer-plugins-bad',
-			'gstreamer-plugins-libav',
-			'gstreamer-plugins-ugly',
 			'libavcodec-full',
 			'vlc-codecs',
+			'pipewire-aptx',
+			'gstreamer-plugins-bad-codecs',
+			'gstreamer-plugins-ugly-codecs',
+			'gstreamer-plugins-libav',
 		])
 
 		opi.install_packages([
 			'gstreamer-plugins-good',
 			'gstreamer-plugins-good-extra',
+			'gstreamer-plugins-bad',
+			'gstreamer-plugins-ugly',
 		])
