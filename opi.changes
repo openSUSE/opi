@@ -1,4 +1,12 @@
 -------------------------------------------------------------------
+Tue Mar  1 17:44:14 UTC 2022 - Dominik Heidler <dheidler@suse.de>
+
+- Version 2.4.5
+- Update packman codecs plugin to reflect recent changes
+  that apply to Tumbleweed and releases after 15.4
+  see https://lists.opensuse.org/archives/list/factory@lists.opensuse.org/thread/VMXOWQWC4WW3W6PM7WPZDRMNCV26KKGY/
+
+-------------------------------------------------------------------
 Fri Jan 28 11:07:25 UTC 2022 - Dominik Heidler <dheidler@suse.de>
 
 - Version 2.4.4
