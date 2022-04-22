@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Fri Apr 22 12:43:05 UTC 2022 - Dominik Heidler <dheidler@suse.de>
+
+- Version 2.4.6
+- Update .NET SDK to 6.0
+
+-------------------------------------------------------------------
 Tue Mar  1 17:44:14 UTC 2022 - Dominik Heidler <dheidler@suse.de>
 
 - Version 2.4.5
