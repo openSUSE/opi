@@ -88,7 +88,7 @@ openSUSE Package Installer
 Search and install almost all packages available for openSUSE and SLE:
   1. openSUSE Build Service
   2. Packman
-  2. Popular packages for various vendors
+  3. Popular packages for various vendors
 
 positional arguments:
   query                 can be any package name or part of it and will be
