@@ -1,4 +1,4 @@
-#!/bin/bash -e -x
+#!/bin/bash -ex
 
 version=$1
 changes=$(git log $(git describe --tags --abbrev=0)..HEAD --no-merges --format="- %s")
