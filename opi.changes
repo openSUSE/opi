@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Mon Apr 25 08:54:45 UTC 2022 - Dominik Heidler <dheidler@suse.de>
+
+- Version 2.4.7
+- Fix numbering in --help
+- Add release helper script
+
+-------------------------------------------------------------------
 Fri Apr 22 12:43:05 UTC 2022 - Dominik Heidler <dheidler@suse.de>
 
 - Version 2.4.6
