@@ -42,7 +42,7 @@ try:
 			Search and install almost all packages available for openSUSE and SLE:
 			  1. openSUSE Build Service
 			  2. Packman
-			  2. Popular packages for various vendors
+			  3. Popular packages for various vendors
 
 		'''),
 		epilog=textwrap.dedent('''\
