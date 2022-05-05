@@ -9,8 +9,11 @@ class BasePlugin(object):
 	queries = ()
 
 	@classmethod
-	def matches(cls, query):
-		return query in cls.queries
+	def matches(cls, user_query):
+		for query in cls.queries:
+			if query.find(user_query) != -1:
+				return True
+		return False
 
 	@classmethod
 	def run(cls, query):
