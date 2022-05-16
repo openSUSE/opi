@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Mon May 16 15:07:53 UTC 2022 - Dominik Heidler <dheidler@suse.de>
+
+- Version 2.5.0
+- Run ci for both tumbleweed and leap
+- Use $releasever in repo creation on Leap
+
+-------------------------------------------------------------------
 Mon Apr 25 08:54:45 UTC 2022 - Dominik Heidler <dheidler@suse.de>
 
 - Version 2.4.7
