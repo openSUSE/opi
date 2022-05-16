@@ -18,6 +18,7 @@ cd ~/devel/obs/utilities/opi
 osc up
 sed -i -e "s/^\(Version: *\)[^ ]*$/\1${version}/" opi.spec
 osc vc -m "Version ${version}\n${changes}"
+vi opi.changes
 osc rm opi-*.tar.gz
 osc service dr
 osc add opi-*.tar.gz
