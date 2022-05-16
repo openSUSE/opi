@@ -9,7 +9,7 @@ total_tests=0
 
 for t in *.py ; do
 	let total_tests++
-	if ! sudo ./run_container_test.sh "$t" ; then
+	if ! sudo ./run_container_test.sh "$t" "$1" ; then
 		let failed_tests++
 	fi
 done

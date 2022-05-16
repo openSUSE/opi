@@ -3,7 +3,7 @@
 # prepare container image
 if ! podman images -n | grep -q opi_base ; then
 	echo "Preparing container"
-	podman run -td --dns=1.1.1.1 --name=opi_base opensuse/tumbleweed
+	podman run -td --dns=1.1.1.1 --name=opi_base ${2:-opensuse/tumbleweed}
 	podman exec -it opi_base zypper -n ref
 	# opi dependencies
 	podman exec -it opi_base zypper -n install sudo python3 python3-requests python3-lxml python3-termcolor python3-curses curl
