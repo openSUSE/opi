@@ -15,6 +15,7 @@ gh release create "v${version}"  --generate-notes
 
 read -p "Update RPM? "
 cd ~/devel/obs/utilities/opi
+osc up
 sed -i -e "s/^\(Version: *\)[^ ]*$/\1${version}/" opi.spec
 osc vc -m "Version ${version}\n${changes}"
 osc rm opi-*.tar.gz
