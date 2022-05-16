@@ -4,9 +4,9 @@ import sys
 import pexpect
 import subprocess
 
-c = pexpect.spawn('./bin/opi gstreamer-plugins-ugly-codecs', logfile=sys.stdout.buffer, echo=False)
+c = pexpect.spawn('./bin/opi x265', logfile=sys.stdout.buffer, echo=False)
 
-c.expect('1. gstreamer-plugins-ugly-codecs\r\n')
+c.expect('1. x265\r\n')
 c.sendline('q')
 c.expect('Pick a number')
 c.sendline('1')
@@ -25,4 +25,4 @@ c.wait()
 c.close()
 assert c.exitstatus == 0, 'Exit code: %i' % c.exitstatus
 
-subprocess.check_call(['rpm', '-qi', 'gstreamer-plugins-ugly-codecs'])
+subprocess.check_call(['rpm', '-qi', 'x265'])
