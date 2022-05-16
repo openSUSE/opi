@@ -36,7 +36,7 @@ def get_cpu_arch():
 			cpu_arch = 'i586'
 	return cpu_arch
 
-def get_distribution(prefix=False):
+def get_os_release():
 	os_release = {}
 	with open('/etc/os-release') as f:
 		for line in f.readlines():
@@ -49,6 +49,10 @@ def get_distribution(prefix=False):
 			if '"' in value:
 				value = value.split('"', 1)[1].split('"', 1)[0]
 			os_release[key] = value
+	return os_release
+
+def get_distribution(prefix=False, use_releasever_variable=False):
+	os_release = get_os_release()
 	name = os_release['NAME']
 	version = os_release.get('VERSION') # VERSION is not set for TW
 	if version:
@@ -57,20 +61,27 @@ def get_distribution(prefix=False):
 	if name == 'openSUSE Tumbleweed' or name == 'openSUSE MicroOS':
 		project = 'openSUSE:Factory'
 	elif name == 'openSUSE Leap':
-		project = 'openSUSE:Leap:' + version
+		if use_releasever_variable:
+			project = 'openSUSE:Leap:$releasever'
+		else:
+			project = 'openSUSE:Leap:' + version
 	elif name.startswith('SLE'):
 		project = 'SLE' + version
 	if prefix:
 		project = 'openSUSE.org:' + project
 	return project
 
+def get_version():
+	os_release = get_os_release()
+	version = os_release.get('VERSION') # VERSION is not set for TW
+	return version
 
 ###############
 ### PACKMAN ###
 ###############
 
 def add_packman_repo(dup=False):
-	project = get_distribution()
+	project = get_distribution(use_releasever_variable=True)
 	project = project.replace(':', '_')
 	project = project.replace('Factory', 'Tumbleweed')
 
@@ -105,7 +116,7 @@ def add_repo(filename, name, url, enabled=True, gpgcheck=True, gpgkey=None, repo
 	tf.file.write("type=%s\n" % repo_type)
 	tf.file.write("gpgcheck=%i\n" % gpgcheck)
 	if gpgkey:
-		subprocess.call(['sudo', 'rpm', '--import', gpgkey])
+		subprocess.call(['sudo', 'rpm', '--import', gpgkey.replace('$releasever', get_version() or '$releasever')])
 		tf.file.write("gpgkey=%s\n" % gpgkey)
 	if auto_refresh:
 		tf.file.write("autorefresh=1\n")
@@ -274,6 +285,10 @@ def install_binary(binary):
 	else:
 		repo_alias = project.replace(':', '_')
 		project_path = project.replace(':', ':/')
+		version = get_version()
+		if version:
+			# version is None on tw
+			repository = repository.replace(version, '$releasever')
 		add_repo(
 			filename = repo_alias,
 			name = project,
