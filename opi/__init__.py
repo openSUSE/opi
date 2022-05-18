@@ -15,6 +15,7 @@ from os import path, remove
 
 from opi.backends import get_backend, BackendConstants
 from opi import pager
+from opi import config
 
 OBS_APIROOT = {
 	'openSUSE': 'https://api.opensuse.org',
@@ -81,7 +82,7 @@ def get_version():
 ###############
 
 def add_packman_repo(dup=False):
-	project = get_distribution(use_releasever_variable=True)
+	project = get_distribution(use_releasever_variable=config.get_key_from_config("use_releasever_var"))
 	project = project.replace(':', '_')
 	project = project.replace('Factory', 'Tumbleweed')
 
@@ -285,10 +286,11 @@ def install_binary(binary):
 	else:
 		repo_alias = project.replace(':', '_')
 		project_path = project.replace(':', ':/')
-		version = get_version()
-		if version:
-			# version is None on tw
-			repository = repository.replace(version, '$releasever')
+		if config.get_key_from_config("use_releasever_var"):
+			version = get_version()
+			if version:
+				# version is None on tw
+				repository = repository.replace(version, '$releasever')
 		add_repo(
 			filename = repo_alias,
 			name = project,
