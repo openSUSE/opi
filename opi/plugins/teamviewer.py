@@ -1,4 +1,5 @@
 import opi
+import os
 from opi.plugins import BasePlugin
 import subprocess
 
@@ -21,5 +22,5 @@ class Teamviewer(BasePlugin):
 
 		opi.install_packages(['teamviewer-suse'])
 		# Teamviewer packages its own repo file so our repo file got saved as rpmorig
-		subprocess.call(['sudo', 'rm', '-f', '/etc/zypp/repos.d/teamviewer.repo.rpmorig'])
+		subprocess.call(['sudo', 'rm', '-f', os.path.join(opi.REPO_DIR, 'teamviewer.repo.rpmorig')])
 		opi.ask_keep_repo('teamviewer')
