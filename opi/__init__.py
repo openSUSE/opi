@@ -4,6 +4,7 @@ import subprocess
 import re
 import tempfile
 import math
+import configparser
 
 import requests
 import lxml.etree
@@ -22,6 +23,8 @@ OBS_APIROOT = {
 	'Packman': 'https://pmbs.links2linux.de'
 }
 PROXY_URL = 'https://opi-proxy.opensuse.org/'
+
+REPO_DIR = "/etc/zypp/repos.d/"
 
 
 ###################
@@ -108,6 +111,23 @@ def install_packman_packages(packages, **kwargs):
 ### ZYPP/DNF ###
 ################
 
+def url_normalize(url):
+	return re.sub(r"^https?", "", url).rstrip('/').replace('$releasever', get_version() or '$releasever')
+
+def get_repos():
+	for repo_file in os.listdir(REPO_DIR):
+		cp = configparser.ConfigParser()
+		cp.read(os.path.join(REPO_DIR, repo_file))
+		mainsec = cp.sections()[0]
+		if not bool(int(cp.get(mainsec, "enabled"))):
+			continue
+		yield (re.sub(r"\.repo$", "", repo_file), cp.get(mainsec, "baseurl"))
+
+def get_enabled_repo_by_url(url):
+	for repo, repo_url in get_repos():
+		if url_normalize(repo_url) == url_normalize(url):
+			return repo
+
 def add_repo(filename, name, url, enabled=True, gpgcheck=True, gpgkey=None, repo_type='rpm-md', auto_import_key=False, auto_refresh=False, priority=None):
 	tf = tempfile.NamedTemporaryFile('w')
 	tf.file.write("[%s]\n" % filename)
@@ -124,8 +144,8 @@ def add_repo(filename, name, url, enabled=True, gpgcheck=True, gpgkey=None, repo
 	if priority:
 		tf.file.write("priority=%i\n" % priority)
 	tf.file.flush()
-	subprocess.call(['sudo', 'cp', tf.name, '/etc/zypp/repos.d/%s.repo' % filename])
-	subprocess.call(['sudo', 'chmod', '644', '/etc/zypp/repos.d/%s.repo' % filename])
+	subprocess.call(['sudo', 'cp', tf.name, os.path.join(REPO_DIR, '%s.repo' % filename)])
+	subprocess.call(['sudo', 'chmod', '644', os.path.join(REPO_DIR, '%s.repo' % filename)])
 	tf.file.close()
 	refresh_cmd = []
 	if get_backend() == BackendConstants.zypp:
@@ -280,9 +300,6 @@ def install_binary(binary):
 		# Install from Packman Repo
 		add_packman_repo()
 		install_packman_packages([name_with_arch])
-	elif is_official_project(project):
-		# Install from official repos (don't add a repo)
-		install_packages([name_with_arch])
 	else:
 		repo_alias = project.replace(':', '_')
 		project_path = project.replace(':', ':/')
@@ -291,16 +308,28 @@ def install_binary(binary):
 			if version:
 				# version is None on tw
 				repository = repository.replace(version, '$releasever')
-		add_repo(
-			filename = repo_alias,
-			name = project,
-			url = "https://download.opensuse.org/repositories/%s/%s/" % (project_path, repository),
-			gpgkey = "https://download.opensuse.org/repositories/%s/%s/repodata/repomd.xml.key" % (project_path, repository),
-			gpgcheck = True,
-			auto_refresh = True
-		)
-		install_packages([name_with_arch], from_repo=repo_alias, allow_downgrade=True, allow_arch_change=True, allow_name_change=True, allow_vendor_change=True)
-		ask_keep_repo(repo_alias)
+		url = "https://download.opensuse.org/repositories/%s/%s/" % (project_path, repository)
+		gpgkey = "https://download.opensuse.org/repositories/%s/%s/repodata/repomd.xml.key" % (project_path, repository)
+		existing_repo = get_enabled_repo_by_url(url)
+		if existing_repo:
+			# Install from existing repos (don't add a repo)
+			install_packages([name_with_arch])
+		else:
+			add_repo(
+				filename = repo_alias,
+				name = project,
+				url = url,
+				gpgkey = gpgkey,
+				gpgcheck = True,
+				auto_refresh = True
+			)
+			install_packages([name_with_arch], from_repo=repo_alias,
+				allow_downgrade=True,
+				allow_arch_change=True,
+				allow_name_change=True,
+				allow_vendor_change=True
+			)
+			ask_keep_repo(repo_alias)
 
 
 ########################
@@ -366,7 +395,7 @@ def ask_keep_repo(repo):
 		if get_backend() == BackendConstants.zypp:
 			subprocess.call(['sudo', 'zypper', 'rr', repo])
 		if get_backend() == BackendConstants.dnf:
-			subprocess.call(['sudo', 'rm', '/etc/zypp/repos.d/' + repo + '.repo'])
+			subprocess.call(['sudo', 'rm', os.path.join(REPO_DIR, '%s.repo' % repo)])
 
 def format_binary_option(binary, table=True):
 	if is_official_project(binary['project']):
