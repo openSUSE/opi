@@ -57,12 +57,10 @@ Demo:
 
 ### Using DNF instead of Zypper
 If you want to, you can use [DNF](https://en.opensuse.org/SDB:DNF) instead of Zypper.
-To do this, change the content of `~/.config/opi/config.json` so that it looks like this:
+To do this, change the content of `/etc/opi.cfg`:
 
-```json
-{
-  "backend": "dnf"
-}
+```cfg
+backend = dnf
 ```
 
 If you want to go back to Zypper, just change the value of `backend` back to `zypp`.
