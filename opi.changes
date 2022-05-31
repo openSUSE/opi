@@ -1,4 +1,12 @@
 -------------------------------------------------------------------
+Tue May 31 14:44:14 UTC 2022 - Dominik Heidler <dheidler@suse.de>
+
+- Version 2.6.0
+- Move to global config in /etc/opi.cfg
+- Check if desired repo is already added instead of relying on prefix
+- Add config option use_releasever_var
+
+-------------------------------------------------------------------
 Mon May 16 15:07:53 UTC 2022 - Dominik Heidler <dheidler@suse.de>
 
 - Version 2.5.0
