@@ -31,8 +31,8 @@ sudo zypper install opi
 ### SLE
 
 ```
-# SLE 15
-sudo zypper addrepo --refresh https://download.opensuse.org/repositories/home:guoyunhe/SLE_15/home:guoyunhe.repo
+# eg. for SLE 15 SP4
+sudo SUSEConnect -p PackageHub/15.4/x86_64
 
 sudo zypper refresh
 sudo zypper install opi
