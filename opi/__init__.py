@@ -116,12 +116,17 @@ def url_normalize(url):
 
 def get_repos():
 	for repo_file in os.listdir(REPO_DIR):
-		cp = configparser.ConfigParser()
-		cp.read(os.path.join(REPO_DIR, repo_file))
-		mainsec = cp.sections()[0]
-		if not bool(int(cp.get(mainsec, "enabled"))):
+		if not repo_file.endswith('.repo'):
 			continue
-		yield (re.sub(r"\.repo$", "", repo_file), cp.get(mainsec, "baseurl"))
+		try:
+			cp = configparser.ConfigParser()
+			cp.read(os.path.join(REPO_DIR, repo_file))
+			mainsec = cp.sections()[0]
+			if not bool(int(cp.get(mainsec, "enabled"))):
+				continue
+			yield (re.sub(r"\.repo$", "", repo_file), cp.get(mainsec, "baseurl"))
+		except Exception as e:
+			print("Error parsing '%s': %r" % (repo_file, e))
 
 def get_enabled_repo_by_url(url):
 	for repo, repo_url in get_repos():
