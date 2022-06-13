@@ -241,6 +241,18 @@ def search_published_binary(obs_instance, query):
 			if binary_data['arch'] not in (get_cpu_arch(), 'noarch'):
 				continue
 
+			# Filter repo architecture
+			if binary_data['repository'] == 'openSUSE_Factory' and (get_cpu_arch() not in ('x86_64' 'i586')):
+				continue
+			elif binary_data['repository'] == 'openSUSE_Factory_ARM' and not get_cpu_arch().startswith('arm') and not get_cpu_arch() == 'aarch64':
+				continue
+			elif binary_data['repository'] == 'openSUSE_Factory_PowerPC' and not get_cpu_arch().startswith('ppc'):
+				continue
+			elif binary_data['repository'] == 'openSUSE_Factory_zSystems' and not get_cpu_arch().startswith('s390'):
+				continue
+			elif binary_data['repository'] == 'openSUSE_Factory_RISCV' and not get_cpu_arch().startswith('risc'):
+				continue
+
 			binaries.append(binary_data)
 
 		return binaries

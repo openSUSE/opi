@@ -71,9 +71,9 @@ try:
 	if len(binaries) == 0:
 		print("No package found.")
 		sys.exit()
-	binary_names = opi.get_binary_names(binaries)
 
 	# Print and select a package name option
+	binary_names = opi.get_binary_names(binaries)
 	selected_name = opi.ask_for_option(binary_names)
 	print("You have selected package name: %s" % selected_name)
 
