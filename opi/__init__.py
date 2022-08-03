@@ -133,7 +133,7 @@ def get_enabled_repo_by_url(url):
 		if url_normalize(repo_url) == url_normalize(url):
 			return repo
 
-def add_repo(filename, name, url, enabled=True, gpgcheck=True, gpgkey=None, repo_type='rpm-md', auto_import_key=False, auto_refresh=False, priority=None):
+def add_repo(filename, name, url, enabled=True, gpgcheck=True, gpgkey=None, repo_type='rpm-md', auto_import_key=False, auto_refresh=True, priority=None):
 	tf = tempfile.NamedTemporaryFile('w')
 	tf.file.write("[%s]\n" % filename)
 	tf.file.write("name=%s\n" % name)
