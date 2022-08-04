@@ -120,5 +120,6 @@ Also these queries can be used to install packages from various other vendors:
   vscode            Microsoft Visual Studio Code
   vscodium          Visual Studio Codium
   yandex-disk       Yandex.Disk cloud storage client
+  yandex-browser    Yandex web browser
   zoom              Zoom Video Conference
 ```
