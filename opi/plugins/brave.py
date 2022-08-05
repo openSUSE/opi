@@ -5,7 +5,7 @@ import subprocess
 class BraveBrowser(BasePlugin):
 	main_query = "brave"
 	description = "Brave web browser"
-	queries = ('brave', 'brave-browser')
+	queries = ['brave', 'brave-browser']
 
 	@classmethod
 	def run(cls, query):

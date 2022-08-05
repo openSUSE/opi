@@ -5,7 +5,7 @@ import subprocess
 class VSCodium(BasePlugin):
 	main_query = "vscodium"
 	description = "Visual Studio Codium"
-	queries = ('visualstudiocodium', 'vscodium', 'codium')
+	queries = ['visualstudiocodium', 'vscodium', 'codium']
 
 	@classmethod
 	def run(cls, query):

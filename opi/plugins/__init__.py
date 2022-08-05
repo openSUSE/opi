@@ -6,7 +6,7 @@ import inspect
 class BasePlugin(object):
 	main_query = ''
 	description = ''
-	queries = ()
+	queries = []
 
 	@classmethod
 	def matches(cls, query):

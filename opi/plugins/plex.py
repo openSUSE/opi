@@ -5,7 +5,7 @@ import subprocess
 class PlexMediaServer(BasePlugin):
 	main_query = "plex"
 	description = "Plex Media Server"
-	queries = ('plex', 'plexmediaserver')
+	queries = ['plex', 'plexmediaserver']
 
 	@classmethod
 	def run(cls, query):

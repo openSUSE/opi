@@ -5,7 +5,7 @@ import subprocess
 class SublimeText(BasePlugin):
 	main_query = "sublime"
 	description = "Editor for code, markup and prose"
-	queries = ('sublime', 'sublime-text', 'sublimetext')
+	queries = ['sublime', 'sublime-text', 'sublimetext']
 
 	@classmethod
 	def run(cls, query):

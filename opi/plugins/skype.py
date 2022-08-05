@@ -2,10 +2,10 @@ import opi
 from opi.plugins import BasePlugin
 import subprocess
 
-class VSCode(BasePlugin):
+class Skype(BasePlugin):
 	main_query = "skype"
 	description = "Microsoft Skype"
-	queries = ('skype')
+	queries = ['skype']
 
 	@classmethod
 	def run(cls, query):

@@ -6,7 +6,7 @@ import subprocess
 class Teamviewer(BasePlugin):
 	main_query = "teamviewer"
 	description = "TeamViewer remote access"
-	queries = ('teamviewer')
+	queries = ['teamviewer']
 
 	@classmethod
 	def run(cls, query):

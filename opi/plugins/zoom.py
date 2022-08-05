@@ -5,7 +5,7 @@ import subprocess
 class Zoom(BasePlugin):
 	main_query = "zoom"
 	description = "Zoom Video Conference"
-	queries = ('zoom')
+	queries = ['zoom']
 
 	@classmethod
 	def run(cls, query):

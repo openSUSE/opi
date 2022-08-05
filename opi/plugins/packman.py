@@ -4,7 +4,7 @@ from opi.plugins import BasePlugin
 class PackmanCodecsPlugin(BasePlugin):
 	main_query = "codecs"
 	description = "Media Codecs from Packman and official repo"
-	queries = ('packman', 'codecs')
+	queries = ['packman', 'codecs']
 
 	@classmethod
 	def run(cls, query):

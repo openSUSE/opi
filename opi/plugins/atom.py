@@ -5,7 +5,7 @@ from opi.plugins import BasePlugin
 class Atom(BasePlugin):
 	main_query = "atom"
 	description = "Atom Text Editor"
-	queries = ('atom', 'atom-editor')
+	queries = ['atom', 'atom-editor']
 
 	@classmethod
 	def run(cls, query):

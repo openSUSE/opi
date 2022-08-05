@@ -5,7 +5,7 @@ import subprocess
 class VSCode(BasePlugin):
 	main_query = "vscode"
 	description = "Microsoft Visual Studio Code"
-	queries = ('visualstudiocode', 'vscode', 'vsc')
+	queries = ['visualstudiocode', 'vscode', 'vsc']
 
 	@classmethod
 	def run(cls, query):

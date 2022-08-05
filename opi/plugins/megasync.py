@@ -6,7 +6,7 @@ from shutil import which
 class MEGAsync(BasePlugin):
 	main_query = "megasync"
 	description = "Mega Desktop App"
-	queries = ('megasync', 'megasyncapp')
+	queries = ['megasync', 'megasyncapp']
 
 	@classmethod
 	def run(cls, query):

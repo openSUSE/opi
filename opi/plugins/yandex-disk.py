@@ -5,7 +5,7 @@ import subprocess
 class YandexDisk(BasePlugin):
 	main_query = "yandex-disk"
 	description = "Yandex.Disk cloud storage client"
-	queries = ('yandex-disk')
+	queries = ['yandex-disk']
 
 	@classmethod
 	def run(cls, query):

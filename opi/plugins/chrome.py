@@ -5,7 +5,7 @@ import subprocess
 class GoogleChrome(BasePlugin):
 	main_query = "chrome"
 	description = "Google Chrome web browser"
-	queries = ('chrome', 'google-chrome')
+	queries = ['chrome', 'google-chrome']
 
 	@classmethod
 	def run(cls, query):

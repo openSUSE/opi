@@ -5,7 +5,7 @@ import subprocess
 class Vivaldi(BasePlugin):
 	main_query = "vivaldi"
 	description = "Vivaldi web browser"
-	queries = ('vivaldi')
+	queries = ['vivaldi']
 
 	@classmethod
 	def run(cls, query):

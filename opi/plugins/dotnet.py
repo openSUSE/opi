@@ -5,7 +5,7 @@ import subprocess
 class MSDotnet(BasePlugin):
 	main_query = "dotnet"
 	description = "Microsoft .NET"
-	queries = ('dotnet-sdk', 'dotnet')
+	queries = ['dotnet-sdk', 'dotnet']
 
 	@classmethod
 	def run(cls, query):

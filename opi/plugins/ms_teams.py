@@ -5,7 +5,7 @@ import subprocess
 class MSTeams(BasePlugin):
 	main_query = "msteams"
 	description = "Microsoft Teams"
-	queries = ('microsoftteams', 'msteams', 'teams')
+	queries = ['microsoftteams', 'msteams', 'teams']
 
 	@classmethod
 	def run(cls, query):

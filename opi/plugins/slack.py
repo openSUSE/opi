@@ -5,7 +5,7 @@ import subprocess
 class Slack(BasePlugin):
 	main_query = "slack"
 	description = "Slack messenger"
-	queries = ('slack')
+	queries = ['slack']
 
 	@classmethod
 	def run(cls, query):
