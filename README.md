@@ -102,6 +102,7 @@ optional arguments:
                         print the search results in reverse
 
 Also these queries can be used to install packages from various other vendors:
+  anydesk           AnyDesk remote access
   atom              Atom Text Editor
   brave             Brave web browser
   chrome            Google Chrome web browser
