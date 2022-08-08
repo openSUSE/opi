@@ -58,3 +58,4 @@ wheels/
 *.egg
 
 config.json
+.idea
