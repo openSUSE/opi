@@ -5,7 +5,7 @@ import subprocess
 class ResilioSync(BasePlugin):
 	main_query = "resilio-sync"
 	description = "Resilio Sync decentralized file synchronization between devices using the bittorrent protocol."
-	queries = ['resilio-sync, resilio, rslsync']
+	queries = ['resilio-sync', 'resilio', 'rslsync']
 
 	@classmethod
 	def run(cls, query):
