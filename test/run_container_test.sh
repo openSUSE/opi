@@ -12,7 +12,7 @@ if ! podman image exists $opi_base_image ; then
 	podman exec -it opi_base zypper -n install sudo python3 python3-requests python3-lxml python3-termcolor python3-curses curl
 
 	# test dependencies
-	podman exec -it opi_base zypper -n install python3-pexpect
+	podman exec -it opi_base zypper -n install python3-pexpect shadow
 
 	podman commit opi_base $opi_base_image
 	podman kill opi_base

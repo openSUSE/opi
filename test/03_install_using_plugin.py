@@ -4,7 +4,7 @@ import sys
 import pexpect
 import subprocess
 
-c = pexpect.spawn('./bin/opi yandex-disk', logfile=sys.stdout.buffer, echo=False)
+c = pexpect.spawn('./bin/opi resilio-sync', logfile=sys.stdout.buffer, echo=False)
 
 c.expect("Do you want to install")
 c.sendline('y')
@@ -20,5 +20,5 @@ c.wait()
 c.close()
 assert c.exitstatus == 0, "Exit code: %i" % c.exitstatus
 
-subprocess.check_call(['rpm', '-qi', 'yandex-disk'])
-subprocess.check_call('zypper lr | grep yandex-disk', shell=True)
+subprocess.check_call(['rpm', '-qi', 'resilio-sync'])
+subprocess.check_call('zypper lr | grep resilio-sync', shell=True)
