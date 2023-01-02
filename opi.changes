@@ -1,4 +1,12 @@
 -------------------------------------------------------------------
+Mon Jan  2 11:27:29 UTC 2023 - Dominik Heidler <dheidler@suse.de>
+
+- Version 2.9.0
+- Install selected package explicitly from the selected repo
+- Switch to resilio-sync for testsuite
+- add resilio-sync
+
+-------------------------------------------------------------------
 Tue Aug  9 13:58:57 UTC 2022 - Dominik Heidler <dheidler@suse.de>
 
 - Version 2.8.0
