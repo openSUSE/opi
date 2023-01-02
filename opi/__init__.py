@@ -330,8 +330,10 @@ def install_binary(binary):
 		existing_repo = get_enabled_repo_by_url(url)
 		if existing_repo:
 			# Install from existing repos (don't add a repo)
-			install_packages([name_with_arch])
+			print(f"Installing from existing repo '{existing_repo}'")
+			install_packages([name_with_arch], from_repo=existing_repo)
 		else:
+			print(f"Adding repo '{project}'")
 			add_repo(
 				filename = repo_alias,
 				name = project,
