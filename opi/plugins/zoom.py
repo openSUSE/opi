@@ -12,5 +12,7 @@ class Zoom(BasePlugin):
 		if not opi.ask_yes_or_no("Do you want to install Zoom from zoom.us?", 'y'):
 			return
 
-		subprocess.call(['sudo', 'rpm', '--import', 'https://zoom.us/linux/download/pubkey'])
+		key_url = "https://zoom.us/linux/download/pubkey"
+		opi.ask_import_key(key_url)
 		opi.install_packages(['https://zoom.us/client/latest/zoom_openSUSE_x86_64.rpm'])
+		opi.ask_keep_key(key_url)

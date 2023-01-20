@@ -9,6 +9,9 @@ c = pexpect.spawn('./bin/opi resilio-sync', logfile=sys.stdout.buffer, echo=Fals
 c.expect("Do you want to install")
 c.sendline('y')
 
+c.expect('Import package signing key', timeout=10)
+c.sendline('y')
+
 c.expect("Continue")
 c.sendline('y')
 

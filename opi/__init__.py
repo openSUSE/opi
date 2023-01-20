@@ -124,14 +124,20 @@ def get_repos():
 			mainsec = cp.sections()[0]
 			if not bool(int(cp.get(mainsec, "enabled"))):
 				continue
-			yield (re.sub(r"\.repo$", "", repo_file), cp.get(mainsec, "baseurl"))
+			repo = {
+				"name": re.sub(r"\.repo$", "", repo_file),
+				"url": cp.get(mainsec, "baseurl"),
+			}
+			if cp.has_option(mainsec, "gpgkey"):
+				repo["gpgkey"] = cp.get(mainsec, "gpgkey")
+			yield repo
 		except Exception as e:
 			print("Error parsing '%s': %r" % (repo_file, e))
 
 def get_enabled_repo_by_url(url):
-	for repo, repo_url in get_repos():
-		if url_normalize(repo_url) == url_normalize(url):
-			return repo
+	for repo in get_repos():
+		if url_normalize(repo['url']) == url_normalize(url):
+			return repo['name']
 
 def add_repo(filename, name, url, enabled=True, gpgcheck=True, gpgkey=None, repo_type='rpm-md', auto_import_key=False, auto_refresh=False, priority=None):
 	tf = tempfile.NamedTemporaryFile('w')
@@ -142,7 +148,7 @@ def add_repo(filename, name, url, enabled=True, gpgcheck=True, gpgkey=None, repo
 	tf.file.write("type=%s\n" % repo_type)
 	tf.file.write("gpgcheck=%i\n" % gpgcheck)
 	if gpgkey:
-		subprocess.call(['sudo', 'rpm', '--import', gpgkey.replace('$releasever', get_version() or '$releasever')])
+		ask_import_key(gpgkey)
 		tf.file.write("gpgkey=%s\n" % gpgkey)
 	if auto_refresh:
 		tf.file.write("autorefresh=1\n")
@@ -161,6 +167,34 @@ def add_repo(filename, name, url, enabled=True, gpgcheck=True, gpgkey=None, repo
 	elif get_backend() == BackendConstants.dnf:
 		refresh_cmd = ['sudo', 'dnf', 'ref']
 	subprocess.call(refresh_cmd)
+
+def normalize_key(pem):
+	new_lines = []
+	for line in pem.split("\n"):
+		line = line.strip()
+		if not line:
+			continue
+		if line.lower().startswith("version:"):
+			continue
+		new_lines.append(line)
+	new_lines.insert(1, '')
+	return "\n".join(new_lines)
+
+def get_keys_from_rpmdb():
+	s = subprocess.check_output(["rpm", "-q", "gpg-pubkey", "--qf",
+	    '%{NAME}-%{VERSION}-%{RELEASE}\n%{PACKAGER}\n%{DESCRIPTION}\nOPI-SPLIT-TOKEN-TO-TELL-KEY-PACKAGES-APART\n'])
+	keys = []
+	for raw_kpkg in s.decode().strip().split("OPI-SPLIT-TOKEN-TO-TELL-KEY-PACKAGES-APART"):
+		raw_kpkg = raw_kpkg.strip()
+		if not raw_kpkg:
+			continue
+		kid, name, pubkey = raw_kpkg.strip().split("\n", 2)
+		keys.append({
+			"kid": kid,
+			"name": name,
+			"pubkey": normalize_key(pubkey)
+		})
+	return keys
 
 def install_packages(packages, from_repo=None, allow_vendor_change=False, allow_arch_change=False, allow_downgrade=False, allow_name_change=False):
 	if get_backend() == BackendConstants.zypp:
@@ -409,12 +443,57 @@ def ask_for_option(options, question="Pick a number (0 to quit):", option_filter
 	else:
 		return options[num-1]
 
+def ask_import_key(keyurl):
+	key = normalize_key(requests.get(keyurl.replace('$releasever', get_version() or '$releasever')).text)
+	for line in subprocess.check_output(["gpg", "--quiet", "--show-keys", "--with-colons", "-"], input=key.encode()).decode().strip().split("\n"):
+		if line.startswith("uid:"):
+			key_info = line.split(':')[9]
+	if [db_key for db_key in get_keys_from_rpmdb() if normalize_key(db_key['pubkey']) == key]:
+		print(f"Package signing key '{key_info}' is already present.")
+	else:
+		if ask_yes_or_no(f"Import package signing key '{key_info}'", 'y'):
+			tf = tempfile.NamedTemporaryFile('w')
+			tf.file.write(key)
+			tf.file.flush()
+			subprocess.call(['sudo', 'rpm', '--import', tf.name])
+			tf.file.close()
+
+def ask_keep_key(keyurl, repo_name=None):
+	"""
+		Ask to remove the key given by url to key file.
+		Warns about all repos still using the key except the repo given by repo_name param.
+	"""
+	urlkey = normalize_key(requests.get(keyurl.replace('$releasever', get_version() or '$releasever')).text)
+	keys = [key for key in get_keys_from_rpmdb() if key['pubkey'] == urlkey]
+	for key in keys:
+		repos_using_this_key = []
+		for repo in get_repos():
+			if repo_name and repo['name'] == repo_name:
+				continue
+			if repo.get('gpgkey'):
+				repokey = normalize_key(requests.get(repo['gpgkey']).text)
+				if repokey == key['pubkey']:
+					repos_using_this_key.append(repo)
+		if repos_using_this_key:
+			default_answer = 'y'
+			print("This key is still in use by the following remaining repos - removal is NOT recommended:")
+			print(" - "+ "\n - ".join([repo['name'] for repo in repos_using_this_key]))
+		else:
+			default_answer = 'n'
+			print("This key is not in use by any remaining repos.")
+		print("Keeping the key will allow additional packages signed by this key to be installed in the future without further warning.")
+		if not ask_yes_or_no(f"Keep package signing key '{key['name']}'?", default_answer):
+			subprocess.call(['sudo', 'rpm', '-e', key['kid']])
+
 def ask_keep_repo(repo):
 	if not ask_yes_or_no('Do you want to keep the repo "%s"?' % repo, 'y'):
+		repo_info = next((r for r in get_repos() if r['name'] == repo))
 		if get_backend() == BackendConstants.zypp:
 			subprocess.call(['sudo', 'zypper', 'rr', repo])
 		if get_backend() == BackendConstants.dnf:
 			subprocess.call(['sudo', 'rm', os.path.join(REPO_DIR, '%s.repo' % repo)])
+		if repo_info.get('gpgkey'):
+			ask_keep_key(repo_info['gpgkey'], repo)
 
 def format_binary_option(binary, table=True):
 	if is_official_project(binary['project']):
