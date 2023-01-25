@@ -25,5 +25,6 @@ osc add opi-*.tar.gz
 osc st
 osc diff|bat
 
+read -p "Submit RPM? "
 osc ci
 osc sr
