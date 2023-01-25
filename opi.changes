@@ -1,4 +1,12 @@
 -------------------------------------------------------------------
+Wed Jan 25 12:57:21 UTC 2023 - Dominik Heidler <dheidler@suse.de>
+
+- Version 2.10.0
+- Ask for submit in release.sh
+- Fix packman plugin for 15.4
+- Introduce repo key handling (bsc#1207334)
+
+-------------------------------------------------------------------
 Mon Jan  2 11:27:29 UTC 2023 - Dominik Heidler <dheidler@suse.de>
 
 - Version 2.9.0
