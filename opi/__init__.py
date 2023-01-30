@@ -180,6 +180,10 @@ def normalize_key(pem):
 	new_lines.insert(1, '')
 	return "\n".join(new_lines)
 
+def split_keys(keys):
+	for key in keys.split('-----BEGIN PGP PUBLIC KEY BLOCK-----')[1:]:
+		yield '-----BEGIN PGP PUBLIC KEY BLOCK-----' + key
+
 def get_keys_from_rpmdb():
 	s = subprocess.check_output(["rpm", "-q", "gpg-pubkey", "--qf",
 	    '%{NAME}-%{VERSION}-%{RELEASE}\n%{PACKAGER}\n%{DESCRIPTION}\nOPI-SPLIT-TOKEN-TO-TELL-KEY-PACKAGES-APART\n'])
@@ -444,28 +448,32 @@ def ask_for_option(options, question="Pick a number (0 to quit):", option_filter
 		return options[num-1]
 
 def ask_import_key(keyurl):
-	key = normalize_key(requests.get(keyurl.replace('$releasever', get_version() or '$releasever')).text)
-	for line in subprocess.check_output(["gpg", "--quiet", "--show-keys", "--with-colons", "-"], input=key.encode()).decode().strip().split("\n"):
-		if line.startswith("uid:"):
-			key_info = line.split(':')[9]
-	if [db_key for db_key in get_keys_from_rpmdb() if normalize_key(db_key['pubkey']) == key]:
-		print(f"Package signing key '{key_info}' is already present.")
-	else:
-		if ask_yes_or_no(f"Import package signing key '{key_info}'", 'y'):
-			tf = tempfile.NamedTemporaryFile('w')
-			tf.file.write(key)
-			tf.file.flush()
-			subprocess.call(['sudo', 'rpm', '--import', tf.name])
-			tf.file.close()
+	keys = requests.get(keyurl.replace('$releasever', get_version() or '$releasever')).text
+	db_keys = get_keys_from_rpmdb()
+	for key in split_keys(keys):
+		for line in subprocess.check_output(["gpg", "--quiet", "--show-keys", "--with-colons", "-"], input=key.encode()).decode().strip().split("\n"):
+			if line.startswith("uid:"):
+				key_info = line.split(':')[9]
+		if [db_key for db_key in get_keys_from_rpmdb() if normalize_key(key) in normalize_key(db_key['pubkey'])]:
+			print(f"Package signing key '{key_info}' is already present.")
+		else:
+			if ask_yes_or_no(f"Import package signing key '{key_info}'", 'y'):
+				tf = tempfile.NamedTemporaryFile('w')
+				tf.file.write(key)
+				tf.file.flush()
+				subprocess.call(['sudo', 'rpm', '--import', tf.name])
+				tf.file.close()
 
 def ask_keep_key(keyurl, repo_name=None):
 	"""
 		Ask to remove the key given by url to key file.
 		Warns about all repos still using the key except the repo given by repo_name param.
 	"""
-	urlkey = normalize_key(requests.get(keyurl.replace('$releasever', get_version() or '$releasever')).text)
-	keys = [key for key in get_keys_from_rpmdb() if key['pubkey'] == urlkey]
-	for key in keys:
+	urlkeys = split_keys(requests.get(keyurl.replace('$releasever', get_version() or '$releasever')).text)
+	urlkeys_normalized = [normalize_key(urlkey) for urlkey in urlkeys]
+	db_keys = get_keys_from_rpmdb()
+	keys_to_ask_user = [key for key in db_keys if key['pubkey'] in urlkeys_normalized]
+	for key in keys_to_ask_user:
 		repos_using_this_key = []
 		for repo in get_repos():
 			if repo_name and repo['name'] == repo_name:
