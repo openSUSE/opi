@@ -103,6 +103,25 @@ def add_packman_repo(dup=False):
 		elif get_backend() == BackendConstants.dnf:
 			subprocess.call(['sudo', 'dnf', 'dup', '--setopt=allow_vendor_change=True', '--repo', 'packman'])
 
+def add_openh264_repo(dup=False):
+	project = get_distribution(use_releasever_variable=config.get_key_from_config("use_releasever_var"))
+	project = project.replace(':', '_')
+	project = project.replace('Factory', 'Tumbleweed')
+
+	add_repo(
+		filename = 'repo-openh264',
+		name = 'repo-openh264',
+		url = 'http://codecs.opensuse.org/openh264/%s/' % project,
+		auto_refresh = True,
+		priority = 90
+	)
+
+	if dup:
+		if get_backend() == BackendConstants.zypp:
+			subprocess.call(['sudo', 'zypper', 'dist-upgrade', '--from', 'repo-openh264', '--allow-downgrade', '--allow-vendor-change'])
+		elif get_backend() == BackendConstants.dnf:
+			subprocess.call(['sudo', 'dnf', 'dup', '--setopt=allow_vendor_change=True', '--repo', 'repo-openh264'])
+
 def install_packman_packages(packages, **kwargs):
 	install_packages(packages, from_repo='packman', **kwargs)
 

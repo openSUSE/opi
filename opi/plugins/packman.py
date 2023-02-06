@@ -31,3 +31,12 @@ class PackmanCodecsPlugin(BasePlugin):
 			'gstreamer-plugins-bad',
 			'gstreamer-plugins-ugly',
 		])
+
+		if not opi.ask_yes_or_no("Do you want to install openh264 codecs from openh264 repository?", 'y'):
+			return
+		opi.add_openh264_repo(dup=True)
+
+		opi.install_packages([
+			'gstreamer-1.20-plugin-openh264',
+			'mozilla-openh264',
+		])
