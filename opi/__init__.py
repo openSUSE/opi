@@ -104,9 +104,8 @@ def add_packman_repo(dup=False):
 			subprocess.call(['sudo', 'dnf', 'dup', '--setopt=allow_vendor_change=True', '--repo', 'packman'])
 
 def add_openh264_repo(dup=False):
-	project = get_distribution(use_releasever_variable=config.get_key_from_config("use_releasever_var"))
-	project = project.replace(':', '_')
-	project = project.replace('Factory', 'Tumbleweed')
+	project = get_os_release()["NAME"]
+	project = project.replace(':', '_').replace(' ', '_')
 
 	add_repo(
 		filename = 'repo-openh264',
