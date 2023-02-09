@@ -111,6 +111,7 @@ def add_openh264_repo(dup=False):
 		filename = 'openh264',
 		name = 'openh264',
 		url = 'https://codecs.opensuse.org/openh264/%s/' % project,
+		gpgkey = f"https://codecs.opensuse.org/openh264/{project}/repodata/repomd.xml.key",
 		auto_refresh = True,
 		priority = 90
 	)
