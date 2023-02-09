@@ -37,6 +37,6 @@ class PackmanCodecsPlugin(BasePlugin):
 		opi.add_openh264_repo(dup=True)
 
 		opi.install_packages([
-			'gstreamer-1.20-plugin-openh264',
+			'libgstopenh264.so()(64bit)',
 			'mozilla-openh264',
 		])
