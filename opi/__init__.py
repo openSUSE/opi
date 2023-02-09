@@ -117,7 +117,7 @@ def add_openh264_repo(dup=False):
 
 	if dup:
 		if get_backend() == BackendConstants.zypp:
-			subprocess.call(['sudo', 'zypper', 'dist-upgrade', '--from', 'repo-openh264', '--allow-downgrade', '--allow-vendor-change'])
+			subprocess.call(['sudo', 'zypper', 'dist-upgrade', '--from', 'openh264', '--allow-downgrade', '--allow-vendor-change'])
 		elif get_backend() == BackendConstants.dnf:
 			subprocess.call(['sudo', 'dnf', 'dup', '--setopt=allow_vendor_change=True', '--repo', 'repo-openh264'])
 
