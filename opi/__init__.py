@@ -110,7 +110,7 @@ def add_openh264_repo(dup=False):
 	add_repo(
 		filename = 'openh264',
 		name = 'openh264',
-		url = 'http://codecs.opensuse.org/openh264/%s/' % project,
+		url = 'https://codecs.opensuse.org/openh264/%s/' % project,
 		auto_refresh = True,
 		priority = 90
 	)
