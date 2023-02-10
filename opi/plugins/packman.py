@@ -20,6 +20,7 @@ class PackmanCodecsPlugin(BasePlugin):
 			'gstreamer-plugins-bad-codecs',
 			'gstreamer-plugins-ugly-codecs',
 			'gstreamer-plugins-libav',
+			'libfdk-aac2',
 		]
 		if opi.get_version() != '15.4':
 			packman_packages.append('pipewire-aptx')
@@ -37,6 +38,6 @@ class PackmanCodecsPlugin(BasePlugin):
 		opi.add_openh264_repo(dup=True)
 
 		opi.install_packages([
-			'gstreamer-1.20-plugin-openh264',
+			'libgstopenh264.so()(64bit)',
 			'mozilla-openh264',
 		])

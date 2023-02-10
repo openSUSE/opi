@@ -107,20 +107,26 @@ def add_openh264_repo(dup=False):
 	project = get_os_release()["NAME"]
 	project = project.replace(':', '_').replace(' ', '_')
 
-	add_repo(
-		filename = 'openh264',
-		name = 'openh264',
-		url = 'https://codecs.opensuse.org/openh264/%s/' % project,
-		gpgkey = f"https://codecs.opensuse.org/openh264/{project}/repodata/repomd.xml.key",
-		auto_refresh = True,
-		priority = 90
-	)
+	url = 'https://codecs.opensuse.org/openh264/%s/' % project
+	existing_repo = get_enabled_repo_by_url(url)
+	if not existing_repo:
+		repo = "openh264"
+		add_repo(
+			filename = repo,
+			name = repo,
+			url = url,
+			gpgkey = f"{url}repodata/repomd.xml.key",
+			auto_refresh = True,
+			priority = 90
+		)
+	else:
+		repo = existing_repo
 
 	if dup:
 		if get_backend() == BackendConstants.zypp:
-			subprocess.call(['sudo', 'zypper', 'dist-upgrade', '--from', 'openh264', '--allow-downgrade', '--allow-vendor-change'])
+			subprocess.call(['sudo', 'zypper', 'dist-upgrade', '--from', repo, '--allow-downgrade', '--allow-vendor-change'])
 		elif get_backend() == BackendConstants.dnf:
-			subprocess.call(['sudo', 'dnf', 'dup', '--setopt=allow_vendor_change=True', '--repo', 'openh264'])
+			subprocess.call(['sudo', 'dnf', 'dup', '--setopt=allow_vendor_change=True', '--repo', repo])
 
 def install_packman_packages(packages, **kwargs):
 	install_packages(packages, from_repo='packman', **kwargs)
