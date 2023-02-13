@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Mon Feb 13 10:27:03 UTC 2023 - Dominik Heidler <dheidler@suse.de>
+
+- Version 2.13.0
+- Add openh264 (#119)
+
+-------------------------------------------------------------------
 Mon Feb 13 09:41:31 UTC 2023 - Dominik Heidler <dheidler@suse.de>
 
 - Version 2.12.0
