@@ -107,7 +107,7 @@ def add_openh264_repo(dup=False):
 	project = get_os_release()["NAME"]
 	project = project.replace(':', '_').replace(' ', '_')
 
-	url = 'https://codecs.opensuse.org/openh264/%s/' % project
+	url = 'http://codecs.opensuse.org/openh264/%s/' % project
 	existing_repo = get_enabled_repo_by_url(url)
 	if existing_repo:
 		print(f"Installing from existing repo '{existing_repo['name']}'")
@@ -119,7 +119,7 @@ def add_openh264_repo(dup=False):
 			filename = repo,
 			name = repo,
 			url = url,
-			gpgkey = f"{url}repodata/repomd.xml.key",
+			gpgkey = f"{url.replace('http://', 'https://')}repodata/repomd.xml.key",
 			auto_refresh = True,
 			priority = 90
 		)
