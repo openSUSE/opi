@@ -109,8 +109,12 @@ def add_openh264_repo(dup=False):
 
 	url = 'https://codecs.opensuse.org/openh264/%s/' % project
 	existing_repo = get_enabled_repo_by_url(url)
-	if not existing_repo:
+	if existing_repo:
+		print(f"Installing from existing repo '{existing_repo['name']}'")
+		repo = existing_repo['alias']
+	else:
 		repo = "openh264"
+		print(f"Adding repo '{repo}'")
 		add_repo(
 			filename = repo,
 			name = repo,
@@ -119,8 +123,6 @@ def add_openh264_repo(dup=False):
 			auto_refresh = True,
 			priority = 90
 		)
-	else:
-		repo = existing_repo
 
 	if dup:
 		if get_backend() == BackendConstants.zypp:
@@ -150,6 +152,7 @@ def get_repos():
 			if not bool(int(cp.get(mainsec, "enabled"))):
 				continue
 			repo = {
+				"alias": mainsec,
 				"name": re.sub(r"\.repo$", "", repo_file),
 				"url": cp.get(mainsec, "baseurl"),
 			}
@@ -162,7 +165,7 @@ def get_repos():
 def get_enabled_repo_by_url(url):
 	for repo in get_repos():
 		if url_normalize(repo['url']) == url_normalize(url):
-			return repo['name']
+			return repo
 
 def add_repo(filename, name, url, enabled=True, gpgcheck=True, gpgkey=None, repo_type='rpm-md', auto_import_key=False, auto_refresh=False, priority=None):
 	tf = tempfile.NamedTemporaryFile('w')
@@ -393,8 +396,8 @@ def install_binary(binary):
 		existing_repo = get_enabled_repo_by_url(url)
 		if existing_repo:
 			# Install from existing repos (don't add a repo)
-			print(f"Installing from existing repo '{existing_repo}'")
-			install_packages([name_with_arch], from_repo=existing_repo)
+			print(f"Installing from existing repo '{existing_repo['name']}'")
+			install_packages([name_with_arch], from_repo=existing_repo['alias'])
 		else:
 			print(f"Adding repo '{project}'")
 			add_repo(
