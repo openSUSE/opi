@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Mon Feb 13 16:35:28 UTC 2023 - Dominik Heidler <dheidler@suse.de>
+
+- Version 2.14.0
+- Install openh264 according to arch
+- Use http instead of https for openh264 repo
+
+-------------------------------------------------------------------
 Mon Feb 13 10:27:03 UTC 2023 - Dominik Heidler <dheidler@suse.de>
 
 - Version 2.13.0
