@@ -35,7 +35,7 @@ cpu_arch = ''
 def get_cpu_arch():
 	global cpu_arch
 	if not cpu_arch:
-		cpu_arch = subprocess.check_output(['uname', '-m']).strip().decode('ASCII')
+		cpu_arch = os.uname().machine
 		if re.match(r"^i.86$", cpu_arch):
 			cpu_arch = 'i586'
 	return cpu_arch

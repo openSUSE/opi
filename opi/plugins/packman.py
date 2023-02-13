@@ -38,7 +38,11 @@ class PackmanCodecsPlugin(BasePlugin):
 			return
 		opi.add_openh264_repo(dup=True)
 
-		opi.install_packages([
-			'libgstopenh264.so()(64bit)',
+		openh264_packages = [
 			'mozilla-openh264',
-		])
+		]
+		if opi.get_cpu_arch() == 'i586' or opi.get_cpu_arch().startswith('armv7'):
+			openh264_packages.append('libgstopenh264.so()')
+		else:
+			openh264_packages.append('libgstopenh264.so()(64bit)')
+		opi.install_packages(openh264_packages)
