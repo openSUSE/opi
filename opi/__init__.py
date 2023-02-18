@@ -481,7 +481,7 @@ def ask_import_key(keyurl):
 	for key in split_keys(keys):
 		for line in subprocess.check_output(["gpg", "--quiet", "--show-keys", "--with-colons", "-"], input=key.encode()).decode().strip().split("\n"):
 			if line.startswith("uid:"):
-				key_info = line.split(':')[9]
+				key_info = line.split(':')[9].replace('\\x3a', ':')
 		if [db_key for db_key in get_keys_from_rpmdb() if normalize_key(key) in normalize_key(db_key['pubkey'])]:
 			print(f"Package signing key '{key_info}' is already present.")
 		else:
