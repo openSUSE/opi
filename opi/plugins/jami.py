@@ -27,12 +27,12 @@ class Jami(BasePlugin):
 			repourl = 'https://dl.jami.net/nightly/opensuse-tumbleweed/'
 
 		opi.add_repo(
-			filename = Jami.main_query,
-			name = option,
+			filename = 'jami'
+			name = 'jami',
 			url = repourl,
 			gpgkey = 'https://dl.jami.net/jami.pub.key',
 			gpgcheck = False
 		)
 
 		opi.install_packages([option])
-		opi.ask_keep_repo(option)
+		opi.ask_keep_repo('jami')
