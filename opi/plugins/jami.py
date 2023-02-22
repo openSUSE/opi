@@ -27,7 +27,7 @@ class Jami(BasePlugin):
 			repourl = 'https://dl.jami.net/nightly/opensuse-tumbleweed/'
 
 		opi.add_repo(
-			filename = 'jami'
+			filename = 'jami',
 			name = 'jami',
 			url = repourl,
 			gpgkey = 'https://dl.jami.net/jami.pub.key',
