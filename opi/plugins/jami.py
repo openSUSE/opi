@@ -19,7 +19,7 @@ class Jami(BasePlugin):
 			'jami-daemon',
 		])
 
-		print("You have chosen %s", option)
+		print('You have chosen %s' % option)
 
 		if opi.get_distribution().startswith('openSUSE:Leap'):
 			repourl = 'https://dl.jami.net/nightly/opensuse-leap_%s/' % opi.get_version()
