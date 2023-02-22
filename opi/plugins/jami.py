@@ -18,7 +18,6 @@ class Jami(BasePlugin):
 			'jami-daemon',
 		])
 
-		# release = option.split('-')[2]
 		print("You have chosen %s", option)
 
 		opi.add_repo(
