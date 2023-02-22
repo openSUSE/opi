@@ -4,7 +4,7 @@ from opi.plugins import BasePlugin
 class Jami(BasePlugin):
 	main_query = "jami"
 	description = "Jami p2p messenger."
-	queries = ['jami-qt', 'jami-gnome', 'jami-daemon']
+	queries = [main_query, 'jami-qt', 'jami-gnome', 'jami-daemon']
 
 	@classmethod
 	def run(cls, query):
