@@ -23,7 +23,7 @@ class YandexBrowser(BasePlugin):
 		opi.add_repo(
 			filename = option,
 			name = option,
-			url = 'https://repo.yandex.ru/yandex-browser/rpm/{release}/$basearch/',
+			url = f'https://repo.yandex.ru/yandex-browser/rpm/{release}/$basearch/',
 			gpgkey = 'https://repo.yandex.ru/yandex-browser/YANDEX-BROWSER-KEY.GPG',
 			gpgcheck = False
 		)
