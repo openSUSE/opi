@@ -21,10 +21,8 @@ class Jami(BasePlugin):
 
 		print("You have chosen %s", option)
 
-		if opi.get_version() == '15.4':
-			repourl = 'https://dl.jami.net/nightly/opensuse-leap_15.4/'
-		elif opi.get_version() == '15.3':
-			repourl = 'https://dl.jami.net/nightly/opensuse-leap_15.3/'
+		if opi.get_distribution().startswith('openSUSE:Leap'):
+			repourl = 'https://dl.jami.net/nightly/opensuse-leap_%s/' % opi.get_version()
 		else:
 			repourl = 'https://dl.jami.net/nightly/opensuse-tumbleweed/'
 
