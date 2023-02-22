@@ -25,10 +25,8 @@ class Jami(BasePlugin):
 			repourl = 'https://dl.jami.net/nightly/opensuse-leap_15.4/'
 		elif opi.get_version() == '15.3':
 			repourl = 'https://dl.jami.net/nightly/opensuse-leap_15.3/'
-		elif opi.get_version() == 'tumbleweed':
-			repourl = 'https://dl.jami.net/nightly/opensuse-tumbleweed/'
 		else:
-			print("Distribution version detection error")
+			repourl = 'https://dl.jami.net/nightly/opensuse-tumbleweed/'
 
 		opi.add_repo(
 			filename = Jami.main_query,
