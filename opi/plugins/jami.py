@@ -13,6 +13,7 @@ class Jami(BasePlugin):
 
 		print("Which version do you want to install?")
 		option = opi.ask_for_option(options=[
+			'jami',
 			'jami-qt',
 			'jami-gnome',
 			'jami-daemon',
