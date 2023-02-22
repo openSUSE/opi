@@ -30,7 +30,7 @@ class Jami(BasePlugin):
 			print("Distribution version detection error")
 
 		opi.add_repo(
-			filename = main_query,
+			filename = Jami.main_query,
 			name = option,
 			url = repourl,
 			gpgkey = 'https://dl.jami.net/jami.pub.key',
