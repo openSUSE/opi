@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Mon Apr  3 12:49:29 UTC 2023 - Dominik Heidler <dheidler@suse.de>
+
+- Version 2.17.0
+- Codecs: Don't force ffmpeg>=5 on leap 15.5
+- Use new checkout version in ci.yaml
+
+-------------------------------------------------------------------
 Mon Apr  3 10:23:42 UTC 2023 - Dominik Heidler <dheidler@suse.de>
 
 - Version 2.16.0
