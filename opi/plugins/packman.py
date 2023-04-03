@@ -22,7 +22,7 @@ class PackmanCodecsPlugin(BasePlugin):
 			'gstreamer-plugins-libav',
 			'libfdk-aac2',
 		]
-		if opi.get_version() != '15.4':
+		if opi.get_version() not in ('15.4', '15.5'):
 			packman_packages.append('pipewire-aptx')
 			packman_packages.append('ffmpeg>=5')
 		opi.install_packman_packages(packman_packages)
