@@ -108,11 +108,11 @@ Also these queries can be used to install packages from various other vendors:
   chrome            Google Chrome web browser
   codecs            Media Codecs from Packman and official repo
   dotnet            Microsoft .NET
+  jami              Jami p2p messenger
   megasync          Mega Desktop App
-  msedge-beta       Microsoft Edge Beta
-  msedge-dev        Microsoft Edge Dev
-  msteams           Microsoft Teams
+  msedge            Microsoft Edge
   plex              Plex Media Server
+  resilio-sync      Resilio Sync decentralized file synchronization between devices using the bittorrent protocol
   skype             Microsoft Skype
   slack             Slack messenger
   sublime           Editor for code, markup and prose
@@ -120,7 +120,7 @@ Also these queries can be used to install packages from various other vendors:
   vivaldi           Vivaldi web browser
   vscode            Microsoft Visual Studio Code
   vscodium          Visual Studio Codium
-  yandex-disk       Yandex.Disk cloud storage client
   yandex-browser    Yandex web browser
+  yandex-disk       Yandex.Disk cloud storage client
   zoom              Zoom Video Conference
 ```
