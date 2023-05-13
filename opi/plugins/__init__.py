@@ -3,7 +3,7 @@ import sys
 from importlib import import_module
 import inspect
 
-class BasePlugin(object):
+class BasePlugin:
 	main_query = ''
 	description = ''
 	queries = []
@@ -16,11 +16,11 @@ class BasePlugin(object):
 	def run(cls, query):
 		pass
 
-class PluginManager(object):
+class PluginManager:
 	def __init__(self):
 		self.plugins = []
 		for module in os.listdir(os.path.dirname(__file__)):
-			if module == '__init__.py' or module[-3:] != '.py' or module == '__pycache__':
+			if module == '__init__.py' or not module.endswith('.py') or module == '__pycache__':
 				continue
 			m = import_module('opi.plugins.%s' % module[:-3])
 			for name, obj in inspect.getmembers(m):

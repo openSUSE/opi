@@ -17,7 +17,7 @@ class YandexBrowser(BasePlugin):
 			'yandex-browser-beta',
 		])
 
-		release = option.split('-')[2]
+		release = option.split('-')[-1]
 		print("You have chosen %s", release)
 
 		opi.add_repo(

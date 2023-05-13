@@ -22,7 +22,7 @@ def ask_number_with_pager(text, question="Pick a number (0 to quit):"):
 			# remove artefacts due to smaller status line when scrolling up
 			controlbar.addstr(0, 0, ' ' * curses.COLS)
 			controlbar.addstr(0, 0,
-				"Use arrow keys or PgUP/PgDown to scroll - lines %i-%i/%i %i%%" % (
+				"Use arrow keys or PgUp/PgDown to scroll - lines %i-%i/%i %i%%" % (
 					scrollarea_topline_ptr,
 					scrollarea_topline_ptr + (curses.LINES-2),
 					text_len_lines,
