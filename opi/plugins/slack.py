@@ -9,7 +9,7 @@ class Slack(BasePlugin):
 
 	@classmethod
 	def run(cls, query):
-		if not opi.ask_yes_or_no("Do you want to install slack from the slack repository?", 'y'):
+		if not opi.ask_yes_or_no("Do you want to install slack from the slack repository?"):
 			return
 
 		opi.add_repo(

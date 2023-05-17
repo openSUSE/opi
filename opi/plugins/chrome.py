@@ -9,7 +9,7 @@ class GoogleChrome(BasePlugin):
 
 	@classmethod
 	def run(cls, query):
-		if not opi.ask_yes_or_no("Do you want to install Chrome from Google repository?", 'y'):
+		if not opi.ask_yes_or_no("Do you want to install Chrome from Google repository?"):
 			return
 
 		print("Which version do you want to install?")

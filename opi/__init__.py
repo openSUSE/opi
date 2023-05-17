@@ -420,7 +420,7 @@ def install_binary(binary):
 ### User Interaction ###
 ########################
 
-def ask_yes_or_no(question, default_answer):
+def ask_yes_or_no(question, default_answer='y'):
 	q = question + ' '
 	if default_answer == 'y':
 		q += '(Y/n)'
@@ -484,7 +484,7 @@ def ask_import_key(keyurl):
 		if [db_key for db_key in get_keys_from_rpmdb() if normalize_key(key) in normalize_key(db_key['pubkey'])]:
 			print(f"Package signing key '{key_info}' is already present.")
 		else:
-			if ask_yes_or_no(f"Import package signing key '{key_info}'", 'y'):
+			if ask_yes_or_no(f"Import package signing key '{key_info}'"):
 				tf = tempfile.NamedTemporaryFile('w')
 				tf.file.write(key)
 				tf.file.flush()
@@ -521,7 +521,7 @@ def ask_keep_key(keyurl, repo_name=None):
 			subprocess.call(['sudo', 'rpm', '-e', key['kid']])
 
 def ask_keep_repo(repo):
-	if not ask_yes_or_no('Do you want to keep the repo "%s"?' % repo, 'y'):
+	if not ask_yes_or_no('Do you want to keep the repo "%s"?' % repo):
 		repo_info = next((r for r in get_repos() if r['name'] == repo))
 		if get_backend() == BackendConstants.zypp:
 			subprocess.call(['sudo', 'zypper', 'rr', repo])
