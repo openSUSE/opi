@@ -9,7 +9,7 @@ class YandexDisk(BasePlugin):
 
 	@classmethod
 	def run(cls, query):
-		if not opi.ask_yes_or_no("Do you want to install yandex-disk from yandex-disk repository?", 'y'):
+		if not opi.ask_yes_or_no("Do you want to install yandex-disk from yandex-disk repository?"):
 			return
 
 		opi.add_repo(

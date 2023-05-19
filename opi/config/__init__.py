@@ -1,10 +1,6 @@
 import os
-import pwd
 import subprocess
 import configparser
-
-parser = configparser.ConfigParser()
-parser.read("/etc/opi.cfg")
 
 default_config = {
 	"backend": "zypp",

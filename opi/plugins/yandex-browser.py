@@ -8,7 +8,7 @@ class YandexBrowser(BasePlugin):
 
 	@classmethod
 	def run(cls, query):
-		if not opi.ask_yes_or_no("Do you want to install yandex-browser from yandex-browser repository?", 'y'):
+		if not opi.ask_yes_or_no("Do you want to install yandex-browser from yandex-browser repository?"):
 			return
 
 		print("Which version do you want to install?")
@@ -17,7 +17,7 @@ class YandexBrowser(BasePlugin):
 			'yandex-browser-beta',
 		])
 
-		release = option.split('-')[2]
+		release = option.split('-')[-1]
 		print("You have chosen %s", release)
 
 		opi.add_repo(

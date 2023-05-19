@@ -9,7 +9,7 @@ class VSCodium(BasePlugin):
 
 	@classmethod
 	def run(cls, query):
-		if not opi.ask_yes_or_no("Do you want to install VS Codium from paulcarroty_vscodium repository?", 'y'):
+		if not opi.ask_yes_or_no("Do you want to install VS Codium from paulcarroty_vscodium repository?"):
 			return
 
 		opi.add_repo(

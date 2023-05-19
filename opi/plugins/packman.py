@@ -9,7 +9,7 @@ class PackmanCodecsPlugin(BasePlugin):
 	@classmethod
 	def run(cls, query):
 		# Install Packman Codecs
-		if not opi.ask_yes_or_no("Do you want to install codecs from Packman repository?", 'y'):
+		if not opi.ask_yes_or_no("Do you want to install codecs from Packman repository?"):
 			return
 
 		opi.add_packman_repo(dup=True)
@@ -34,7 +34,7 @@ class PackmanCodecsPlugin(BasePlugin):
 			'gstreamer-plugins-ugly',
 		])
 
-		if not opi.ask_yes_or_no("Do you want to install openh264 codecs from openSUSE openh264 repository?", 'y'):
+		if not opi.ask_yes_or_no("Do you want to install openh264 codecs from openSUSE openh264 repository?"):
 			return
 		opi.add_openh264_repo(dup=True)
 

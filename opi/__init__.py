@@ -304,19 +304,20 @@ def search_published_binary(obs_instance, query):
 				continue
 
 			# Filter architecture
-			if binary_data['arch'] not in (get_cpu_arch(), 'noarch'):
+			cpu_arch = get_cpu_arch()
+			if binary_data['arch'] not in (cpu_arch, 'noarch'):
 				continue
 
 			# Filter repo architecture
-			if binary_data['repository'] == 'openSUSE_Factory' and (get_cpu_arch() not in ('x86_64' 'i586')):
+			if binary_data['repository'] == 'openSUSE_Factory' and (cpu_arch not in ('x86_64' 'i586')):
 				continue
-			elif binary_data['repository'] == 'openSUSE_Factory_ARM' and not get_cpu_arch().startswith('arm') and not get_cpu_arch() == 'aarch64':
+			elif binary_data['repository'] == 'openSUSE_Factory_ARM' and not cpu_arch.startswith('arm') and not cpu_arch == 'aarch64':
 				continue
-			elif binary_data['repository'] == 'openSUSE_Factory_PowerPC' and not get_cpu_arch().startswith('ppc'):
+			elif binary_data['repository'] == 'openSUSE_Factory_PowerPC' and not cpu_arch.startswith('ppc'):
 				continue
-			elif binary_data['repository'] == 'openSUSE_Factory_zSystems' and not get_cpu_arch().startswith('s390'):
+			elif binary_data['repository'] == 'openSUSE_Factory_zSystems' and not cpu_arch.startswith('s390'):
 				continue
-			elif binary_data['repository'] == 'openSUSE_Factory_RISCV' and not get_cpu_arch().startswith('risc'):
+			elif binary_data['repository'] == 'openSUSE_Factory_RISCV' and not cpu_arch.startswith('risc'):
 				continue
 
 			binaries.append(binary_data)
@@ -344,9 +345,7 @@ def get_binary_weight(binary):
 	weight = 0
 	if is_official_project(binary['project']):
 		weight += 20000
-	elif is_personal_project(binary['project']):
-		weight += 0
-	else:
+	elif not is_personal_project(binary['project']):
 		weight += 10000
 
 	if binary['name'] == binary['package']:
@@ -392,7 +391,7 @@ def install_binary(binary):
 				# version is None on tw
 				repository = repository.replace(version, '$releasever')
 		url = "https://download.opensuse.org/repositories/%s/%s/" % (project_path, repository)
-		gpgkey = "https://download.opensuse.org/repositories/%s/%s/repodata/repomd.xml.key" % (project_path, repository)
+		gpgkey = url + "repodata/repomd.xml.key"
 		existing_repo = get_enabled_repo_by_url(url)
 		if existing_repo:
 			# Install from existing repos (don't add a repo)
@@ -421,7 +420,7 @@ def install_binary(binary):
 ### User Interaction ###
 ########################
 
-def ask_yes_or_no(question, default_answer):
+def ask_yes_or_no(question, default_answer='y'):
 	q = question + ' '
 	if default_answer == 'y':
 		q += '(Y/n)'
@@ -441,7 +440,7 @@ def ask_for_option(options, question="Pick a number (0 to quit):", option_filter
 		If needed, a pager will be used, unless disable_pager is True.
 	"""
 
-	padding_len = math.floor(math.log(len(options), 10))
+	padding_len = math.floor(math.log10(len(options)))
 	i = 1
 	numbered_options = []
 	terminal_width = os.get_terminal_size().columns-1 if sys.stdout.isatty() else 0
@@ -485,7 +484,7 @@ def ask_import_key(keyurl):
 		if [db_key for db_key in get_keys_from_rpmdb() if normalize_key(key) in normalize_key(db_key['pubkey'])]:
 			print(f"Package signing key '{key_info}' is already present.")
 		else:
-			if ask_yes_or_no(f"Import package signing key '{key_info}'", 'y'):
+			if ask_yes_or_no(f"Import package signing key '{key_info}'"):
 				tf = tempfile.NamedTemporaryFile('w')
 				tf.file.write(key)
 				tf.file.flush()
@@ -522,7 +521,7 @@ def ask_keep_key(keyurl, repo_name=None):
 			subprocess.call(['sudo', 'rpm', '-e', key['kid']])
 
 def ask_keep_repo(repo):
-	if not ask_yes_or_no('Do you want to keep the repo "%s"?' % repo, 'y'):
+	if not ask_yes_or_no('Do you want to keep the repo "%s"?' % repo):
 		repo_info = next((r for r in get_repos() if r['name'] == repo))
 		if get_backend() == BackendConstants.zypp:
 			subprocess.call(['sudo', 'zypper', 'rr', repo])
@@ -546,9 +545,9 @@ def format_binary_option(binary, table=True):
 	if binary['obs_instance'] != 'openSUSE':
 		project = '%s %s' % (binary['obs_instance'], project)
 
-	colored_name = colored('%s %s' % (project[0:39], symbol), color)
+	colored_name = colored('%s %s' % (project[:39], symbol), color)
 
 	if table:
-		return '%-50s | %-25s | %s' % (colored_name, binary['version'][0:25], binary['arch'])
+		return '%-50s | %-25s | %s' % (colored_name, binary['version'][:25], binary['arch'])
 	else:
 		return '%s | %s | %s' % (colored_name, binary['version'], binary['arch'])

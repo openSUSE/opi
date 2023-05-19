@@ -11,7 +11,7 @@ class MSEdge(BasePlugin):
 
 	@classmethod
 	def run(cls, query):
-		if not opi.ask_yes_or_no("Do you want to install Microsoft Edge from Microsoft repository?", 'y'):
+		if not opi.ask_yes_or_no("Do you want to install Microsoft Edge from Microsoft repository?"):
 			return
 
 		print("Which version do you want to install?")

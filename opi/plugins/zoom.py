@@ -9,7 +9,7 @@ class Zoom(BasePlugin):
 
 	@classmethod
 	def run(cls, query):
-		if not opi.ask_yes_or_no("Do you want to install Zoom from zoom.us?", 'y'):
+		if not opi.ask_yes_or_no("Do you want to install Zoom from zoom.us?"):
 			return
 
 		key_url = "https://zoom.us/linux/download/pubkey"

@@ -9,7 +9,7 @@ class PlexMediaServer(BasePlugin):
 
 	@classmethod
 	def run(cls, query):
-		if not opi.ask_yes_or_no("Do you want to install plexmediaserver from Plex repository?", 'y'):
+		if not opi.ask_yes_or_no("Do you want to install plexmediaserver from Plex repository?"):
 			return
 
 		opi.add_repo(

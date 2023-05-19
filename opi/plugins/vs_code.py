@@ -9,7 +9,7 @@ class VSCode(BasePlugin):
 
 	@classmethod
 	def run(cls, query):
-		if not opi.ask_yes_or_no("Do you want to install VS Code from Microsoft repository?", 'y'):
+		if not opi.ask_yes_or_no("Do you want to install VS Code from Microsoft repository?"):
 			return
 
 		option = opi.ask_for_option(options=[

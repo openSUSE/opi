@@ -9,7 +9,7 @@ class Skype(BasePlugin):
 
 	@classmethod
 	def run(cls, query):
-		if not opi.ask_yes_or_no("Do you want to install Skype from Microsoft repository?", 'y'):
+		if not opi.ask_yes_or_no("Do you want to install Skype from Microsoft repository?"):
 			return
 
 		opi.add_repo(

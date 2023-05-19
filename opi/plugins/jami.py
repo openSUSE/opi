@@ -8,7 +8,7 @@ class Jami(BasePlugin):
 
 	@classmethod
 	def run(cls, query):
-		if not opi.ask_yes_or_no("Do you want to install jami from jami repository?", 'y'):
+		if not opi.ask_yes_or_no("Do you want to install jami from jami repository?"):
 			return
 
 		print("Which version do you want to install?")
