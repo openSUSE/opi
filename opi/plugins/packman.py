@@ -42,8 +42,8 @@ class PackmanCodecsPlugin(BasePlugin):
 			'mozilla-openh264',
 		]
 		# install something like gstreamer-1.20-plugin-openh264 without actually specifying any version number
-		if opi.get_cpu_arch() == 'i586' or opi.get_cpu_arch().startswith('armv7'):
-			openh264_packages.append('libgstopenh264.so()')
-		else:
-			openh264_packages.append('libgstopenh264.so()(64bit)')
+		gstreamer_plugin_openh264_pkg = 'libgstopenh264.so()'
+		if not (opi.get_cpu_arch() == 'i586' or opi.get_cpu_arch().startswith('armv7')):
+			gstreamer_plugin_openh264_pkg += '(64bit)'
+		openh264_packages.append(gstreamer_plugin_openh264_pkg)
 		opi.install_packages(openh264_packages)
