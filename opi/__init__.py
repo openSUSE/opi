@@ -97,10 +97,7 @@ def add_packman_repo(dup=False):
 	)
 
 	if dup:
-		if get_backend() == BackendConstants.zypp:
-			subprocess.call(['sudo', 'zypper', 'dist-upgrade', '--from', 'packman', '--allow-downgrade', '--allow-vendor-change'])
-		elif get_backend() == BackendConstants.dnf:
-			subprocess.call(['sudo', 'dnf', 'dup', '--setopt=allow_vendor_change=True', '--repo', 'packman'])
+		install_packman_packages([], action='dup', allow_downgrade=True, allow_vendor_change=True)
 
 def add_openh264_repo(dup=False):
 	project = get_os_release()["NAME"]
@@ -124,10 +121,7 @@ def add_openh264_repo(dup=False):
 		)
 
 	if dup:
-		if get_backend() == BackendConstants.zypp:
-			subprocess.call(['sudo', 'zypper', 'dist-upgrade', '--from', repo, '--allow-downgrade', '--allow-vendor-change'])
-		elif get_backend() == BackendConstants.dnf:
-			subprocess.call(['sudo', 'dnf', 'dup', '--setopt=allow_vendor_change=True', '--repo', repo])
+		install_packages([], action='dup', from_repo=repo, allow_downgrade=True, allow_vendor_change=True)
 
 def install_packman_packages(packages, **kwargs):
 	install_packages(packages, from_repo='packman', **kwargs)
@@ -227,13 +221,13 @@ def get_keys_from_rpmdb():
 		})
 	return keys
 
-def install_packages(packages, from_repo=None, allow_vendor_change=False, allow_arch_change=False, allow_downgrade=False, allow_name_change=False):
+def install_packages(packages, action='in', from_repo=None, allow_vendor_change=False, allow_arch_change=False, allow_downgrade=False, allow_name_change=False):
 	if get_backend() == BackendConstants.zypp:
-		args = ['sudo', 'zypper', 'in']
+		args = ['sudo', 'zypper', action]
 		if from_repo:
 			args.extend(['--from', from_repo])
 	elif get_backend() == BackendConstants.dnf:
-		args = ['sudo', 'dnf', 'in']
+		args = ['sudo', 'dnf', action]
 		if from_repo:
 			args.extend(['--repo', from_repo])
 	if get_backend() == BackendConstants.zypp:
