@@ -17,6 +17,7 @@ Search and install almost all packages available for openSUSE and SLE:
 - python3-termcolor
 
 If you want to use dnf instead of zypper, you also need:
+
 - dnf
 - libdnf-repo-config-zypp
 
@@ -47,6 +48,7 @@ opi [package_name]
 ```
 
 Example:
+
 ```
 opi filezilla
 ```
@@ -56,6 +58,7 @@ Demo:
 ![Screenshot](demo.gif)
 
 ### Using DNF instead of Zypper
+
 If you want to, you can use [DNF](https://en.opensuse.org/SDB:DNF) instead of Zypper.
 To do this, change the content of `/etc/opi.cfg`:
 
