@@ -5,6 +5,7 @@ import sys
 import re
 import argparse
 import textwrap
+from termcolor import colored
 sys.path.insert(0, os.path.abspath(os.path.dirname(__file__) + '/..'))
 
 import opi
@@ -83,7 +84,7 @@ try:
 	selected_binary = opi.ask_for_option(binary_options, option_filter=opi.format_binary_option, disable_pager=True)
 	print("You have selected binary package: %s" % opi.format_binary_option(selected_binary, table=False))
 	if opi.is_personal_project(selected_binary['project']):
-		print(opi.colored(
+		print(colored(
 			"BE CAREFUL! The package is from a personal repository and NOT reviewed by others.\n"
 			"You can ask the author to submit the package to development projects and openSUSE:Factory.\n"
 			"Learn more at https://en.opensuse.org/openSUSE:How_to_contribute_to_Factory",
