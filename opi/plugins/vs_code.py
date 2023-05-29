@@ -1,6 +1,5 @@
 import opi
 from opi.plugins import BasePlugin
-import subprocess
 
 class VSCode(BasePlugin):
 	main_query = "vscode"

@@ -1,7 +1,5 @@
 #!/usr/bin/python3
 
-import sys
-import pexpect
 import subprocess
 
 subprocess.check_call(['python3', 'setup.py', 'install'])

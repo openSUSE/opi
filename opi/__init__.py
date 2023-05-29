@@ -13,9 +13,6 @@ import lxml.etree
 import rpm
 
 from termcolor import colored
-from shutil import which
-from tempfile import NamedTemporaryFile
-from os import path, remove
 
 from opi.backends import get_backend, BackendConstants
 from opi import pager

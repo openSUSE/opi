@@ -1,6 +1,5 @@
 import opi
 from opi.plugins import BasePlugin
-import subprocess
 
 class YandexDisk(BasePlugin):
 	main_query = "yandex-disk"

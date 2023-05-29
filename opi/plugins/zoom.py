@@ -1,6 +1,5 @@
 import opi
 from opi.plugins import BasePlugin
-import subprocess
 
 class Zoom(BasePlugin):
 	main_query = "zoom"
