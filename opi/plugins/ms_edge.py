@@ -1,6 +1,5 @@
 import opi
 import subprocess
-import textwrap
 
 from opi.plugins import BasePlugin
 

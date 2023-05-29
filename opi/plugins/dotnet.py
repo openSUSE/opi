@@ -1,6 +1,5 @@
 import opi
 from opi.plugins import BasePlugin
-import subprocess
 
 class MSDotnet(BasePlugin):
 	main_query = "dotnet"
