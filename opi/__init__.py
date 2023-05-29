@@ -40,19 +40,21 @@ def get_cpu_arch():
 			cpu_arch = 'i586'
 	return cpu_arch
 
+os_release = {}
 def get_os_release():
-	os_release = {}
-	with open('/etc/os-release') as f:
-		for line in f.readlines():
-			line = line.strip()
-			if line.startswith('#') or '=' not in line:
-				continue
-			key, value = line.split('=', 1)
-			key = key.strip()
-			value = value.strip()
-			if '"' in value:
-				value = value.split('"', 1)[1].split('"', 1)[0]
-			os_release[key] = value
+	global os_release
+	if not os_release:
+		with open('/etc/os-release') as f:
+			for line in f.readlines():
+				line = line.strip()
+				if line.startswith('#') or '=' not in line:
+					continue
+				key, value = line.split('=', 1)
+				key = key.strip()
+				value = value.strip()
+				if '"' in value:
+					value = value.split('"', 1)[1].split('"', 1)[0]
+				os_release[key] = value
 	return os_release
 
 def get_distribution(prefix=False, use_releasever_variable=False):
