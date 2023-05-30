@@ -3,7 +3,6 @@ import sys
 import subprocess
 import re
 import tempfile
-import math
 import configparser
 
 import requests
@@ -28,7 +27,7 @@ REPO_DIR = '/etc/zypp/repos.d/'
 ### System Info ###
 ###################
 
-cpu_arch = ''
+cpu_arch = None
 def get_cpu_arch():
 	global cpu_arch
 	if not cpu_arch:
@@ -37,7 +36,7 @@ def get_cpu_arch():
 			cpu_arch = 'i586'
 	return cpu_arch
 
-os_release = {}
+os_release = None
 def get_os_release():
 	global os_release
 	if not os_release:
@@ -433,7 +432,7 @@ def ask_for_option(options, question='Pick a number (0 to quit):', option_filter
 		If needed, a pager will be used, unless disable_pager is True.
 	"""
 
-	padding_len = math.floor(math.log10(len(options)))
+	padding_len = len(str(len(options)))
 	i = 1
 	numbered_options = []
 	terminal_width = os.get_terminal_size().columns - 1 if sys.stdout.isatty() else 0
