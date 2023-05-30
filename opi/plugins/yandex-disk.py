@@ -2,13 +2,13 @@ import opi
 from opi.plugins import BasePlugin
 
 class YandexDisk(BasePlugin):
-	main_query = "yandex-disk"
-	description = "Yandex.Disk cloud storage client"
+	main_query = 'yandex-disk'
+	description = 'Yandex.Disk cloud storage client'
 	queries = ['yandex-disk']
 
 	@classmethod
 	def run(cls, query):
-		if not opi.ask_yes_or_no("Do you want to install yandex-disk from yandex-disk repository?"):
+		if not opi.ask_yes_or_no('Do you want to install yandex-disk from yandex-disk repository?'):
 			return
 
 		opi.add_repo(

@@ -21,7 +21,7 @@ OBS_APIROOT = {
 }
 PROXY_URL = 'https://opi-proxy.opensuse.org/'
 
-REPO_DIR = "/etc/zypp/repos.d/"
+REPO_DIR = '/etc/zypp/repos.d/'
 
 
 ###################
@@ -33,7 +33,7 @@ def get_cpu_arch():
 	global cpu_arch
 	if not cpu_arch:
 		cpu_arch = os.uname().machine
-		if re.match(r"^i.86$", cpu_arch):
+		if re.match(r'^i.86$', cpu_arch):
 			cpu_arch = 'i586'
 	return cpu_arch
 
@@ -59,7 +59,7 @@ def get_distribution(prefix=False, use_releasever_variable=False):
 	name = os_release['NAME']
 	version = os_release.get('VERSION') # VERSION is not set for TW
 	if version:
-		# strip prerelease suffix (eg. " Alpha")
+		# strip prerelease suffix (eg. ' Alpha')
 		version = version.split(' ', 1)[0]
 	if name == 'openSUSE Tumbleweed' or name == 'openSUSE MicroOS':
 		project = 'openSUSE:Factory'
@@ -84,14 +84,14 @@ def get_version():
 ###############
 
 def add_packman_repo(dup=False):
-	project = get_distribution(use_releasever_variable=config.get_key_from_config("use_releasever_var"))
+	project = get_distribution(use_releasever_variable=config.get_key_from_config('use_releasever_var'))
 	project = project.replace(':', '_')
 	project = project.replace('Factory', 'Tumbleweed')
 
 	add_repo(
 		filename = 'packman',
 		name = 'Packman',
-		url = 'https://ftp.gwdg.de/pub/linux/misc/packman/suse/%s/' % project,
+		url = f'https://ftp.gwdg.de/pub/linux/misc/packman/suse/{project}/',
 		auto_refresh = True,
 		priority = 90
 	)
@@ -100,16 +100,16 @@ def add_packman_repo(dup=False):
 		install_packman_packages([], action='dup', allow_downgrade=True, allow_vendor_change=True)
 
 def add_openh264_repo(dup=False):
-	project = get_os_release()["NAME"]
+	project = get_os_release()['NAME']
 	project = project.replace(':', '_').replace(' ', '_')
 
-	url = 'http://codecs.opensuse.org/openh264/%s/' % project
+	url = f'http://codecs.opensuse.org/openh264/{project}/'
 	existing_repo = get_enabled_repo_by_url(url)
 	if existing_repo:
 		print(f"Installing from existing repo '{existing_repo['name']}'")
 		repo = existing_repo['alias']
 	else:
-		repo = "openh264"
+		repo = 'openh264'
 		print(f"Adding repo '{repo}'")
 		add_repo(
 			filename = repo,
@@ -132,7 +132,7 @@ def install_packman_packages(packages, **kwargs):
 ################
 
 def url_normalize(url):
-	return re.sub(r"^https?", "", url).rstrip('/').replace('$releasever', get_version() or '$releasever')
+	return re.sub(r'^https?', '', url).rstrip('/').replace('$releasever', get_version() or '$releasever')
 
 def get_repos():
 	for repo_file in os.listdir(REPO_DIR):
@@ -142,18 +142,18 @@ def get_repos():
 			cp = configparser.ConfigParser()
 			cp.read(os.path.join(REPO_DIR, repo_file))
 			mainsec = cp.sections()[0]
-			if not bool(int(cp.get(mainsec, "enabled"))):
+			if not bool(int(cp.get(mainsec, 'enabled'))):
 				continue
 			repo = {
-				"alias": mainsec,
-				"name": re.sub(r"\.repo$", "", repo_file),
-				"url": cp.get(mainsec, "baseurl"),
+				'alias': mainsec,
+				'name': re.sub(r'\.repo$', '', repo_file),
+				'url': cp.get(mainsec, 'baseurl'),
 			}
-			if cp.has_option(mainsec, "gpgkey"):
-				repo["gpgkey"] = cp.get(mainsec, "gpgkey")
+			if cp.has_option(mainsec, 'gpgkey'):
+				repo['gpgkey'] = cp.get(mainsec, 'gpgkey')
 			yield repo
 		except Exception as e:
-			print("Error parsing '%s': %r" % (repo_file, e))
+			print(f"Error parsing '{repo_file}': {e}")
 
 def get_enabled_repo_by_url(url):
 	for repo in get_repos():
@@ -162,22 +162,22 @@ def get_enabled_repo_by_url(url):
 
 def add_repo(filename, name, url, enabled=True, gpgcheck=True, gpgkey=None, repo_type='rpm-md', auto_import_key=False, auto_refresh=False, priority=None):
 	tf = tempfile.NamedTemporaryFile('w')
-	tf.file.write("[%s]\n" % filename)
-	tf.file.write("name=%s\n" % name)
-	tf.file.write("baseurl=%s\n" % url)
-	tf.file.write("enabled=%i\n" % enabled)
-	tf.file.write("type=%s\n" % repo_type)
-	tf.file.write("gpgcheck=%i\n" % gpgcheck)
+	tf.file.write(f'[{filename}]\n')
+	tf.file.write(f'name={name}\n')
+	tf.file.write(f'baseurl={url}\n')
+	tf.file.write(f'enabled={int(enabled)}\n')
+	tf.file.write(f'type={repo_type}\n')
+	tf.file.write(f'gpgcheck={int(gpgcheck)}\n')
 	if gpgkey:
 		ask_import_key(gpgkey)
-		tf.file.write("gpgkey=%s\n" % gpgkey)
+		tf.file.write(f'gpgkey={gpgkey}\n')
 	if auto_refresh:
-		tf.file.write("autorefresh=1\n")
+		tf.file.write('autorefresh=1\n')
 	if priority:
-		tf.file.write("priority=%i\n" % priority)
+		tf.file.write(f'priority={priority}\n')
 	tf.file.flush()
-	subprocess.call(['sudo', 'cp', tf.name, os.path.join(REPO_DIR, '%s.repo' % filename)])
-	subprocess.call(['sudo', 'chmod', '644', os.path.join(REPO_DIR, '%s.repo' % filename)])
+	subprocess.call(['sudo', 'cp', tf.name, os.path.join(REPO_DIR, f'{filename}.repo')])
+	subprocess.call(['sudo', 'chmod', '644', os.path.join(REPO_DIR, f'{filename}.repo')])
 	tf.file.close()
 	refresh_cmd = []
 	if get_backend() == BackendConstants.zypp:
@@ -191,33 +191,33 @@ def add_repo(filename, name, url, enabled=True, gpgcheck=True, gpgkey=None, repo
 
 def normalize_key(pem):
 	new_lines = []
-	for line in pem.split("\n"):
+	for line in pem.split('\n'):
 		line = line.strip()
 		if not line:
 			continue
-		if line.lower().startswith("version:"):
+		if line.lower().startswith('version:'):
 			continue
 		new_lines.append(line)
 	new_lines.insert(1, '')
-	return "\n".join(new_lines)
+	return '\n'.join(new_lines)
 
 def split_keys(keys):
 	for key in keys.split('-----BEGIN PGP PUBLIC KEY BLOCK-----')[1:]:
 		yield '-----BEGIN PGP PUBLIC KEY BLOCK-----' + key
 
 def get_keys_from_rpmdb():
-	s = subprocess.check_output(["rpm", "-q", "gpg-pubkey", "--qf",
+	s = subprocess.check_output(['rpm', '-q', 'gpg-pubkey', '--qf',
 	    '%{NAME}-%{VERSION}-%{RELEASE}\n%{PACKAGER}\n%{DESCRIPTION}\nOPI-SPLIT-TOKEN-TO-TELL-KEY-PACKAGES-APART\n'])
 	keys = []
-	for raw_kpkg in s.decode().strip().split("OPI-SPLIT-TOKEN-TO-TELL-KEY-PACKAGES-APART"):
+	for raw_kpkg in s.decode().strip().split('OPI-SPLIT-TOKEN-TO-TELL-KEY-PACKAGES-APART'):
 		raw_kpkg = raw_kpkg.strip()
 		if not raw_kpkg:
 			continue
-		kid, name, pubkey = raw_kpkg.strip().split("\n", 2)
+		kid, name, pubkey = raw_kpkg.strip().split('\n', 2)
 		keys.append({
-			"kid": kid,
-			"name": name,
-			"pubkey": normalize_key(pubkey)
+			'kid': kid,
+			'name': name,
+			'pubkey': normalize_key(pubkey)
 		})
 	return keys
 
@@ -258,8 +258,8 @@ def search_published_binary(obs_instance, query):
 	if isinstance(query, list):
 		xquery = "'" + "', '".join(query) + "'"
 	else:
-		xquery = "'%s'" % query
-	xpath = "contains-ic(@name, %s) and path/project='%s'" % (xquery, distribution)
+		xquery = f"'{query}'"
+	xpath = f"contains-ic(@name, {xquery}) and path/project='{distribution}'"
 	url = requests.Request('GET', url, params={'match': xpath, 'limit': 0}).prepare().url
 	try:
 		r = requests.get(PROXY_URL, params={'obs_api_link': url, 'obs_instance': obs_instance})
@@ -272,7 +272,7 @@ def search_published_binary(obs_instance, query):
 			binary_data['obs_instance'] = obs_instance
 
 			for k in ['name', 'project', 'repository', 'version', 'release', 'arch', 'filename', 'filepath', 'baseproject', 'type']:
-				assert k in binary_data, 'Key "%s" missing' % k
+				assert k in binary_data, f"Key '{k}' missing"
 
 			# Filter out ghost binary
 			# (package has been deleted, but binary still exists)
@@ -288,7 +288,7 @@ def search_published_binary(obs_instance, query):
 				continue
 
 			# Filter out debuginfo, debugsource, devel, buildsymbols, lang and docs packages
-			regex = r"-(debuginfo|debugsource|buildsymbols|devel|lang|l10n|trans|doc|docs)(-.+)?$"
+			regex = r'-(debuginfo|debugsource|buildsymbols|devel|lang|l10n|trans|doc|docs)(-.+)?$'
 			if re.match(regex, binary_data['name']):
 				continue
 
@@ -318,9 +318,9 @@ def search_published_binary(obs_instance, query):
 		return binaries
 	except requests.exceptions.HTTPError as e:
 		if e.response.status_code == 413:
-			print("Please use different search keywords. Some short keywords cause OBS timeout.")
+			print('Please use different search keywords. Some short keywords cause OBS timeout.')
 		else:
-			print("HTTPError: %s" % e)
+			print('HTTPError:', e)
 		sys.exit(1)
 
 def get_binary_names(binaries):
@@ -369,7 +369,7 @@ def install_binary(binary):
 	arch = binary['arch']
 	project = binary['project']
 	repository = binary['repository']
-	name_with_arch = "%s.%s" % (name, arch)
+	name_with_arch = f'{name}.{arch}'
 
 	if obs_instance == 'Packman':
 		# Install from Packman Repo
@@ -378,13 +378,13 @@ def install_binary(binary):
 	else:
 		repo_alias = project.replace(':', '_')
 		project_path = project.replace(':', ':/')
-		if config.get_key_from_config("use_releasever_var"):
+		if config.get_key_from_config('use_releasever_var'):
 			version = get_version()
 			if version:
 				# version is None on tw
 				repository = repository.replace(version, '$releasever')
-		url = "https://download.opensuse.org/repositories/%s/%s/" % (project_path, repository)
-		gpgkey = url + "repodata/repomd.xml.key"
+		url = f'https://download.opensuse.org/repositories/{project_path}/{repository}/'
+		gpgkey = url + 'repodata/repomd.xml.key'
 		existing_repo = get_enabled_repo_by_url(url)
 		if existing_repo:
 			# Install from existing repos (don't add a repo)
@@ -423,7 +423,7 @@ def ask_yes_or_no(question, default_answer='y'):
 	answer = input(q) or default_answer
 	return answer.strip().lower() == 'y'
 
-def ask_for_option(options, question="Pick a number (0 to quit):", option_filter=lambda a: a, disable_pager=False):
+def ask_for_option(options, question='Pick a number (0 to quit):', option_filter=lambda a: a, disable_pager=False):
 	"""
 		Ask the user for a number to pick in order to select an option.
 		Exit if the number is 0.
@@ -438,7 +438,7 @@ def ask_for_option(options, question="Pick a number (0 to quit):", option_filter
 	numbered_options = []
 	terminal_width = os.get_terminal_size().columns-1 if sys.stdout.isatty() else 0
 	for option in options:
-		number = "%%%id. " % (padding_len+1) % i
+		number = '%%%id. ' % (padding_len+1) % i
 		numbered_option = number + option_filter(option)
 		if terminal_width and not disable_pager:
 			# break too long lines:
@@ -471,8 +471,8 @@ def ask_import_key(keyurl):
 	keys = requests.get(keyurl.replace('$releasever', get_version() or '$releasever')).text
 	db_keys = get_keys_from_rpmdb()
 	for key in split_keys(keys):
-		for line in subprocess.check_output(["gpg", "--quiet", "--show-keys", "--with-colons", "-"], input=key.encode()).decode().strip().split("\n"):
-			if line.startswith("uid:"):
+		for line in subprocess.check_output(['gpg', '--quiet', '--show-keys', '--with-colons', '-'], input=key.encode()).decode().strip().split('\n'):
+			if line.startswith('uid:'):
 				key_info = line.split(':')[9].replace('\\x3a', ':')
 		if [db_key for db_key in get_keys_from_rpmdb() if normalize_key(key) in normalize_key(db_key['pubkey'])]:
 			print(f"Package signing key '{key_info}' is already present.")
@@ -504,22 +504,22 @@ def ask_keep_key(keyurl, repo_name=None):
 					repos_using_this_key.append(repo)
 		if repos_using_this_key:
 			default_answer = 'y'
-			print("This key is still in use by the following remaining repos - removal is NOT recommended:")
-			print(" - "+ "\n - ".join([repo['name'] for repo in repos_using_this_key]))
+			print('This key is still in use by the following remaining repos - removal is NOT recommended:')
+			print(' - ' + '\n - '.join([repo['name'] for repo in repos_using_this_key]))
 		else:
 			default_answer = 'n'
-			print("This key is not in use by any remaining repos.")
-		print("Keeping the key will allow additional packages signed by this key to be installed in the future without further warning.")
+			print('This key is not in use by any remaining repos.')
+		print('Keeping the key will allow additional packages signed by this key to be installed in the future without further warning.')
 		if not ask_yes_or_no(f"Keep package signing key '{key['name']}'?", default_answer):
 			subprocess.call(['sudo', 'rpm', '-e', key['kid']])
 
 def ask_keep_repo(repo):
-	if not ask_yes_or_no('Do you want to keep the repo "%s"?' % repo):
+	if not ask_yes_or_no(f"Do you want to keep the repo '{repo}'?"):
 		repo_info = next((r for r in get_repos() if r['name'] == repo))
 		if get_backend() == BackendConstants.zypp:
 			subprocess.call(['sudo', 'zypper', 'rr', repo])
 		if get_backend() == BackendConstants.dnf:
-			subprocess.call(['sudo', 'rm', os.path.join(REPO_DIR, '%s.repo' % repo)])
+			subprocess.call(['sudo', 'rm', os.path.join(REPO_DIR, f'{repo}.repo')])
 		if repo_info.get('gpgkey'):
 			ask_keep_key(repo_info['gpgkey'], repo)
 
@@ -536,11 +536,11 @@ def format_binary_option(binary, table=True):
 
 	project = binary['project']
 	if binary['obs_instance'] != 'openSUSE':
-		project = '%s %s' % (binary['obs_instance'], project)
+		project = f"{binary['obs_instance']} {project}"
 
-	colored_name = colored('%s %s' % (project[:39], symbol), color)
+	colored_name = colored(f'{project[:39]} {symbol}', color)
 
 	if table:
 		return '%-50s | %-25s | %s' % (colored_name, binary['version'][:25], binary['arch'])
 	else:
-		return '%s | %s | %s' % (colored_name, binary['version'], binary['arch'])
+		return f"{colored_name} | {binary['version']} | {binary['arch']}"

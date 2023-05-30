@@ -2,13 +2,13 @@ import opi
 from opi.plugins import BasePlugin
 
 class PlexMediaServer(BasePlugin):
-	main_query = "plex"
-	description = "Plex Media Server"
+	main_query = 'plex'
+	description = 'Plex Media Server'
 	queries = ['plex', 'plexmediaserver']
 
 	@classmethod
 	def run(cls, query):
-		if not opi.ask_yes_or_no("Do you want to install plexmediaserver from Plex repository?"):
+		if not opi.ask_yes_or_no('Do you want to install plexmediaserver from Plex repository?'):
 			return
 
 		opi.add_repo(

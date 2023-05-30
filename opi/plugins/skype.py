@@ -2,13 +2,13 @@ import opi
 from opi.plugins import BasePlugin
 
 class Skype(BasePlugin):
-	main_query = "skype"
-	description = "Microsoft Skype"
+	main_query = 'skype'
+	description = 'Microsoft Skype'
 	queries = ['skype']
 
 	@classmethod
 	def run(cls, query):
-		if not opi.ask_yes_or_no("Do you want to install Skype from Microsoft repository?"):
+		if not opi.ask_yes_or_no('Do you want to install Skype from Microsoft repository?'):
 			return
 
 		opi.add_repo(

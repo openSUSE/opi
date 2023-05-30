@@ -2,13 +2,13 @@ import opi
 from opi.plugins import BasePlugin
 
 class SublimeText(BasePlugin):
-	main_query = "sublime"
-	description = "Editor for code, markup and prose"
+	main_query = 'sublime'
+	description = 'Editor for code, markup and prose'
 	queries = ['sublime', 'sublime-text', 'sublimetext']
 
 	@classmethod
 	def run(cls, query):
-		if not opi.ask_yes_or_no("Do you want to install sublime-text from sublime-text repository?"):
+		if not opi.ask_yes_or_no('Do you want to install sublime-text from sublime-text repository?'):
 			return
 
 		opi.add_repo(

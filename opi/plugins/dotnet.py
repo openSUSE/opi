@@ -2,13 +2,13 @@ import opi
 from opi.plugins import BasePlugin
 
 class MSDotnet(BasePlugin):
-	main_query = "dotnet"
-	description = "Microsoft .NET"
+	main_query = 'dotnet'
+	description = 'Microsoft .NET'
 	queries = ['dotnet-sdk', 'dotnet']
 
 	@classmethod
 	def run(cls, query):
-		if not opi.ask_yes_or_no("Do you want to install .NET from Microsoft repository?"):
+		if not opi.ask_yes_or_no('Do you want to install .NET from Microsoft repository?'):
 			return
 
 		opi.add_repo(
