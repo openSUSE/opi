@@ -48,7 +48,7 @@ try:
 		'''),
 		epilog=textwrap.dedent('''\
 			Also these queries can be used to install packages from various other vendors:
-		''') + pm.get_plugin_string(' '*2))
+		''') + pm.get_plugin_string(' ' * 2))
 
 	ap.add_argument('query', nargs='*', type=str, help=textwrap.dedent('''\
 		can be any package name or part of it and will be searched for both at the openSUSE Build Service and Packman.

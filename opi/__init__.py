@@ -345,7 +345,7 @@ def get_binary_weight(binary):
 		weight += 1000
 
 	dash_count = binary['name'].count('-')
-	weight += 100 * (0.5**dash_count)
+	weight += 100 * (0.5 ** dash_count)
 
 	if not (get_cpu_arch() == 'x86_64' and binary['arch'] == 'i586'):
 		weight += 10
@@ -436,9 +436,9 @@ def ask_for_option(options, question='Pick a number (0 to quit):', option_filter
 	padding_len = math.floor(math.log10(len(options)))
 	i = 1
 	numbered_options = []
-	terminal_width = os.get_terminal_size().columns-1 if sys.stdout.isatty() else 0
+	terminal_width = os.get_terminal_size().columns - 1 if sys.stdout.isatty() else 0
 	for option in options:
-		number = '%%%id. ' % (padding_len+1) % i
+		number = '%%%id. ' % (padding_len + 1) % i
 		numbered_option = number + option_filter(option)
 		if terminal_width and not disable_pager:
 			# break too long lines:
@@ -447,11 +447,11 @@ def ask_for_option(options, question='Pick a number (0 to quit):', option_filter
 			# also too long lines are not fatal outside of the pager
 			while len(numbered_option) > terminal_width:
 				numbered_options.append(numbered_option[:terminal_width])
-				numbered_option = ' '*len(number) + numbered_option[terminal_width:]
+				numbered_option = ' ' * len(number) + numbered_option[terminal_width:]
 		numbered_options.append(numbered_option)
 		i += 1
 	text = '\n'.join(numbered_options)
-	if not sys.stdout.isatty() or len(numbered_options) < (os.get_terminal_size().lines-1) or disable_pager:
+	if not sys.stdout.isatty() or len(numbered_options) < (os.get_terminal_size().lines - 1) or disable_pager:
 		# no pager needed
 		print(text)
 		input_string = input(question + ' ')
@@ -465,7 +465,7 @@ def ask_for_option(options, question='Pick a number (0 to quit):', option_filter
 	elif not (num >= 1 and num <= len(options)):
 		return ask_for_option(options, question, option_filter, disable_pager)
 	else:
-		return options[num-1]
+		return options[num - 1]
 
 def ask_import_key(keyurl):
 	keys = requests.get(keyurl.replace('$releasever', get_version() or '$releasever')).text
