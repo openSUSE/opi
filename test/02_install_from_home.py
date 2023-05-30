@@ -13,7 +13,7 @@ c.sendline('1')
 
 c.expect(r'([0-9]+)\. [^ ]*hardware', timeout=10)
 hwentryid = c.match.groups()[0]
-print("PEXPECT: Found hardware entry id %r" % hwentryid)
+print('PEXPECT: Found hardware entry id', repr(hwentryid))
 c.sendline(hwentryid)
 
 c.expect('Import package signing key', timeout=10)
@@ -32,7 +32,7 @@ c.sendline('n')
 c.interact()
 c.wait()
 c.close()
-assert c.exitstatus == 0, 'Exit code: %i' % c.exitstatus
+assert c.exitstatus == 0, f'Exit code: {c.exitstatus}'
 
 subprocess.check_call(['rpm', '-qi', 'rtl8812au'])
 subprocess.check_call('! zypper lr -u | grep hardware', shell=True)

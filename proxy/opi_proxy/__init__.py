@@ -21,9 +21,9 @@ def endpoint():
 		r.text,
 		status=r.status_code,
 		headers={
-			"Access-Control-Allow-Origin": "*"
+			'Access-Control-Allow-Origin': '*'
 		},
-		mimetype=r.headers.get("content-type", "text/plain")
+		mimetype=r.headers.get('content-type', 'text/plain')
 	)
 
 if __name__ == '__main__':

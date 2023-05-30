@@ -4,13 +4,13 @@ from opi.plugins import BasePlugin
 import subprocess
 
 class Teamviewer(BasePlugin):
-	main_query = "teamviewer"
-	description = "TeamViewer remote access"
+	main_query = 'teamviewer'
+	description = 'TeamViewer remote access'
 	queries = ['teamviewer']
 
 	@classmethod
 	def run(cls, query):
-		if not opi.ask_yes_or_no("Do you want to install Teamviewer from Teamviewer repository?"):
+		if not opi.ask_yes_or_no('Do you want to install Teamviewer from Teamviewer repository?'):
 			return
 
 		opi.add_repo(

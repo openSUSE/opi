@@ -22,7 +22,7 @@ class PluginManager:
 		for module in os.listdir(os.path.dirname(__file__)):
 			if module == '__init__.py' or not module.endswith('.py') or module == '__pycache__':
 				continue
-			m = import_module('opi.plugins.%s' % module[:-3])
+			m = import_module(f'opi.plugins.{module[:-3]}')
 			for name, obj in inspect.getmembers(m):
 				if inspect.isclass(obj) and issubclass(obj, BasePlugin) and obj is not BasePlugin:
 					self.plugins.append(obj)
@@ -36,8 +36,8 @@ class PluginManager:
 				sys.exit()
 
 	def get_plugin_string(self, indent=''):
-		plugins = ""
+		plugins = ''
 		for plugin in self.plugins:
-			description = plugin.description.replace("\n", "\n" + (" "*16) + "  ")
-			plugins += "%s%-16s  %s\n" % (indent, plugin.main_query, description)
+			description = plugin.description.replace('\n', '\n' + (' ' * 16) + '  ')
+			plugins += '%s%-16s  %s\n' % (indent, plugin.main_query, description)
 		return plugins

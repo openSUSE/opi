@@ -4,13 +4,13 @@ from opi.plugins import BasePlugin
 from shutil import which
 
 class MEGAsync(BasePlugin):
-	main_query = "megasync"
-	description = "Mega Desktop App"
+	main_query = 'megasync'
+	description = 'Mega Desktop App'
 	queries = ['megasync', 'megasyncapp']
 
 	@classmethod
 	def run(cls, query):
-		if not opi.ask_yes_or_no("Do you want to install MEGAsync from MEGAsync repository?"):
+		if not opi.ask_yes_or_no('Do you want to install MEGAsync from MEGAsync repository?'):
 			return
 
 		opi.add_repo(

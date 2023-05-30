@@ -2,8 +2,8 @@ import os
 import configparser
 
 default_config = {
-	"backend": "zypp",
-	"use_releasever_var": True
+	'backend': 'zypp',
+	'use_releasever_var': True
 }
 
 config_cache = None
