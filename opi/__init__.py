@@ -5,9 +5,12 @@ import re
 import tempfile
 import math
 import configparser
+from functools import cmp_to_key
+from collections import defaultdict
 
 import requests
 import lxml.etree
+import rpm
 
 from termcolor import colored
 from shutil import which
@@ -137,6 +140,42 @@ def install_packman_packages(packages, **kwargs):
 ################
 ### ZYPP/DNF ###
 ################
+
+def search_local_repos(package):
+	"""
+		Search local default repos
+	"""
+	search_results = defaultdict(list)
+	try:
+		sr = subprocess.check_output(["zypper", "-n", "--no-refresh", "se", "-sx", "-tpackage", package], env={"LANG": "c"}).decode()
+		for line in re.split(r"-\+-+\n", sr, re.MULTILINE)[1].strip().split("\n"):
+			version, arch, repo_name = [s.strip() for s in line.split('|')[3:]]
+			if arch not in (get_cpu_arch(), 'noarch'):
+				continue
+			if repo_name == '(System Packages)':
+				continue
+			search_results[repo_name].append({"version": version, "arch": arch})
+	except subprocess.CalledProcessError as e:
+		if e.returncode != 104:
+			# 104 ZYPPER_EXIT_INF_CAP_NOT_FOUND is returned if there are no results
+			raise
+
+	repos_by_name = {repo['name']: repo for repo in get_repos()}
+	local_installables = []
+	for repo_name, installables in search_results.items():
+		installables.sort(key=lambda p: cmp_to_key(rpm.labelCompare)(p['version']))
+		installable = installables[-1]
+		installable['repository'] = repos_by_name[repo_name]
+		installable['name'] = package
+		installable['obs_instance'] = 'LOCAL_REPO'
+		installable['project'] = installable['repository']['name']
+		# filter out OBS/Packman repos as they are already searched via OBS/Packman API
+		if 'download.opensuse.org/repositories' in installable['repository']['url']:
+			continue
+		if installable['repository']['filename'] == 'packman':
+			continue
+		local_installables.append(installable)
+	return local_installables
 
 def url_normalize(url):
 	return re.sub(r"^https?", "", url).rstrip('/').replace('$releasever', get_version() or '$releasever')
@@ -292,7 +331,7 @@ def search_published_binary(obs_instance, query):
 				continue
 
 			# Filter out Packman personal projects
-			if binary_data['obs_instance'] != 'openSUSE'and is_personal_project(binary_data['project']):
+			if binary_data['obs_instance'] != 'openSUSE' and is_personal_project(binary_data['project']):
 				continue
 
 			# Filter out debuginfo, debugsource, devel, buildsymbols, lang and docs packages
@@ -384,16 +423,19 @@ def install_binary(binary):
 		add_packman_repo()
 		install_packman_packages([name_with_arch])
 	else:
-		repo_alias = project.replace(':', '_')
-		project_path = project.replace(':', ':/')
-		if config.get_key_from_config("use_releasever_var"):
-			version = get_version()
-			if version:
-				# version is None on tw
-				repository = repository.replace(version, '$releasever')
-		url = "https://download.opensuse.org/repositories/%s/%s/" % (project_path, repository)
-		gpgkey = url + "repodata/repomd.xml.key"
-		existing_repo = get_enabled_repo_by_url(url)
+		if binary['obs_instance'] == 'LOCAL_REPO':
+			existing_repo = repository
+		else:
+			repo_alias = project.replace(':', '_')
+			project_path = project.replace(':', ':/')
+			if config.get_key_from_config("use_releasever_var"):
+				version = get_version()
+				if version:
+					# version is None on tw
+					repository = repository.replace(version, '$releasever')
+			url = "https://download.opensuse.org/repositories/%s/%s/" % (project_path, repository)
+			gpgkey = url + "repodata/repomd.xml.key"
+			existing_repo = get_enabled_repo_by_url(url)
 		if existing_repo:
 			# Install from existing repos (don't add a repo)
 			print(f"Installing from existing repo '{existing_repo['name']}'")
@@ -532,9 +574,12 @@ def ask_keep_repo(repo):
 			ask_keep_key(repo_info['gpgkey'], repo)
 
 def format_binary_option(binary, table=True):
-	if is_official_project(binary['project']):
+	if binary['obs_instance'] == 'LOCAL_REPO':
 		color = 'green'
 		symbol = '+'
+	elif is_official_project(binary['project']):
+		color = 'yellow'
+		symbol = '-'
 	elif is_personal_project(binary['project']):
 		color = 'red'
 		symbol = '!'
@@ -543,7 +588,7 @@ def format_binary_option(binary, table=True):
 		symbol = '?'
 
 	project = binary['project']
-	if binary['obs_instance'] != 'openSUSE':
+	if binary['obs_instance'] not in ('openSUSE', 'LOCAL_REPO'):
 		project = '%s %s' % (binary['obs_instance'], project)
 
 	colored_name = colored('%s %s' % (project[:39], symbol), color)
