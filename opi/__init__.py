@@ -153,11 +153,12 @@ def get_repos():
 				continue
 			repo = {
 				"alias": mainsec,
-				"name": re.sub(r"\.repo$", "", repo_file),
-				"url": cp.get(mainsec, "baseurl"),
+				"filename": re.sub(r"\.repo$", "", repo_file),
+				"name": cp[mainsec].get("name", mainsec),
+				"url": cp[mainsec].get("baseurl"),
 			}
 			if cp.has_option(mainsec, "gpgkey"):
-				repo["gpgkey"] = cp.get(mainsec, "gpgkey")
+				repo["gpgkey"] = cp[mainsec].get("gpgkey")
 			yield repo
 		except Exception as e:
 			print("Error parsing '%s': %r" % (repo_file, e))
@@ -503,7 +504,7 @@ def ask_keep_key(keyurl, repo_name=None):
 	for key in keys_to_ask_user:
 		repos_using_this_key = []
 		for repo in get_repos():
-			if repo_name and repo['name'] == repo_name:
+			if repo_name and repo['filename'] == repo_name:
 				continue
 			if repo.get('gpgkey'):
 				repokey = normalize_key(requests.get(repo['gpgkey']).text)
@@ -512,7 +513,7 @@ def ask_keep_key(keyurl, repo_name=None):
 		if repos_using_this_key:
 			default_answer = 'y'
 			print("This key is still in use by the following remaining repos - removal is NOT recommended:")
-			print(" - "+ "\n - ".join([repo['name'] for repo in repos_using_this_key]))
+			print(" - "+ "\n - ".join([repo['filename'] for repo in repos_using_this_key]))
 		else:
 			default_answer = 'n'
 			print("This key is not in use by any remaining repos.")
@@ -522,7 +523,7 @@ def ask_keep_key(keyurl, repo_name=None):
 
 def ask_keep_repo(repo):
 	if not ask_yes_or_no('Do you want to keep the repo "%s"?' % repo):
-		repo_info = next((r for r in get_repos() if r['name'] == repo))
+		repo_info = next((r for r in get_repos() if r['filename'] == repo))
 		if get_backend() == BackendConstants.zypp:
 			subprocess.call(['sudo', 'zypper', 'rr', repo])
 		if get_backend() == BackendConstants.dnf:
