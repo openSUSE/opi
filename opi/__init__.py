@@ -163,7 +163,11 @@ def search_local_repos(package):
 	repos_by_name = {repo['name']: repo for repo in get_repos()}
 	local_installables = []
 	for repo_name, installables in search_results.items():
-		installables.sort(key=lambda p: cmp_to_key(rpm.labelCompare)(p['version']))
+		try:
+			installables.sort(key=lambda p: cmp_to_key(rpm.labelCompare)(p['version']))
+		except TypeError:
+			# rpm 4.14 needs a tuple of epoch, version, release - rpm 4.18 can handle a string
+			installables.sort(key=lambda p: cmp_to_key(rpm.labelCompare)(['1']+p['version'].split('-')))
 		installable = installables[-1]
 		installable['repository'] = repos_by_name[repo_name]
 		installable['name'] = package
