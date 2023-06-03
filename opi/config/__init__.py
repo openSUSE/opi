@@ -6,11 +6,10 @@ default_config = {
 	'use_releasever_var': True
 }
 
-config_cache = None
-
 class ConfigError(Exception):
 	pass
 
+config_cache = None
 def get_key_from_config(key: str):
 	global config_cache
 	if not config_cache:

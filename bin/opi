@@ -6,8 +6,8 @@ import re
 import argparse
 import textwrap
 from termcolor import colored
-sys.path.insert(0, os.path.abspath(os.path.dirname(__file__) + '/..'))
 
+sys.path.insert(0, os.path.abspath(os.path.dirname(__file__) + '/..'))
 import opi
 from opi.plugins import PluginManager
 from opi.version import __version__

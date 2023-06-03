@@ -8,7 +8,7 @@ from functools import cmp_to_key
 from collections import defaultdict
 
 import requests
-import lxml.etree
+from lxml import etree
 import rpm
 
 from termcolor import colored
@@ -308,7 +308,7 @@ def search_published_binary(obs_instance, query):
 		r = requests.get(PROXY_URL, params={'obs_api_link': url, 'obs_instance': obs_instance})
 		r.raise_for_status()
 
-		dom = lxml.etree.fromstring(r.text)
+		dom = etree.fromstring(r.text)
 		binaries = []
 		for binary in dom.xpath('/collection/binary'):
 			binary_data = {k: v for k, v in binary.items()}
@@ -520,7 +520,7 @@ def ask_import_key(keyurl):
 		for line in subprocess.check_output(['gpg', '--quiet', '--show-keys', '--with-colons', '-'], input=key.encode()).decode().strip().split('\n'):
 			if line.startswith('uid:'):
 				key_info = line.split(':')[9].replace('\\x3a', ':')
-		if [db_key for db_key in get_keys_from_rpmdb() if normalize_key(key) in normalize_key(db_key['pubkey'])]:
+		if [db_key for db_key in db_keys if normalize_key(key) in normalize_key(db_key['pubkey'])]:
 			print(f"Package signing key '{key_info}' is already present.")
 		else:
 			if ask_yes_or_no(f"Import package signing key '{key_info}'"):
