@@ -39,5 +39,5 @@ class PluginManager:
 		plugins = ''
 		for plugin in self.plugins:
 			description = plugin.description.replace('\n', '\n' + (' ' * 16) + '  ')
-			plugins += '%s%-16s  %s\n' % (indent, plugin.main_query, description)
+			plugins += f'{indent}{plugin.main_query:16}  {description}\n'
 		return plugins

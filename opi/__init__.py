@@ -36,7 +36,7 @@ def get_cpu_arch():
 			cpu_arch = 'i586'
 	return cpu_arch
 
-os_release = None
+os_release = {}
 def get_os_release():
 	global os_release
 	if not os_release:
@@ -164,9 +164,9 @@ def add_repo(filename, name, url, enabled=True, gpgcheck=True, gpgkey=None, repo
 	tf.file.write(f'[{filename}]\n')
 	tf.file.write(f'name={name}\n')
 	tf.file.write(f'baseurl={url}\n')
-	tf.file.write(f'enabled={int(enabled)}\n')
+	tf.file.write(f'enabled={enabled:d}\n')
 	tf.file.write(f'type={repo_type}\n')
-	tf.file.write(f'gpgcheck={int(gpgcheck)}\n')
+	tf.file.write(f'gpgcheck={gpgcheck:d}\n')
 	if gpgkey:
 		ask_import_key(gpgkey)
 		tf.file.write(f'gpgkey={gpgkey}\n')
@@ -437,7 +437,7 @@ def ask_for_option(options, question='Pick a number (0 to quit):', option_filter
 	numbered_options = []
 	terminal_width = os.get_terminal_size().columns - 1 if sys.stdout.isatty() else 0
 	for option in options:
-		number = '%%%id. ' % (padding_len + 1) % i
+		number = f'{i:{padding_len}}. '
 		numbered_option = number + option_filter(option)
 		if terminal_width and not disable_pager:
 			# break too long lines:
@@ -540,6 +540,6 @@ def format_binary_option(binary, table=True):
 	colored_name = colored(f'{project[:39]} {symbol}', color)
 
 	if table:
-		return '%-50s | %-25s | %s' % (colored_name, binary['version'][:25], binary['arch'])
+		return f"{colored_name:50} | {binary['version'][:25]:25} | {binary['arch']}"
 	else:
 		return f"{colored_name} | {binary['version']} | {binary['arch']}"
