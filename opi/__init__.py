@@ -5,9 +5,12 @@ import re
 import tempfile
 import math
 import configparser
+from functools import cmp_to_key
+from collections import defaultdict
 
 import requests
 import lxml.etree
+import rpm
 
 from termcolor import colored
 from shutil import which
@@ -138,6 +141,46 @@ def install_packman_packages(packages, **kwargs):
 ### ZYPP/DNF ###
 ################
 
+def search_local_repos(package):
+	"""
+		Search local default repos
+	"""
+	search_results = defaultdict(list)
+	try:
+		sr = subprocess.check_output(["zypper", "-n", "--no-refresh", "se", "-sx", "-tpackage", package], env={"LANG": "c"}).decode()
+		for line in re.split(r"-\+-+\n", sr, re.MULTILINE)[1].strip().split("\n"):
+			version, arch, repo_name = [s.strip() for s in line.split('|')[3:]]
+			if arch not in (get_cpu_arch(), 'noarch'):
+				continue
+			if repo_name == '(System Packages)':
+				continue
+			search_results[repo_name].append({"version": version, "arch": arch})
+	except subprocess.CalledProcessError as e:
+		if e.returncode != 104:
+			# 104 ZYPPER_EXIT_INF_CAP_NOT_FOUND is returned if there are no results
+			raise
+
+	repos_by_name = {repo['name']: repo for repo in get_repos()}
+	local_installables = []
+	for repo_name, installables in search_results.items():
+		try:
+			installables.sort(key=lambda p: cmp_to_key(rpm.labelCompare)(p['version']))
+		except TypeError:
+			# rpm 4.14 needs a tuple of epoch, version, release - rpm 4.18 can handle a string
+			installables.sort(key=lambda p: cmp_to_key(rpm.labelCompare)(['1']+p['version'].split('-')))
+		installable = installables[-1]
+		installable['repository'] = repos_by_name[repo_name]
+		installable['name'] = package
+		installable['obs_instance'] = 'LOCAL_REPO'
+		installable['project'] = installable['repository']['name']
+		# filter out OBS/Packman repos as they are already searched via OBS/Packman API
+		if 'download.opensuse.org/repositories' in installable['repository']['url']:
+			continue
+		if installable['repository']['filename'] == 'packman':
+			continue
+		local_installables.append(installable)
+	return local_installables
+
 def url_normalize(url):
 	return re.sub(r"^https?", "", url).rstrip('/').replace('$releasever', get_version() or '$releasever')
 
@@ -153,11 +196,12 @@ def get_repos():
 				continue
 			repo = {
 				"alias": mainsec,
-				"name": re.sub(r"\.repo$", "", repo_file),
-				"url": cp.get(mainsec, "baseurl"),
+				"filename": re.sub(r"\.repo$", "", repo_file),
+				"name": cp[mainsec].get("name", mainsec),
+				"url": cp[mainsec].get("baseurl"),
 			}
 			if cp.has_option(mainsec, "gpgkey"):
-				repo["gpgkey"] = cp.get(mainsec, "gpgkey")
+				repo["gpgkey"] = cp[mainsec].get("gpgkey")
 			yield repo
 		except Exception as e:
 			print("Error parsing '%s': %r" % (repo_file, e))
@@ -291,7 +335,7 @@ def search_published_binary(obs_instance, query):
 				continue
 
 			# Filter out Packman personal projects
-			if binary_data['obs_instance'] != 'openSUSE'and is_personal_project(binary_data['project']):
+			if binary_data['obs_instance'] != 'openSUSE' and is_personal_project(binary_data['project']):
 				continue
 
 			# Filter out debuginfo, debugsource, devel, buildsymbols, lang and docs packages
@@ -383,16 +427,19 @@ def install_binary(binary):
 		add_packman_repo()
 		install_packman_packages([name_with_arch])
 	else:
-		repo_alias = project.replace(':', '_')
-		project_path = project.replace(':', ':/')
-		if config.get_key_from_config("use_releasever_var"):
-			version = get_version()
-			if version:
-				# version is None on tw
-				repository = repository.replace(version, '$releasever')
-		url = "https://download.opensuse.org/repositories/%s/%s/" % (project_path, repository)
-		gpgkey = url + "repodata/repomd.xml.key"
-		existing_repo = get_enabled_repo_by_url(url)
+		if binary['obs_instance'] == 'LOCAL_REPO':
+			existing_repo = repository
+		else:
+			repo_alias = project.replace(':', '_')
+			project_path = project.replace(':', ':/')
+			if config.get_key_from_config("use_releasever_var"):
+				version = get_version()
+				if version:
+					# version is None on tw
+					repository = repository.replace(version, '$releasever')
+			url = "https://download.opensuse.org/repositories/%s/%s/" % (project_path, repository)
+			gpgkey = url + "repodata/repomd.xml.key"
+			existing_repo = get_enabled_repo_by_url(url)
 		if existing_repo:
 			# Install from existing repos (don't add a repo)
 			print(f"Installing from existing repo '{existing_repo['name']}'")
@@ -503,7 +550,7 @@ def ask_keep_key(keyurl, repo_name=None):
 	for key in keys_to_ask_user:
 		repos_using_this_key = []
 		for repo in get_repos():
-			if repo_name and repo['name'] == repo_name:
+			if repo_name and repo['filename'] == repo_name:
 				continue
 			if repo.get('gpgkey'):
 				repokey = normalize_key(requests.get(repo['gpgkey']).text)
@@ -512,7 +559,7 @@ def ask_keep_key(keyurl, repo_name=None):
 		if repos_using_this_key:
 			default_answer = 'y'
 			print("This key is still in use by the following remaining repos - removal is NOT recommended:")
-			print(" - "+ "\n - ".join([repo['name'] for repo in repos_using_this_key]))
+			print(" - "+ "\n - ".join([repo['filename'] for repo in repos_using_this_key]))
 		else:
 			default_answer = 'n'
 			print("This key is not in use by any remaining repos.")
@@ -522,7 +569,7 @@ def ask_keep_key(keyurl, repo_name=None):
 
 def ask_keep_repo(repo):
 	if not ask_yes_or_no('Do you want to keep the repo "%s"?' % repo):
-		repo_info = next((r for r in get_repos() if r['name'] == repo))
+		repo_info = next((r for r in get_repos() if r['filename'] == repo))
 		if get_backend() == BackendConstants.zypp:
 			subprocess.call(['sudo', 'zypper', 'rr', repo])
 		if get_backend() == BackendConstants.dnf:
@@ -531,9 +578,12 @@ def ask_keep_repo(repo):
 			ask_keep_key(repo_info['gpgkey'], repo)
 
 def format_binary_option(binary, table=True):
-	if is_official_project(binary['project']):
+	if binary['obs_instance'] == 'LOCAL_REPO':
 		color = 'green'
 		symbol = '+'
+	elif is_official_project(binary['project']):
+		color = 'yellow'
+		symbol = '-'
 	elif is_personal_project(binary['project']):
 		color = 'red'
 		symbol = '!'
@@ -542,7 +592,7 @@ def format_binary_option(binary, table=True):
 		symbol = '?'
 
 	project = binary['project']
-	if binary['obs_instance'] != 'openSUSE':
+	if binary['obs_instance'] not in ('openSUSE', 'LOCAL_REPO'):
 		project = '%s %s' % (binary['obs_instance'], project)
 
 	colored_name = colored('%s %s' % (project[:39], symbol), color)

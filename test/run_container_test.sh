@@ -9,7 +9,7 @@ if ! podman image exists $opi_base_image ; then
 	podman run -td --dns=1.1.1.1 --name=opi_base $base_image
 	podman exec -it opi_base zypper -n ref
 	# opi dependencies
-	podman exec -it opi_base zypper -n install sudo python3 python3-requests python3-lxml python3-termcolor python3-curses curl
+	podman exec -it opi_base zypper -n install sudo python3 python3-requests python3-lxml python3-termcolor python3-curses python3-rpm curl
 
 	# test dependencies
 	podman exec -it opi_base zypper -n install python3-pexpect shadow

@@ -77,6 +77,9 @@ try:
 	selected_name = opi.ask_for_option(binary_names)
 	print("You have selected package name: %s" % selected_name)
 
+	# Inject binaries from local repos
+	binaries = opi.search_local_repos(selected_name) + binaries
+
 	binary_options = opi.get_binaries_by_name(selected_name, binaries)
 
 	# Print and select a binary package option
@@ -89,6 +92,15 @@ try:
 			"Learn more at https://en.opensuse.org/openSUSE:How_to_contribute_to_Factory",
 			'red'
 		))
+	elif selected_binary['project'] == 'openSUSE:Factory':
+		print(opi.colored(
+			"BE CAREFUL! You are about to add the Factory Repository.\n"
+			"This repo contains the unreleased Tumbleweed distro before openQA tests have been run.\n"
+			"Only proceed if you know what you are doing!",
+			'yellow'
+		))
+		if not opi.ask_yes_or_no("Do you want to continue?", default_answer='n'):
+			sys.exit()
 
 	# Install selected package
 	opi.install_binary(selected_binary)
