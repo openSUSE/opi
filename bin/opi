@@ -68,7 +68,7 @@ try:
 	binaries = []
 	binaries.extend(opi.search_published_binary('openSUSE', args.query))
 	binaries.extend(opi.search_published_binary('Packman', args.query))
-	binaries = opi.sort_binaries(binaries)
+	binaries = opi.sort_uniq_binaries(binaries)
 	if len(binaries) == 0:
 		print('No package found.')
 		sys.exit()
