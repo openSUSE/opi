@@ -8,7 +8,7 @@ from functools import cmp_to_key
 from collections import defaultdict
 
 import requests
-from lxml import etree
+import lxml.etree
 import rpm
 
 from termcolor import colored
@@ -308,7 +308,7 @@ def search_published_binary(obs_instance, query):
 		r = requests.get(PROXY_URL, params={'obs_api_link': url, 'obs_instance': obs_instance})
 		r.raise_for_status()
 
-		dom = etree.fromstring(r.text)
+		dom = lxml.etree.fromstring(r.text)
 		binaries = []
 		for binary in dom.xpath('/collection/binary'):
 			binary_data = {k: v for k, v in binary.items()}

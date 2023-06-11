@@ -13,7 +13,7 @@ c.sendline('1')
 
 c.expect(r'([0-9]+)\. [^ ]*hardware', timeout=10)
 hwentryid = c.match.groups()[0]
-print('PEXPECT: Found hardware entry id', repr(hwentryid))
+print(f'PEXPECT: Found hardware entry id {hwentryid!r}')
 c.sendline(hwentryid)
 
 c.expect('Import package signing key', timeout=10)
