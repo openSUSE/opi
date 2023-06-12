@@ -485,7 +485,7 @@ def ask_for_option(options, question='Pick a number (0 to quit):', option_filter
 		If needed, a pager will be used, unless disable_pager is True.
 	"""
 
-	padding_len = len(str(len(options)))
+	padding_len = len(str(len(options))) + 1
 	i = 1
 	numbered_options = []
 	terminal_width = os.get_terminal_size().columns - 1 if sys.stdout.isatty() else 0
