@@ -139,14 +139,14 @@ def search_local_repos(package):
 	"""
 	search_results = defaultdict(list)
 	try:
-		sr = subprocess.check_output(["zypper", "-n", "--no-refresh", "se", "-sx", "-tpackage", package], env={"LANG": "c"}).decode()
-		for line in re.split(r"-\+-+\n", sr, re.MULTILINE)[1].strip().split("\n"):
+		sr = subprocess.check_output(['zypper', '-n', '--no-refresh', 'se', '-sx', '-tpackage', package], env={'LANG': 'c'}).decode()
+		for line in re.split(r'-\+-+\n', sr, re.MULTILINE)[1].strip().split('\n'):
 			version, arch, repo_name = [s.strip() for s in line.split('|')[3:]]
 			if arch not in (get_cpu_arch(), 'noarch'):
 				continue
 			if repo_name == '(System Packages)':
 				continue
-			search_results[repo_name].append({"version": version, "arch": arch})
+			search_results[repo_name].append({'version': version, 'arch': arch})
 	except subprocess.CalledProcessError as e:
 		if e.returncode != 104:
 			# 104 ZYPPER_EXIT_INF_CAP_NOT_FOUND is returned if there are no results
