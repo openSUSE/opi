@@ -1,15 +1,14 @@
 import opi
 from opi.plugins import BasePlugin
-import subprocess
 
 class Vivaldi(BasePlugin):
-	main_query = "vivaldi"
-	description = "Vivaldi web browser"
+	main_query = 'vivaldi'
+	description = 'Vivaldi web browser'
 	queries = ['vivaldi']
 
 	@classmethod
 	def run(cls, query):
-		if not opi.ask_yes_or_no("Do you want to install Vivaldi from Vivaldi repository?"):
+		if not opi.ask_yes_or_no('Do you want to install Vivaldi from Vivaldi repository?'):
 			return
 
 		option = opi.ask_for_option(options=[

@@ -3,16 +3,16 @@ from opi.plugins import BasePlugin
 import subprocess
 
 class GoogleChrome(BasePlugin):
-	main_query = "chrome"
-	description = "Google Chrome web browser"
+	main_query = 'chrome'
+	description = 'Google Chrome web browser'
 	queries = ['chrome', 'google-chrome']
 
 	@classmethod
 	def run(cls, query):
-		if not opi.ask_yes_or_no("Do you want to install Chrome from Google repository?"):
+		if not opi.ask_yes_or_no('Do you want to install Chrome from Google repository?'):
 			return
 
-		print("Which version do you want to install?")
+		print('Which version do you want to install?')
 		option = opi.ask_for_option(options=[
 			'google-chrome-stable',
 			'google-chrome-beta',
@@ -28,8 +28,8 @@ class GoogleChrome(BasePlugin):
 
 		# prevent post install script from messing with our repos
 		defaults_file = option.replace('-stable', '')
-		subprocess.call(['sudo', 'rm', '-f', '/etc/default/%s' % defaults_file])
-		subprocess.call(['sudo', 'touch', '/etc/default/%s' % defaults_file])
+		subprocess.call(['sudo', 'rm', '-f', f'/etc/default/{defaults_file}'])
+		subprocess.call(['sudo', 'touch', f'/etc/default/{defaults_file}'])
 
 		opi.install_packages([option])
 		opi.ask_keep_repo('google-chrome')

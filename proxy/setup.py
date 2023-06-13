@@ -1,7 +1,6 @@
 #!/usr/bin/python3
 
 from distutils.core import setup
-import os
 
 setup(
     name='opi_proxy',

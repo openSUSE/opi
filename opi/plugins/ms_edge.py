@@ -1,20 +1,19 @@
 import opi
 import subprocess
-import textwrap
 
 from opi.plugins import BasePlugin
 
 class MSEdge(BasePlugin):
-	main_query = "msedge"
-	description = "Microsoft Edge"
+	main_query = 'msedge'
+	description = 'Microsoft Edge'
 	queries = ['microsoft-edge', 'msedge', 'edge']
 
 	@classmethod
 	def run(cls, query):
-		if not opi.ask_yes_or_no("Do you want to install Microsoft Edge from Microsoft repository?"):
+		if not opi.ask_yes_or_no('Do you want to install Microsoft Edge from Microsoft repository?'):
 			return
 
-		print("Which version do you want to install?")
+		print('Which version do you want to install?')
 		option = opi.ask_for_option(options=[
 			'microsoft-edge-stable',
 			'microsoft-edge-beta',
@@ -30,8 +29,8 @@ class MSEdge(BasePlugin):
 
 		# prevent post install script from messing with our repos
 		defaults_file = option.replace('-stable', '')
-		subprocess.call(['sudo', 'rm', '-f', '/etc/default/%s' % defaults_file])
-		subprocess.call(['sudo', 'touch', '/etc/default/%s' % defaults_file])
+		subprocess.call(['sudo', 'rm', '-f', f'/etc/default/{defaults_file}'])
+		subprocess.call(['sudo', 'touch', f'/etc/default/{defaults_file}'])
 
 		opi.install_packages([option])
 		opi.ask_keep_repo('microsoft-edge')

@@ -1,15 +1,14 @@
 import opi
 from opi.plugins import BasePlugin
-import subprocess
 
 class VSCodium(BasePlugin):
-	main_query = "vscodium"
-	description = "Visual Studio Codium"
+	main_query = 'vscodium'
+	description = 'Visual Studio Codium'
 	queries = ['visualstudiocodium', 'vscodium', 'codium']
 
 	@classmethod
 	def run(cls, query):
-		if not opi.ask_yes_or_no("Do you want to install VS Codium from paulcarroty_vscodium repository?"):
+		if not opi.ask_yes_or_no('Do you want to install VS Codium from paulcarroty_vscodium repository?'):
 			return
 
 		opi.add_repo(

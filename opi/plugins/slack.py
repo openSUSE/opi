@@ -3,13 +3,13 @@ from opi.plugins import BasePlugin
 import subprocess
 
 class Slack(BasePlugin):
-	main_query = "slack"
-	description = "Slack messenger"
+	main_query = 'slack'
+	description = 'Slack messenger'
 	queries = ['slack']
 
 	@classmethod
 	def run(cls, query):
-		if not opi.ask_yes_or_no("Do you want to install slack from the slack repository?"):
+		if not opi.ask_yes_or_no('Do you want to install slack from the slack repository?'):
 			return
 
 		opi.add_repo(

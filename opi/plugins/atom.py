@@ -3,13 +3,13 @@ import opi
 from opi.plugins import BasePlugin
 
 class Atom(BasePlugin):
-	main_query = "atom"
-	description = "Atom Text Editor"
+	main_query = 'atom'
+	description = 'Atom Text Editor'
 	queries = ['atom', 'atom-editor']
 
 	@classmethod
 	def run(cls, query):
-		if not opi.ask_yes_or_no("Do you want to install Atom from Atom repository?"):
+		if not opi.ask_yes_or_no('Do you want to install Atom from Atom repository?'):
 			return
 
 		opi.add_repo(

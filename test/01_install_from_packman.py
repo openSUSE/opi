@@ -23,6 +23,6 @@ c.sendline('y')
 c.interact()
 c.wait()
 c.close()
-assert c.exitstatus == 0, 'Exit code: %i' % c.exitstatus
+assert c.exitstatus == 0, f'Exit code: {c.exitstatus}'
 
 subprocess.check_call(['rpm', '-qi', 'x265'])

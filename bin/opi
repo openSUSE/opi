@@ -5,8 +5,9 @@ import sys
 import re
 import argparse
 import textwrap
-sys.path.insert(0, os.path.abspath(os.path.dirname(__file__) + '/..'))
+from termcolor import colored
 
+sys.path.insert(0, os.path.abspath(os.path.dirname(__file__) + '/..'))
 import opi
 from opi.plugins import PluginManager
 from opi.version import __version__
@@ -16,14 +17,14 @@ class PreserveWhiteSpaceWrapRawTextHelpFormatter(argparse.RawTextHelpFormatter):
 	def __add_whitespace(self, idx, iWSpace, text):
 		if idx == 0:
 			return text
-		return (" " * iWSpace) + text
+		return (' ' * iWSpace) + text
 
 	def _split_lines(self, text, width):
 		textRows = text.splitlines()
 		for idx,line in enumerate(textRows):
 			search = re.search('\s*[\d\-]*\.?\s*', line)
-			if line.strip() == "":
-				textRows[idx] = " "
+			if line.strip() == '':
+				textRows[idx] = ' '
 			elif search:
 				lWSpace = search.end()
 				lines = [self.__add_whitespace(i,lWSpace,x) for i,x in enumerate(textwrap.wrap(line, width))]
@@ -47,13 +48,13 @@ try:
 		'''),
 		epilog=textwrap.dedent('''\
 			Also these queries can be used to install packages from various other vendors:
-		''') + pm.get_plugin_string(' '*2))
+		''') + pm.get_plugin_string(' ' * 2))
 
 	ap.add_argument('query', nargs='*', type=str, help=textwrap.dedent('''\
 		can be any package name or part of it and will be searched for both at the openSUSE Build Service and Packman.
 		If multiple query arguments are provided only results matching all of them are returned.
 	'''))
-	ap.add_argument('-v', '--version', action='version', version=('opi version ' +  __version__))
+	ap.add_argument('-v', '--version', action='version', version=f'opi version {__version__}')
 
 	args = ap.parse_args()
 
@@ -69,13 +70,13 @@ try:
 	binaries.extend(opi.search_published_binary('Packman', args.query))
 	binaries = opi.sort_binaries(binaries)
 	if len(binaries) == 0:
-		print("No package found.")
+		print('No package found.')
 		sys.exit()
 
 	# Print and select a package name option
 	binary_names = opi.get_binary_names(binaries)
 	selected_name = opi.ask_for_option(binary_names)
-	print("You have selected package name: %s" % selected_name)
+	print('You have selected package name:', selected_name)
 
 	# Inject binaries from local repos
 	binaries = opi.search_local_repos(selected_name) + binaries
@@ -84,22 +85,22 @@ try:
 
 	# Print and select a binary package option
 	selected_binary = opi.ask_for_option(binary_options, option_filter=opi.format_binary_option, disable_pager=True)
-	print("You have selected binary package: %s" % opi.format_binary_option(selected_binary, table=False))
+	print('You have selected binary package:', opi.format_binary_option(selected_binary, table=False))
 	if opi.is_personal_project(selected_binary['project']):
-		print(opi.colored(
-			"BE CAREFUL! The package is from a personal repository and NOT reviewed by others.\n"
-			"You can ask the author to submit the package to development projects and openSUSE:Factory.\n"
-			"Learn more at https://en.opensuse.org/openSUSE:How_to_contribute_to_Factory",
+		print(colored(
+			'BE CAREFUL! The package is from a personal repository and NOT reviewed by others.\n'
+			'You can ask the author to submit the package to development projects and openSUSE:Factory.\n'
+			'Learn more at https://en.opensuse.org/openSUSE:How_to_contribute_to_Factory',
 			'red'
 		))
 	elif selected_binary['project'] == 'openSUSE:Factory':
 		print(opi.colored(
-			"BE CAREFUL! You are about to add the Factory Repository.\n"
-			"This repo contains the unreleased Tumbleweed distro before openQA tests have been run.\n"
-			"Only proceed if you know what you are doing!",
+			'BE CAREFUL! You are about to add the Factory Repository.\n'
+			'This repo contains the unreleased Tumbleweed distro before openQA tests have been run.\n'
+			'Only proceed if you know what you are doing!',
 			'yellow'
 		))
-		if not opi.ask_yes_or_no("Do you want to continue?", default_answer='n'):
+		if not opi.ask_yes_or_no('Do you want to continue?', default_answer='n'):
 			sys.exit()
 
 	# Install selected package

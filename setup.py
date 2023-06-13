@@ -4,7 +4,7 @@ from distutils.core import setup
 import os
 
 # Load __version__ from opi/version.py
-exec(open(os.path.join(os.path.dirname(os.path.realpath(__file__)), "opi/version.py")).read())
+exec(open(os.path.join(os.path.dirname(os.path.realpath(__file__)), 'opi/version.py')).read())
 
 setup(
     name='opi',
