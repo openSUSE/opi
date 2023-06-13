@@ -8,7 +8,7 @@ c = pexpect.spawn('./bin/opi htop', logfile=sys.stdout.buffer, echo=False)
 
 c.expect(r'([0-9]+)\. htop', timeout=10)
 entry_id = c.match.groups()[0]
-print(f'PEXPECT: Found entry id {entry_id}')
+print(f'PEXPECT: Found entry id {entry_id!r}')
 c.expect('Pick a number')
 c.sendline(entry_id)
 
