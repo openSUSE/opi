@@ -320,7 +320,7 @@ def search_published_binary(obs_instance, query):
 			binary_data = {k: v for k, v in binary.items()}
 			binary_data['obs_instance'] = obs_instance
 
-			for k in ['name', 'project', 'repository', 'version', 'release', 'arch', 'filename', 'filepath', 'baseproject', 'type']:
+			for k in ('name', 'project', 'repository', 'version', 'release', 'arch', 'filename', 'filepath', 'baseproject', 'type'):
 				assert k in binary_data, f"Key '{k}' missing"
 
 			# Filter out ghost binary
@@ -380,26 +380,44 @@ def get_binary_names(binaries):
 			names.append(name)
 	return names
 
-def sort_binaries(binaries):
-	return sorted(binaries, key=lambda b: get_binary_weight(b), reverse=True)
+def sort_uniq_binaries(binaries):
+	""" sort -u for binaries; sort by weight and keep only the one with the best repo """
+	binaries = sorted(binaries, key=get_binary_weight, reverse=True)
+	new_binaries = []
+	added_binaries = set()
+	for binary in binaries:
+		# only select the first binary for each name/project combination
+		# which will be the one with the highest repo weight
+		query = (binary['name'], binary['project'])
+		if query not in added_binaries:
+			new_binaries.append(binary)
+			added_binaries.add(query)
+	return new_binaries
 
 def get_binary_weight(binary):
 	weight = 0
 	if is_official_project(binary['project']):
-		weight += 20000
+		weight += 200000
 	elif not is_personal_project(binary['project']):
-		weight += 10000
+		weight += 100000
 
 	if binary['name'] == binary['package']:
-		weight += 1000
+		weight += 10000
 
 	dash_count = binary['name'].count('-')
-	weight += 100 * (0.5 ** dash_count)
+	weight += 1000 * (0.5 ** dash_count)
 
 	if not (get_cpu_arch() == 'x86_64' and binary['arch'] == 'i586'):
-		weight += 10
+		weight += 100
 
-	weight -= len(binary['name'])
+	weight -= 10 * len(binary['name'])
+
+	if binary['repository'].startswith('openSUSE_Tumbleweed'):
+		weight += 2
+	elif binary['repository'].startswith('openSUSE_Factory'):
+		weight += 1
+	elif binary['repository'] == 'standard':
+		weight += 0
 
 	return weight
 
