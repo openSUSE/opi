@@ -1,4 +1,13 @@
 -------------------------------------------------------------------
+Mon Jun 19 08:56:53 UTC 2023 - Dominik Heidler <dheidler@suse.de>
+
+- Version 3.0.0
+- Use best repo for each project (fixes #113)
+- Use new rpm signing key for zoom (fixes #133)
+- cleanup code
+- Remove MS teams as it is discontinued
+
+-------------------------------------------------------------------
 Mon Apr  3 12:49:29 UTC 2023 - Dominik Heidler <dheidler@suse.de>
 
 - Version 2.17.0
