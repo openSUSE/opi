@@ -94,7 +94,7 @@ def add_packman_repo(dup=False):
 		filename = 'packman',
 		name = 'Packman',
 		url = f'https://ftp.gwdg.de/pub/linux/misc/packman/suse/{project}/',
-		auto_refresh = True,
+		auto_refresh = config.get_key_from_config('new_repo_auto_refresh'),
 		priority = 90
 	)
 
@@ -118,7 +118,7 @@ def add_openh264_repo(dup=False):
 			name = repo,
 			url = url,
 			gpgkey = f"{url.replace('http://', 'https://')}repodata/repomd.xml.key",
-			auto_refresh = True,
+			auto_refresh = config.get_key_from_config('new_repo_auto_refresh'),
 			priority = 90
 		)
 
@@ -191,6 +191,7 @@ def get_repos():
 				'filename': re.sub(r'\.repo$', '', repo_file),
 				'name': cp[mainsec].get('name', mainsec),
 				'url': cp[mainsec].get('baseurl'),
+				'auto_refresh': bool(int(cp[mainsec].get('autorefresh', '0'))),
 			}
 			if cp.has_option(mainsec, 'gpgkey'):
 				repo['gpgkey'] = cp[mainsec].get('gpgkey')
@@ -203,7 +204,7 @@ def get_enabled_repo_by_url(url):
 		if url_normalize(repo['url']) == url_normalize(url):
 			return repo
 
-def add_repo(filename, name, url, enabled=True, gpgcheck=True, gpgkey=None, repo_type='rpm-md', auto_import_key=False, auto_refresh=False, priority=None):
+def add_repo(filename, name, url, enabled=True, gpgcheck=True, gpgkey=None, repo_type='rpm-md', auto_import_keys=False, auto_refresh=False, priority=None):
 	tf = tempfile.NamedTemporaryFile('w')
 	tf.file.write(f'[{filename}]\n')
 	tf.file.write(f'name={name}\n')
@@ -222,14 +223,19 @@ def add_repo(filename, name, url, enabled=True, gpgcheck=True, gpgkey=None, repo
 	subprocess.call(['sudo', 'cp', tf.name, os.path.join(REPO_DIR, f'{filename}.repo')])
 	subprocess.call(['sudo', 'chmod', '644', os.path.join(REPO_DIR, f'{filename}.repo')])
 	tf.file.close()
+	refresh_repos(auto_import_keys=auto_import_keys)
+
+def refresh_repos(repo=None, auto_import_keys=False):
 	refresh_cmd = []
 	if get_backend() == BackendConstants.zypp:
 		refresh_cmd = ['sudo', 'zypper']
-		if auto_import_key:
+		if auto_import_keys:
 			refresh_cmd.append('--gpg-auto-import-keys')
 		refresh_cmd.append('ref')
 	elif get_backend() == BackendConstants.dnf:
 		refresh_cmd = ['sudo', 'dnf', 'ref']
+	if repo:
+		refresh_cmd.append(repo)
 	subprocess.call(refresh_cmd)
 
 def normalize_key(pem):
@@ -459,6 +465,9 @@ def install_binary(binary):
 		if existing_repo:
 			# Install from existing repos (don't add a repo)
 			print(f"Installing from existing repo '{existing_repo['name']}'")
+			# ensure that this repo is up to date if no auto_refresh is configured
+			if not existing_repo['auto_refresh']:
+				refresh_repos(existing_repo['alias'])
 			install_packages([name_with_arch], from_repo=existing_repo['alias'])
 		else:
 			print(f"Adding repo '{project}'")
@@ -468,7 +477,7 @@ def install_binary(binary):
 				url = url,
 				gpgkey = gpgkey,
 				gpgcheck = True,
-				auto_refresh = True
+				auto_refresh = config.get_key_from_config('new_repo_auto_refresh')
 			)
 			install_packages([name_with_arch], from_repo=repo_alias,
 				allow_downgrade=True,
