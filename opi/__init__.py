@@ -403,21 +403,22 @@ def sort_uniq_binaries(binaries):
 
 def get_binary_weight(binary):
 	weight = 0
-	if is_official_project(binary['project']):
-		weight += 200000
-	elif not is_personal_project(binary['project']):
-		weight += 100000
-
-	if binary['name'] == binary['package']:
-		weight += 10000
 
 	dash_count = binary['name'].count('-')
-	weight += 1000 * (0.5 ** dash_count)
+	weight += 1e5 * (0.5 ** dash_count)
+
+	weight -= 1e4 * len(binary['name'])
+
+	if is_official_project(binary['project']):
+		weight += 2e3
+	elif not is_personal_project(binary['project']):
+		weight += 1e3
+
+	if binary['name'] == binary['package']:
+		weight += 1e2
 
 	if not (get_cpu_arch() == 'x86_64' and binary['arch'] == 'i586'):
-		weight += 100
-
-	weight -= 10 * len(binary['name'])
+		weight += 1e1
 
 	if binary['repository'].startswith('openSUSE_Tumbleweed'):
 		weight += 2
