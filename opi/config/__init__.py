@@ -3,7 +3,8 @@ import configparser
 
 default_config = {
 	'backend': 'zypp',
-	'use_releasever_var': True
+	'use_releasever_var': True,
+	'new_repo_auto_refresh': True,
 }
 
 class ConfigError(Exception):
@@ -21,6 +22,7 @@ def get_key_from_config(key: str):
 			ocfg = cp['opi']
 			config_cache.update({
 				'backend': ocfg.get('backend'),
-				'use_releasever_var': ocfg.getboolean('use_releasever_var')
+				'use_releasever_var': ocfg.getboolean('use_releasever_var'),
+				'new_repo_auto_refresh': ocfg.getboolean('new_repo_auto_refresh'),
 			})
 	return config_cache[key]
