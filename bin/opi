@@ -5,12 +5,14 @@ import sys
 import re
 import argparse
 import textwrap
+import subprocess
 from termcolor import colored
 
 sys.path.insert(0, os.path.abspath(os.path.dirname(__file__) + '/..'))
 import opi
 from opi.plugins import PluginManager
 from opi.version import __version__
+from opi.state import global_state
 
 
 class PreserveWhiteSpaceWrapRawTextHelpFormatter(argparse.RawTextHelpFormatter):
@@ -55,12 +57,20 @@ try:
 		If multiple query arguments are provided only results matching all of them are returned.
 	'''))
 	ap.add_argument('-v', '--version', action='version', version=f'opi version {__version__}')
+	ap.add_argument('-n', dest='non_interactive', action='store_true', help="Run in non interactive mode")
 
 	args = ap.parse_args()
 
 	if not args.query:
 		ap.print_help()
 		sys.exit()
+
+	if args.non_interactive:
+		global_state.arg_non_interactive = True
+		if subprocess.run(['sudo', '-n', 'true']).returncode != 0:
+			print('Error: In non-interactive mode this command must be run as root')
+			print('       or sudo must not require interaction.')
+			sys.exit(1)
 
 	# Try to find a matching plugin for the query (and run it and exit afterwards)
 	pm.run(args.query[0])

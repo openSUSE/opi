@@ -16,6 +16,7 @@ from termcolor import colored
 from opi.backends import get_backend, BackendConstants
 from opi import pager
 from opi import config
+from opi.state import global_state
 
 OBS_APIROOT = {
 	'openSUSE': 'https://api.opensuse.org',
@@ -278,11 +279,17 @@ def dist_upgrade(**kwargs):
 
 def pkgmgr_action(action, packages=[], from_repo=None, allow_vendor_change=False, allow_arch_change=False, allow_downgrade=False, allow_name_change=False):
 	if get_backend() == BackendConstants.zypp:
-		args = ['sudo', 'zypper', action]
+		args = ['sudo', 'zypper']
+		if global_state.arg_non_interactive:
+			args.append('-n')
+		args.append(action)
 		if from_repo:
 			args.extend(['--from', from_repo])
 	elif get_backend() == BackendConstants.dnf:
-		args = ['sudo', 'dnf', action]
+		args = ['sudo', 'dnf']
+		if global_state.arg_non_interactive:
+			args.append('-y')
+		args.append(action)
 		if from_repo:
 			args.extend(['--repo', from_repo])
 	if get_backend() == BackendConstants.zypp:
@@ -402,21 +409,22 @@ def sort_uniq_binaries(binaries):
 
 def get_binary_weight(binary):
 	weight = 0
-	if is_official_project(binary['project']):
-		weight += 200000
-	elif not is_personal_project(binary['project']):
-		weight += 100000
-
-	if binary['name'] == binary['package']:
-		weight += 10000
 
 	dash_count = binary['name'].count('-')
-	weight += 1000 * (0.5 ** dash_count)
+	weight += 1e5 * (0.5 ** dash_count)
+
+	weight -= 1e4 * len(binary['name'])
+
+	if is_official_project(binary['project']):
+		weight += 2e3
+	elif not is_personal_project(binary['project']):
+		weight += 1e3
+
+	if binary['name'] == binary['package']:
+		weight += 1e2
 
 	if not (get_cpu_arch() == 'x86_64' and binary['arch'] == 'i586'):
-		weight += 100
-
-	weight -= 10 * len(binary['name'])
+		weight += 1e1
 
 	if binary['repository'].startswith('openSUSE_Tumbleweed'):
 		weight += 2
@@ -499,7 +507,11 @@ def ask_yes_or_no(question, default_answer='y'):
 	else:
 		q += '(y/N)'
 	q += ' '
-	answer = input(q) or default_answer
+	if global_state.arg_non_interactive:
+		print(q)
+		answer = default_answer
+	else:
+		answer = input(q) or default_answer
 	return answer.strip().lower() == 'y'
 
 def ask_for_option(options, question='Pick a number (0 to quit):', option_filter=lambda a: a, disable_pager=False):
@@ -530,7 +542,10 @@ def ask_for_option(options, question='Pick a number (0 to quit):', option_filter
 		numbered_options.append(numbered_option)
 		i += 1
 	text = '\n'.join(numbered_options)
-	if not sys.stdout.isatty() or len(numbered_options) < (os.get_terminal_size().lines - 1) or disable_pager:
+	if global_state.arg_non_interactive:
+		input_string = '1' # default to first option in the list
+		print(f"{text}\n{question} {input_string}")
+	elif not sys.stdout.isatty() or len(numbered_options) < (os.get_terminal_size().lines - 1) or disable_pager:
 		# no pager needed
 		print(text)
 		input_string = input(question + ' ')
