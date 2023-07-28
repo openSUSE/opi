@@ -1,4 +1,12 @@
 -------------------------------------------------------------------
+Fri Jul 28 10:01:21 UTC 2023 - Dominik Heidler <dheidler@suse.de>
+
+- Version 3.3.0
+- Add tests and tweak weighting algorithm for non interactive mode
+- Allow running without user interaction
+- Add config option to disable auto refresh
+
+-------------------------------------------------------------------
 Thu Jul 13 09:12:57 UTC 2023 - Dominik Heidler <dheidler@suse.de>
 
 - Version 3.2.0
