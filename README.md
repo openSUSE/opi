@@ -57,16 +57,29 @@ Demo:
 
 ![Screenshot](demo.gif)
 
-### Using DNF instead of Zypper
+### Config options
+
+Change the config by editing the content of `/etc/opi.cfg`.
+
+#### Using DNF instead of Zypper
 
 If you want to, you can use [DNF](https://en.opensuse.org/SDB:DNF) instead of Zypper.
-To do this, change the content of `/etc/opi.cfg`:
 
 ```cfg
 backend = dnf
 ```
 
 If you want to go back to Zypper, just change the value of `backend` back to `zypp`.
+
+#### Disabling auto-refresh for new repositories
+
+If you want to, you can disable auto-refreshing of new repositories.
+
+```cfg
+new_repo_auto_refresh = false
+```
+
+If you want to reactivate auto-refreshing for new repositories, just change the value of `new_repo_auto_refresh` back to `true`.
 
 ### Packages from Other Repositories
 
@@ -81,7 +94,7 @@ opi codecs
 ```
 
 ```
-usage: opi [-h] [-v] [-r] [query [query ...]]
+usage: opi [-h] [-v] [-n] [query ...]
 
 openSUSE Package Installer
 ==========================
@@ -92,17 +105,15 @@ Search and install almost all packages available for openSUSE and SLE:
   3. Popular packages for various vendors
 
 positional arguments:
-  query                 can be any package name or part of it and will be
-                        searched for both at the openSUSE Build Service and
-                        Packman.
+  query                 can be any package name or part of it and will be searched
+                        for both at the openSUSE Build Service and Packman.
                         If multiple query arguments are provided only results
                         matching all of them are returned.
 
-optional arguments:
-  -h, --help            show this help message and exit
-  -v, --version         show program's version number and exit
-  -r, --reversed-output
-                        print the search results in reverse
+options:
+  -h, --help     show this help message and exit
+  -v, --version  show program's version number and exit
+  -n             Run in non interactive mode
 
 Also these queries can be used to install packages from various other vendors:
   anydesk           AnyDesk remote access
@@ -112,6 +123,7 @@ Also these queries can be used to install packages from various other vendors:
   codecs            Media Codecs from Packman and official repo
   dotnet            Microsoft .NET
   jami              Jami p2p messenger
+  maptool           Virtual Tabletop for playing roleplaying games
   megasync          Mega Desktop App
   msedge            Microsoft Edge
   plex              Plex Media Server
