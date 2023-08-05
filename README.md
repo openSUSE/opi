@@ -105,10 +105,10 @@ Search and install almost all packages available for openSUSE and SLE:
   3. Popular packages for various vendors
 
 positional arguments:
-  query                 can be any package name or part of it and will be searched
-                        for both at the openSUSE Build Service and Packman.
-                        If multiple query arguments are provided only results
-                        matching all of them are returned.
+  query          can be any package name or part of it and will be searched
+                 for both at the openSUSE Build Service and Packman.
+                 If multiple query arguments are provided only results
+                 matching all of them are returned.
 
 options:
   -h, --help     show this help message and exit
