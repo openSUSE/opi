@@ -131,6 +131,7 @@ Also these queries can be used to install packages from various other vendors:
   skype             Microsoft Skype
   slack             Slack messenger
   sublime           Editor for code, markup and prose
+  teams-for-linux   unofficial Microsoft Teams for Linux
   teamviewer        TeamViewer remote access
   vivaldi           Vivaldi web browser
   vscode            Microsoft Visual Studio Code
