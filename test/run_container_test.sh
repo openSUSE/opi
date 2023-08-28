@@ -22,5 +22,6 @@ fi
 
 
 opi_dir="$(dirname $(pwd)/$0)/../"
-podman run -ti --rm --volume "${opi_dir}:/opi/" $opi_base_image /opi/test/run.sh $1
+test_module=$(basename $1)
+podman run -ti --rm --volume "${opi_dir}:/opi/" $opi_base_image /opi/test/run.sh $test_module
 exit $?
