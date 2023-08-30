@@ -1,4 +1,14 @@
 -------------------------------------------------------------------
+Wed Aug 30 13:32:14 UTC 2023 - Dominik Heidler <dheidler@suse.de>
+
+- Version 3.4.0
+- Add unofficial Teams-for-linux client
+- Improve non interactive tests
+- Strip test module name
+- chore: fix indentation
+- docs: add config options, update opi help page
+
+-------------------------------------------------------------------
 Fri Jul 28 10:01:21 UTC 2023 - Dominik Heidler <dheidler@suse.de>
 
 - Version 3.3.0
