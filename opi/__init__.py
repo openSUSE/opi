@@ -82,6 +82,9 @@ def get_version():
 	version = os_release.get('VERSION') # VERSION is not set for TW
 	return version
 
+def expand_releasever(s: str) -> str:
+	return s.replace('$releasever', get_version() or '$releasever')
+
 ###############
 ### PACKMAN ###
 ###############
@@ -153,7 +156,7 @@ def search_local_repos(package):
 			# 104 ZYPPER_EXIT_INF_CAP_NOT_FOUND is returned if there are no results
 			raise
 
-	repos_by_name = {repo['name']: repo for repo in get_repos()}
+	repos_by_name = {expand_releasever(repo['name']): repo for repo in get_repos()}
 	local_installables = []
 	for repo_name, installables in search_results.items():
 		try:
@@ -175,7 +178,7 @@ def search_local_repos(package):
 	return local_installables
 
 def url_normalize(url):
-	return re.sub(r'^https?', '', url).rstrip('/').replace('$releasever', get_version() or '$releasever')
+	return expand_releasever(re.sub(r'^https?', '', url).rstrip('/'))
 
 def get_repos():
 	for repo_file in os.listdir(REPO_DIR):
@@ -472,7 +475,7 @@ def install_binary(binary):
 			existing_repo = get_enabled_repo_by_url(url)
 		if existing_repo:
 			# Install from existing repos (don't add a repo)
-			print(f"Installing from existing repo '{existing_repo['name']}'")
+			print(f"Installing from existing repo '{expand_releasever(existing_repo['name'])}'")
 			# ensure that this repo is up to date if no auto_refresh is configured
 			if not existing_repo['auto_refresh']:
 				refresh_repos(existing_repo['alias'])
@@ -562,7 +565,7 @@ def ask_for_option(options, question='Pick a number (0 to quit):', option_filter
 		return options[num - 1]
 
 def ask_import_key(keyurl):
-	keys = requests.get(keyurl.replace('$releasever', get_version() or '$releasever')).text
+	keys = requests.get(expand_releasever(keyurl)).text
 	db_keys = get_keys_from_rpmdb()
 	for key in split_keys(keys):
 		for line in subprocess.check_output(['gpg', '--quiet', '--show-keys', '--with-colons', '-'], input=key.encode()).decode().strip().split('\n'):
@@ -583,7 +586,7 @@ def ask_keep_key(keyurl, repo_name=None):
 		Ask to remove the key given by url to key file.
 		Warns about all repos still using the key except the repo given by repo_name param.
 	"""
-	urlkeys = split_keys(requests.get(keyurl.replace('$releasever', get_version() or '$releasever')).text)
+	urlkeys = split_keys(requests.get(expand_releasever(keyurl)).text)
 	urlkeys_normalized = [normalize_key(urlkey) for urlkey in urlkeys]
 	db_keys = get_keys_from_rpmdb()
 	keys_to_ask_user = [key for key in db_keys if key['pubkey'] in urlkeys_normalized]
