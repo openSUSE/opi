@@ -16,8 +16,8 @@ class MEGAsync(BasePlugin):
 		opi.add_repo(
 			filename = 'megasync',
 			name = 'MEGAsync',
-			url = 'https://mega.nz/linux/MEGAsync/openSUSE_Tumbleweed/',
-			gpgkey = 'https://mega.nz/linux/MEGAsync/openSUSE_Tumbleweed/repodata/repomd.xml.key'
+			url = 'https://mega.nz/linux/repo/openSUSE_Tumbleweed/',
+			gpgkey = 'https://mega.nz/linux/repo/openSUSE_Tumbleweed/repodata/repomd.xml.key'
 		)
 
 		packages = ['megasync']
