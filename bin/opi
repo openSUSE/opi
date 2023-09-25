@@ -49,7 +49,7 @@ try:
 
 		'''),
 		epilog=textwrap.dedent('''\
-			Also these queries can be used to install packages from various other vendors:
+			Also these queries (provided by plugins) can be used to install packages from various other vendors:
 		''') + pm.get_plugin_string(' ' * 2))
 
 	ap.add_argument('query', nargs='*', type=str, help=textwrap.dedent('''\
@@ -58,6 +58,7 @@ try:
 	'''))
 	ap.add_argument('-v', '--version', action='version', version=f'opi version {__version__}')
 	ap.add_argument('-n', dest='non_interactive', action='store_true', help="Run in non interactive mode")
+	ap.add_argument('-P', dest='no_plugins', action='store_true', help="Don't run any plugins - only search repos, OBS and Packman")
 
 	args = ap.parse_args()
 
@@ -72,8 +73,9 @@ try:
 			print('       or sudo must not require interaction.')
 			sys.exit(1)
 
-	# Try to find a matching plugin for the query (and run it and exit afterwards)
-	pm.run(args.query[0])
+	if not args.no_plugins:
+		# Try to find a matching plugin for the query (and run it and exit afterwards)
+		pm.run(args.query[0])
 
 	binaries = []
 	binaries.extend(opi.search_published_binary('openSUSE', args.query))
