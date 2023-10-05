@@ -3,7 +3,7 @@ from opi.plugins import BasePlugin
 
 class MSDotnet(BasePlugin):
 	main_query = 'dotnet'
-	description = 'Microsoft .NET'
+	description = 'Microsoft .NET framework'
 	queries = ['dotnet-sdk', 'dotnet']
 
 	@classmethod
