@@ -562,7 +562,7 @@ def ask_for_option(options, question='Pick a number (0 to quit):', option_filter
 	input_string = input_string.strip() or '0'
 	num = int(input_string) if input_string.isdecimal() else -1
 	if num == 0:
-		sys.exit()
+		return False
 	elif not (num >= 1 and num <= len(options)):
 		return ask_for_option(options, question, option_filter, disable_pager)
 	else:

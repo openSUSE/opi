@@ -75,6 +75,8 @@ def repo_query(query):
 	# Print and select a package name option
 	binary_names = opi.get_binary_names(binaries)
 	selected_name = opi.ask_for_option(binary_names)
+	if not selected_name:
+		return
 	print('You have selected package name:', selected_name)
 
 	# Inject binaries from local repos
@@ -84,6 +86,8 @@ def repo_query(query):
 
 	# Print and select a binary package option
 	selected_binary = opi.ask_for_option(binary_options, option_filter=opi.format_binary_option, disable_pager=True)
+	if not selected_binary:
+		return
 	print('You have selected binary package:', opi.format_binary_option(selected_binary, table=False))
 	if opi.is_personal_project(selected_binary['project']):
 		print(colored(

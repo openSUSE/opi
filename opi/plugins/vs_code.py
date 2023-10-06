@@ -16,6 +16,8 @@ class VSCode(BasePlugin):
 			'code-exploration',
 			'code-insiders',
 		])
+		if not option:
+			return
 
 		opi.add_repo(
 			filename = 'vscode',

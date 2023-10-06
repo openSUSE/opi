@@ -16,6 +16,8 @@ class YandexBrowser(BasePlugin):
 			'yandex-browser-stable',
 			'yandex-browser-beta',
 		])
+		if not option:
+			return
 
 		release = option.split('-')[-1]
 		print('You have chosen', release)
