@@ -390,7 +390,7 @@ def search_published_binary(obs_instance, query):
 			print('Please use different search keywords. Some short keywords cause OBS timeout.')
 		else:
 			print('HTTPError:', e)
-		sys.exit(1)
+		return
 
 def get_binary_names(binaries):
 	names = []
