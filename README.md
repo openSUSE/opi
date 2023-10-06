@@ -94,7 +94,7 @@ opi codecs
 ```
 
 ```
-usage: opi [-h] [-v] [-n] [query ...]
+usage: opi [-h] [-v] [-n] [-P] [-m] [query ...]
 
 openSUSE Package Installer
 ==========================
@@ -113,25 +113,29 @@ positional arguments:
 options:
   -h, --help     show this help message and exit
   -v, --version  show program's version number and exit
-  -n             Run in non interactive mode
+  -n             run in non interactive mode
+  -P             don't run any plugins - only search repos, OBS and Packman
+  -m             run installation process individually for each query
+                 argument
 
-Also these queries can be used to install packages from various other vendors:
+Also these queries (provided by plugins) can be used to install packages from various other vendors:
   anydesk           AnyDesk remote access
   atom              Atom Text Editor
   brave             Brave web browser
   chrome            Google Chrome web browser
   codecs            Media Codecs from Packman and official repo
-  dotnet            Microsoft .NET
+  dotnet            Microsoft .NET framework
   jami              Jami p2p messenger
   maptool           Virtual Tabletop for playing roleplaying games
   megasync          Mega Desktop App
-  msedge            Microsoft Edge
+  msedge            Microsoft Edge web browser
+  ocenaudio         Audio Editor
   plex              Plex Media Server
-  resilio-sync      Resilio Sync decentralized file synchronization between devices using the bittorrent protocol
+  resilio-sync      Decentralized file synchronization between devices using bittorrent protocol
   skype             Microsoft Skype
   slack             Slack messenger
   sublime           Editor for code, markup and prose
-  teams-for-linux   unofficial Microsoft Teams for Linux
+  teams-for-linux   Unofficial Microsoft Teams for Linux client
   teamviewer        TeamViewer remote access
   vivaldi           Vivaldi web browser
   vscode            Microsoft Visual Studio Code
