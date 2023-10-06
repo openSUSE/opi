@@ -1,5 +1,4 @@
 import os
-import sys
 from importlib import import_module
 import inspect
 
@@ -33,7 +32,7 @@ class PluginManager:
 		for plugin in self.plugins:
 			if plugin.matches(query):
 				plugin.run(query)
-				sys.exit()
+				return True
 
 	def get_plugin_string(self, indent=''):
 		plugins = ''
