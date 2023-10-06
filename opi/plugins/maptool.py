@@ -23,7 +23,7 @@ def install_github_release(org, repo):
 		print(f"No RPM asset found for {org}/{repo} release {latest_release['tag_name']}")
 		return
 	rpm_url = rpm_assets[0]['browser_download_url']
-	opi.install_packages([rpm_url])
+	opi.install_packages([rpm_url], allow_unsigned=True) # no key available
 
 class MapTool(BasePlugin):
 	main_query = 'maptool'

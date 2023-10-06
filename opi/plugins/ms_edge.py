@@ -5,7 +5,7 @@ from opi.plugins import BasePlugin
 
 class MSEdge(BasePlugin):
 	main_query = 'msedge'
-	description = 'Microsoft Edge'
+	description = 'Microsoft Edge web browser'
 	queries = ['microsoft-edge', 'msedge', 'edge']
 
 	@classmethod

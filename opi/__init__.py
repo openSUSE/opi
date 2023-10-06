@@ -280,11 +280,13 @@ def install_packages(packages, **kwargs):
 def dist_upgrade(**kwargs):
 	pkgmgr_action('dup', **kwargs)
 
-def pkgmgr_action(action, packages=[], from_repo=None, allow_vendor_change=False, allow_arch_change=False, allow_downgrade=False, allow_name_change=False):
+def pkgmgr_action(action, packages=[], from_repo=None, allow_vendor_change=False, allow_arch_change=False, allow_downgrade=False, allow_name_change=False, allow_unsigned=False):
 	if get_backend() == BackendConstants.zypp:
 		args = ['sudo', 'zypper']
 		if global_state.arg_non_interactive:
 			args.append('-n')
+		if allow_unsigned:
+			args.append('--no-gpg-checks')
 		args.append(action)
 		if from_repo:
 			args.extend(['--from', from_repo])
@@ -308,6 +310,8 @@ def pkgmgr_action(action, packages=[], from_repo=None, allow_vendor_change=False
 		# allow_downgrade and allow_name_change are default in DNF
 		if allow_vendor_change:
 			args.append('--setopt=allow_vendor_change=True')
+		if allow_unsigned:
+			args.append('--nogpgcheck')
 	args.extend(packages)
 	subprocess.call(args)
 
