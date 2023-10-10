@@ -58,7 +58,7 @@ def setup_argparser(plugin_manager):
 	ap.add_argument('-v', '--version', action='version', version=f'opi version {__version__}')
 	ap.add_argument('-n', dest='non_interactive', action='store_true', help='run in non interactive mode')
 	ap.add_argument('-P', dest='no_plugins', action='store_true', help="don't run any plugins - only search repos, OBS and Packman")
-	ap.add_argument('-m', dest='multi_package', action='store_true', help='run installation process individually for each query argument')
+	ap.add_argument('-m', dest='multi_package', action='store_true', help='run installation process individually for each query arg')
 
 	return ap
 
