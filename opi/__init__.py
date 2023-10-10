@@ -71,6 +71,12 @@ def get_distribution(prefix=False, use_releasever_variable=False):
 			project = 'openSUSE:Leap:$releasever'
 		else:
 			project = 'openSUSE:Leap:' + version
+	elif name == 'openSUSE Leap Micro':
+		# Leap Micro major version seems to be 10 lower than Leap the version it is based on
+		if use_releasever_variable:
+			project = 'openSUSE:Leap:1$releasever'
+		else:
+			project = 'openSUSE:Leap:1' + version
 	elif name.startswith('SLE'):
 		project = 'SLE' + version
 	if prefix:
@@ -107,6 +113,8 @@ def add_packman_repo(dup=False):
 
 def add_openh264_repo(dup=False):
 	project = get_os_release()['NAME']
+	project = project.replace('openSUSE MicroOS', 'openSUSE Tumbleweed')
+	project = project.replace('openSUSE Leap Micro', 'openSUSE Leap')
 	project = project.replace(':', '_').replace(' ', '_')
 
 	url = f'http://codecs.opensuse.org/openh264/{project}/'
