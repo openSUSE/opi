@@ -115,8 +115,7 @@ options:
   -v, --version  show program's version number and exit
   -n             run in non interactive mode
   -P             don't run any plugins - only search repos, OBS and Packman
-  -m             run installation process individually for each query
-                 argument
+  -m             run installation process individually for each query arg
 
 Also these queries (provided by plugins) can be used to install packages from various other vendors:
   anydesk           AnyDesk remote access
