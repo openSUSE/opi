@@ -18,8 +18,6 @@ class Jami(BasePlugin):
 			'jami-gnome',
 			'jami-daemon',
 		])
-		if not option:
-			return
 
 		print('You have chosen', option)
 

@@ -15,8 +15,6 @@ class Vivaldi(BasePlugin):
 			'vivaldi-stable',
 			'vivaldi-snapshot',
 		])
-		if not option:
-			return
 
 		opi.add_repo(
 			filename = 'vivaldi',

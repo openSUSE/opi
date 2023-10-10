@@ -1,6 +1,7 @@
 import os
 from importlib import import_module
 import inspect
+from opi import NoOptionSelected
 
 class BasePlugin:
 	main_query = ''
@@ -31,7 +32,10 @@ class PluginManager:
 		query = query.lower()
 		for plugin in self.plugins:
 			if plugin.matches(query):
-				plugin.run(query)
+				try:
+					plugin.run(query)
+				except NoOptionSelected:
+					pass
 				return True
 
 	def get_plugin_string(self, indent=''):

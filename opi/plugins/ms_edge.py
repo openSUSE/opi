@@ -19,8 +19,6 @@ class MSEdge(BasePlugin):
 			'microsoft-edge-beta',
 			'microsoft-edge-dev',
 		])
-		if not option:
-			return
 
 		opi.add_repo(
 			filename = 'microsoft-edge',

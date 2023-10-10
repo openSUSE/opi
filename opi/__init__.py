@@ -26,6 +26,15 @@ PROXY_URL = 'https://opi-proxy.opensuse.org/'
 
 REPO_DIR = '/etc/zypp/repos.d/'
 
+##################
+### Exceptions ###
+##################
+
+class NoOptionSelected(Exception):
+	pass
+
+class HTTPError(Exception):
+    pass
 
 ###################
 ### System Info ###
@@ -390,7 +399,7 @@ def search_published_binary(obs_instance, query):
 			print('Please use different search keywords. Some short keywords cause OBS timeout.')
 		else:
 			print('HTTPError:', e)
-		return
+		raise HTTPError()
 
 def get_binary_names(binaries):
 	names = []
@@ -562,7 +571,7 @@ def ask_for_option(options, question='Pick a number (0 to quit):', option_filter
 	input_string = input_string.strip() or '0'
 	num = int(input_string) if input_string.isdecimal() else -1
 	if num == 0:
-		return False
+		raise NoOptionSelected()
 	elif not (num >= 1 and num <= len(options)):
 		return ask_for_option(options, question, option_filter, disable_pager)
 	else:
