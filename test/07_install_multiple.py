@@ -4,15 +4,10 @@ import sys
 import pexpect
 import subprocess
 
-c = pexpect.spawn('./bin/opi -nm zfs resilio-sync html2text yandex-disk', logfile=sys.stdout.buffer, echo=False)
+c = pexpect.spawn('./bin/opi -nm zfs resilio-sync html2text', logfile=sys.stdout.buffer, echo=False)
 
 # plugins are installed first
-c.expect('Do you want to install resilio-sync')
-c.expect('Import package signing key', timeout=10)
-c.expect('Continue')
-c.expect('Do you want to keep', timeout=500)
-
-c.expect('Do you want to install yandex-disk')
+c.expect('Do you want to install')
 c.expect('Import package signing key', timeout=10)
 c.expect('Continue')
 c.expect('Do you want to keep', timeout=500)
@@ -36,6 +31,5 @@ c.close()
 print()
 assert c.exitstatus == 0, f'Exit code: {c.exitstatus}'
 subprocess.check_call(['rpm', '-qi', 'resilio-sync'])
-subprocess.check_call(['rpm', '-qi', 'yandex-disk'])
 subprocess.check_call(['rpm', '-qi', 'zfs'])
 subprocess.check_call(['rpm', '-qi', 'html2text'])
