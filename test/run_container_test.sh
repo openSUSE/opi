@@ -3,11 +3,22 @@
 base_image="${2:-opensuse/tumbleweed}"
 opi_base_image="opi_base_${base_image/\//_}"
 
+if [[ "$2" == "opensuse/microos" ]] ; then
+	base_image="opensuse/tumbleweed"
+	opi_base_image="opi_base_opensuse_microos"
+fi
+
 # prepare container image
 if ! podman image exists $opi_base_image ; then
 	echo "Preparing container"
 	podman run -td --dns=1.1.1.1 --name=opi_base $base_image
 	podman exec -it opi_base zypper -n ref
+
+	if [[ "$2" == "opensuse/microos" ]] ; then
+		# fake MicroOS
+		podman exec -it opi_base zypper -n install --force-resolution MicroOS-release
+	fi
+
 	# opi dependencies
 	podman exec -it opi_base zypper -n install sudo python3 python3-requests python3-lxml python3-termcolor python3-curses python3-rpm curl
 
