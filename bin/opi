@@ -64,7 +64,7 @@ def setup_argparser(plugin_manager):
 
 
 def repo_query(query):
-	print(f'Query: {(" ".join(query) if isinstance(query, list) else query)!r}')
+	print(f'Searching repos for: {(" ".join(query) if isinstance(query, list) else query)}')
 
 	binaries = []
 	binaries.extend(opi.search_published_binary('openSUSE', query))
