@@ -2,7 +2,6 @@
 
 import sys
 import pexpect
-import subprocess
 
 c = pexpect.spawn('./bin/opi htop', logfile=sys.stdout.buffer, echo=False)
 
