@@ -134,14 +134,11 @@ if __name__ == '__main__':
 			# Iterate over queries, copy list as modifying it from within the loop
 			for query in list(args.query):
 				# Try to find a matching plugin for the query (and run it); runs just first query if not in multi_package mode
-				success = pm.run(query)
-
-				# After plugin successfully ran, remove from queries to not try again in repo search
-				if success:
+				if pm.run(query):
+					# After plugin successfully ran, remove from queries to not try again in repo search
 					args.query.remove(query)
-
-				if not args.multi_package and success:
-					sys.exit()
+					if not args.multi_package:
+						sys.exit()
 
 		# Search repos
 		if not args.multi_package:
