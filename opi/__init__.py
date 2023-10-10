@@ -34,7 +34,7 @@ class NoOptionSelected(Exception):
 	pass
 
 class HTTPError(Exception):
-    pass
+	pass
 
 ###################
 ### System Info ###
