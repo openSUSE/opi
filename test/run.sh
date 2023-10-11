@@ -6,6 +6,8 @@ cd /opi/
 ./test/$1
 result=$?
 
+echo "$(tput bold)$(tput setaf 6)===== Finished test: $1 =====$(tput sgr0)"
+
 if [[ "$result" == "0" ]] ; then
 	echo "$(tput bold)$(tput setaf 2)>>>>> PASSED <<<<<$(tput sgr0)"
 else
