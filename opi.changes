@@ -1,4 +1,16 @@
 -------------------------------------------------------------------
+Wed Oct 11 10:08:35 UTC 2023 - Dominik Heidler <dheidler@suse.de>
+
+- Version 3.6.0
+- Increase timeouts in testsuite and improve output
+- test: remove yandex-disk from multi-install test
+- Run testsuite for (fake) MicroOS
+- Fix repo URL generation for MicroOS and Leap Micro (fixes #158)
+- Add multi package option
+- Add ocenaudio audio editor (fixes #155)
+- Ignore gpg check for unsigned pkgs (or pkgs without published key)
+
+-------------------------------------------------------------------
 Mon Sep 25 13:23:05 UTC 2023 - Dominik Heidler <dheidler@suse.de>
 
 - Version 3.5.0
