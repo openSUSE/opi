@@ -34,8 +34,7 @@ class PreserveWhiteSpaceWrapRawTextHelpFormatter(argparse.RawTextHelpFormatter):
 		return [item for sublist in textRows for item in sublist]
 
 
-try:
-	pm = PluginManager()
+def setup_argparser(plugin_manager):
 	ap = argparse.ArgumentParser(
 		formatter_class=PreserveWhiteSpaceWrapRawTextHelpFormatter,
 		description=textwrap.dedent('''\
@@ -50,72 +49,102 @@ try:
 		'''),
 		epilog=textwrap.dedent('''\
 			Also these queries (provided by plugins) can be used to install packages from various other vendors:
-		''') + pm.get_plugin_string(' ' * 2))
+		''') + plugin_manager.get_plugin_string(' ' * 2))
 
 	ap.add_argument('query', nargs='*', type=str, help=textwrap.dedent('''\
 		can be any package name or part of it and will be searched for both at the openSUSE Build Service and Packman.
 		If multiple query arguments are provided only results matching all of them are returned.
 	'''))
 	ap.add_argument('-v', '--version', action='version', version=f'opi version {__version__}')
-	ap.add_argument('-n', dest='non_interactive', action='store_true', help="Run in non interactive mode")
-	ap.add_argument('-P', dest='no_plugins', action='store_true', help="Don't run any plugins - only search repos, OBS and Packman")
+	ap.add_argument('-n', dest='non_interactive', action='store_true', help='run in non interactive mode')
+	ap.add_argument('-P', dest='no_plugins', action='store_true', help="don't run any plugins - only search repos, OBS and Packman")
+	ap.add_argument('-m', dest='multi_package', action='store_true', help='run installation process individually for each query arg')
 
-	args = ap.parse_args()
+	return ap
 
-	if not args.query:
-		ap.print_help()
-		sys.exit()
 
-	if args.non_interactive:
-		global_state.arg_non_interactive = True
-		if subprocess.run(['sudo', '-n', 'true']).returncode != 0:
-			print('Error: In non-interactive mode this command must be run as root')
-			print('       or sudo must not require interaction.')
-			sys.exit(1)
+def repo_query(query):
+	try:
+		print(f'Searching repos for: {(" ".join(query) if isinstance(query, list) else query)}')
 
-	if not args.no_plugins:
-		# Try to find a matching plugin for the query (and run it and exit afterwards)
-		pm.run(args.query[0])
+		binaries = []
+		binaries.extend(opi.search_published_binary('openSUSE', query))
+		binaries.extend(opi.search_published_binary('Packman', query))
+		binaries = opi.sort_uniq_binaries(binaries)
+		if len(binaries) == 0:
+			print('No package found.')
+			return
 
-	binaries = []
-	binaries.extend(opi.search_published_binary('openSUSE', args.query))
-	binaries.extend(opi.search_published_binary('Packman', args.query))
-	binaries = opi.sort_uniq_binaries(binaries)
-	if len(binaries) == 0:
-		print('No package found.')
-		sys.exit()
+		# Print and select a package name option
+		binary_names = opi.get_binary_names(binaries)
+		selected_name = opi.ask_for_option(binary_names)
+		print('You have selected package name:', selected_name)
 
-	# Print and select a package name option
-	binary_names = opi.get_binary_names(binaries)
-	selected_name = opi.ask_for_option(binary_names)
-	print('You have selected package name:', selected_name)
+		# Inject binaries from local repos
+		binaries = opi.search_local_repos(selected_name) + binaries
 
-	# Inject binaries from local repos
-	binaries = opi.search_local_repos(selected_name) + binaries
+		binary_options = opi.get_binaries_by_name(selected_name, binaries)
 
-	binary_options = opi.get_binaries_by_name(selected_name, binaries)
+		# Print and select a binary package option
+		selected_binary = opi.ask_for_option(binary_options, option_filter=opi.format_binary_option, disable_pager=True)
+		print('You have selected binary package:', opi.format_binary_option(selected_binary, table=False))
+		if opi.is_personal_project(selected_binary['project']):
+			print(colored(
+				'BE CAREFUL! The package is from a personal repository and NOT reviewed by others.\n'
+				'You can ask the author to submit the package to development projects and openSUSE:Factory.\n'
+				'Learn more at https://en.opensuse.org/openSUSE:How_to_contribute_to_Factory',
+				'red'
+			))
+		elif selected_binary['project'] == 'openSUSE:Factory':
+			print(opi.colored(
+				'BE CAREFUL! You are about to add the Factory Repository.\n'
+				'This repo contains the unreleased Tumbleweed distro before openQA tests have been run.\n'
+				'Only proceed if you know what you are doing!',
+				'yellow'
+			))
+			if not opi.ask_yes_or_no('Do you want to continue?', default_answer='n'):
+				return
 
-	# Print and select a binary package option
-	selected_binary = opi.ask_for_option(binary_options, option_filter=opi.format_binary_option, disable_pager=True)
-	print('You have selected binary package:', opi.format_binary_option(selected_binary, table=False))
-	if opi.is_personal_project(selected_binary['project']):
-		print(colored(
-			'BE CAREFUL! The package is from a personal repository and NOT reviewed by others.\n'
-			'You can ask the author to submit the package to development projects and openSUSE:Factory.\n'
-			'Learn more at https://en.opensuse.org/openSUSE:How_to_contribute_to_Factory',
-			'red'
-		))
-	elif selected_binary['project'] == 'openSUSE:Factory':
-		print(opi.colored(
-			'BE CAREFUL! You are about to add the Factory Repository.\n'
-			'This repo contains the unreleased Tumbleweed distro before openQA tests have been run.\n'
-			'Only proceed if you know what you are doing!',
-			'yellow'
-		))
-		if not opi.ask_yes_or_no('Do you want to continue?', default_answer='n'):
+		# Install selected package
+		opi.install_binary(selected_binary)
+	except (opi.NoOptionSelected, opi.HTTPError):
+		return
+
+
+if __name__ == '__main__':
+	try:
+		pm = PluginManager()
+		ap = setup_argparser(pm)
+		args = ap.parse_args()
+
+		if not args.query:
+			ap.print_help()
 			sys.exit()
 
-	# Install selected package
-	opi.install_binary(selected_binary)
-except KeyboardInterrupt:
-	print()
+		if args.non_interactive:
+			global_state.arg_non_interactive = True
+			if subprocess.run(['sudo', '-n', 'true']).returncode != 0:
+				print('Error: In non-interactive mode this command must be run as root')
+				print('       or sudo must not require interaction.')
+				sys.exit(1)
+
+		# Search plugins
+		if not args.no_plugins:
+			# Iterate over queries, copy list as modifying it from within the loop
+			for query in list(args.query):
+				# Try to find a matching plugin for the query (and run it); runs just first query if not in multi_package mode
+				if pm.run(query):
+					# After plugin successfully ran, remove from queries to not try again in repo search
+					args.query.remove(query)
+					if not args.multi_package:
+						sys.exit()
+
+		# Search repos
+		if not args.multi_package:
+			repo_query(args.query)
+		else:
+			for query in args.query:
+				repo_query(query)
+
+	except KeyboardInterrupt:
+		print()

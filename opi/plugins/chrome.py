@@ -18,7 +18,6 @@ class GoogleChrome(BasePlugin):
 			'google-chrome-beta',
 			'google-chrome-unstable',
 		])
-
 		opi.add_repo(
 			filename = 'google-chrome',
 			name = 'google-chrome',
