@@ -54,11 +54,12 @@ def setup_argparser(plugin_manager):
 	ap.add_argument('query', nargs='*', type=str, help=textwrap.dedent('''\
 		can be any package name or part of it and will be searched for both at the openSUSE Build Service and Packman.
 		If multiple query arguments are provided only results matching all of them are returned.
+		Please use the -m option if you want to use the query arguments as individual package queries.
 	'''))
 	ap.add_argument('-v', '--version', action='version', version=f'opi version {__version__}')
 	ap.add_argument('-n', dest='non_interactive', action='store_true', help='run in non interactive mode')
 	ap.add_argument('-P', dest='no_plugins', action='store_true', help="don't run any plugins - only search repos, OBS and Packman")
-	ap.add_argument('-m', dest='multi_package', action='store_true', help='run installation process individually for each query arg')
+	ap.add_argument('-m', dest='multi_install', action='store_true', help='use query args as space separated package queries')
 
 	return ap
 
@@ -132,15 +133,15 @@ if __name__ == '__main__':
 		if not args.no_plugins:
 			# Iterate over queries, copy list as modifying it from within the loop
 			for query in list(args.query):
-				# Try to find a matching plugin for the query (and run it); runs just first query if not in multi_package mode
+				# Try to find a matching plugin for the query (and run it); runs just first query if not in multi_install mode
 				if pm.run(query):
 					# After plugin successfully ran, remove from queries to not try again in repo search
 					args.query.remove(query)
-					if not args.multi_package:
+					if not args.multi_install:
 						sys.exit()
 
 		# Search repos
-		if not args.multi_package:
+		if not args.multi_install:
 			repo_query(args.query)
 		else:
 			for query in args.query:

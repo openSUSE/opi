@@ -109,13 +109,15 @@ positional arguments:
                  for both at the openSUSE Build Service and Packman.
                  If multiple query arguments are provided only results
                  matching all of them are returned.
+                 Please use the -m option if you want to use the query
+                 arguments as individual package queries.
 
 options:
   -h, --help     show this help message and exit
   -v, --version  show program's version number and exit
   -n             run in non interactive mode
   -P             don't run any plugins - only search repos, OBS and Packman
-  -m             run installation process individually for each query arg
+  -m             use query args as space separated package queries
 
 Also these queries (provided by plugins) can be used to install packages from various other vendors:
   anydesk           AnyDesk remote access
