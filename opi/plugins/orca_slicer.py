@@ -14,35 +14,32 @@ class OrcaSlicer(BasePlugin):
 	def run(cls, query):
 		org = 'SoftFever'
 		repo = 'OrcaSlicer'
-		releases = github.get_releases(org, repo)
-		releases = [r for r in releases if not 'beta' in r['tag_name']]
-		if not releases:
+		latest_release = github.get_latest_release(org, repo)
+		if not latest_release:
 			print(f'No release found for {org}/{repo}')
 			return
-		latest_release = releases[0]
-		if not opi.ask_yes_or_no(f"Do you want to install {repo} release {latest_release['tag_name']} from {org} github repo?"):
+		version = latest_release['tag_name'].lstrip('v').replace('-', '_')
+		if not opi.ask_yes_or_no(f"Do you want to install {repo} release {version} from {org} github repo?"):
 			return
-		version = latest_release['tag_name'].lstrip('v')
-		assets = github.get_release_assets(latest_release)
-		assets = [a for a in assets if a['name'].endswith('.AppImage')]
-		if not assets:
-			print(f"No asset found for {org}/{repo} release {latest_release['tag_name']}")
+		asset = github.get_release_asset(latest_release, filters=[lambda a: a['name'].endswith('.AppImage')])
+		if not asset:
+			print(f"No asset found for {org}/{repo} release {version}")
 			return
-		url = assets[0]['url']
+		url = asset['url']
 
 		binary_path = 'usr/bin/OrcaSlicer'
 		icon_path = 'usr/share/pixmaps/OrcaSlicer.svg'
 
-		rpm = rpmbuild.RPMBuild('OrcaSlicer', version, cls.description, "x86_64", [
+		rpm = rpmbuild.RPMBuild('OrcaSlicer', version, cls.description, "x86_64", files=[
 			f"/{binary_path}",
 			f"/{icon_path}"
 		])
 
-		binary_abspath = os.path.join(rpm.src_root_dir, binary_path)
+		binary_abspath = os.path.join(rpm.buildroot, binary_path)
 		http.download_file(url, binary_abspath)
 		os.chmod(binary_abspath, 0o755)
 
-		icon_abspath = os.path.join(rpm.src_root_dir, icon_path)
+		icon_abspath = os.path.join(rpm.buildroot, icon_path)
 		icon_url = "https://raw.githubusercontent.com/SoftFever/OrcaSlicer/2d849f/resources/images/OrcaSlicer.svg"
 		http.download_file(icon_url, icon_abspath)
 
