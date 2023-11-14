@@ -171,7 +171,7 @@ def search_local_repos(package):
 	except subprocess.CalledProcessError as e:
 		if e.returncode != 104:
 			# 104 ZYPPER_EXIT_INF_CAP_NOT_FOUND is returned if there are no results
-			raise
+			raise # TODO: don't exit program, use exception that will be handled in repo_query except block
 
 	repos_by_name = {expand_releasever(repo['name']): repo for repo in get_repos()}
 	local_installables = []
