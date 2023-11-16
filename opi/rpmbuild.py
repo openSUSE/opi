@@ -76,6 +76,7 @@ class RPMBuild:
 			Built locally using OPI.
 
 			%install
+			mkdir -p %{{buildroot}} # required on leap 15.5
 			cp -lav ./buildroot/* %{{buildroot}}/
 
 			%files
