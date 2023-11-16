@@ -49,8 +49,8 @@ class RPMBuild:
 
 		self.buildroot = os.path.join(self.tmpdir.name, "buildroot") # buildroot where plugins copy files to
 		self.spec_path = os.path.join(self.tmpdir.name, "specfile.spec")
-		self.rpmbuild_buildroot = os.path.join(self.tmpdir.name, "rpmbuildroot") # buildroot internally used by rpmbuild
-		self.rpm_out_dir = os.path.join(self.tmpdir.name, "rpms")
+		self.rpmbuild_buildroot = os.path.join(self.tmpdir.name, "RPMBUILDROOT") # buildroot internally used by rpmbuild
+		self.rpm_out_dir = os.path.join(self.tmpdir.name, "RPMS")
 
 		os.mkdir(self.buildroot)
 		os.mkdir(self.rpm_out_dir)
