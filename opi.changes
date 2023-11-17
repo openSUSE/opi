@@ -1,4 +1,18 @@
 -------------------------------------------------------------------
+Fri Nov 17 14:05:21 UTC 2023 - Dominik Heidler <dheidler@suse.de>
+
+- Version 4.0.0
+  * Simplify rpmbuild by removing %install
+  * Add opi new dependencies to testsuite: rpm-build, squashfs
+  * Rename rpmbuild internal dirs to uppercase
+  * Fix building RPMs for Leap 15.5
+  * Update opi-proxy .service file to listen on IPv6 as well
+  * Add Snap library and Spotify plugin
+  * Allow installing non-rpm applications (add OrcaSlicer)
+  * chore: update multi_install description
+  * Indent changes in changelog further than version
+
+-------------------------------------------------------------------
 Wed Oct 11 10:08:35 UTC 2023 - Dominik Heidler <dheidler@suse.de>
 
 - Version 3.6.0
