@@ -49,8 +49,7 @@ class RPMBuild:
 
 		self.buildroot = os.path.join(self.tmpdir.name, "buildroot") # buildroot where plugins copy files to
 		self.spec_path = os.path.join(self.tmpdir.name, "specfile.spec")
-		self.rpmbuild_buildroot = os.path.join(self.tmpdir.name, "RPMBUILDROOT") # buildroot internally used by rpmbuild
-		self.rpm_out_dir = os.path.join(self.tmpdir.name, "RPMS")
+		self.rpm_out_dir = os.path.join(self.tmpdir.name, "rpms")
 
 		os.mkdir(self.buildroot)
 		os.mkdir(self.rpm_out_dir)
@@ -74,10 +73,6 @@ class RPMBuild:
 			%description
 			{self.description}
 			Built locally using OPI.
-
-			%install
-			mkdir -p %{{buildroot}} # required on leap 15.5
-			cp -lav ./buildroot/* %{{buildroot}}/
 
 			%files
 			{nl.join(self.files)}
@@ -112,7 +107,7 @@ class RPMBuild:
 			f.write(spec)
 		subprocess.check_call([
 			"rpmbuild", "-bb", "--build-in-place",
-			"--buildroot", self.rpmbuild_buildroot,
+			"--buildroot", self.buildroot,
 			"--define", f"_rpmdir {self.rpm_out_dir}",
 			"specfile.spec"
 		], cwd=self.tmpdir.name)
