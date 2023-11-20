@@ -1,7 +1,7 @@
 #!/bin/bash -ex
 
 version=$1
-changes=$(git log $(git describe --tags --abbrev=0)..HEAD --no-merges --format="  - %s")
+changes=$(git log $(git describe --tags --abbrev=0)..HEAD --no-merges --format="  * %s")
 
 echo "__version__ = '${version}'" > opi/version.py
 osc vc -m "Version ${version}\n${changes}" opi.changes
