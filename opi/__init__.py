@@ -98,7 +98,9 @@ def get_version():
 	return version
 
 def expand_releasever(s: str) -> str:
-	return s.replace('$releasever', get_version() or '$releasever')
+	s = s.replace('${releasever}', get_version() or '${releasever}')
+	s = s.replace('$releasever', get_version() or '$releasever')
+	return s
 
 ###############
 ### PACKMAN ###
@@ -185,7 +187,7 @@ def search_local_repos(package):
 		installable['repository'] = repos_by_name[repo_name]
 		installable['name'] = package
 		installable['obs_instance'] = 'LOCAL_REPO'
-		installable['project'] = installable['repository']['name']
+		installable['project'] = expand_releasever(installable['repository']['name'])
 		# filter out OBS/Packman repos as they are already searched via OBS/Packman API
 		if 'download.opensuse.org/repositories' in installable['repository']['url']:
 			continue
