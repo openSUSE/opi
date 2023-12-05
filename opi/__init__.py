@@ -73,8 +73,10 @@ def get_distribution(prefix=False, use_releasever_variable=False):
 	if version:
 		# strip prerelease suffix (eg. ' Alpha')
 		version = version.split(' ', 1)[0]
-	if name == 'openSUSE Tumbleweed' or name == 'openSUSE MicroOS':
+	if name in ('openSUSE Tumbleweed', 'openSUSE MicroOS'):
 		project = 'openSUSE:Factory'
+	elif name in ('openSUSE Tumbleweed-Slowroll', 'openSUSE MicroOS-Slowroll'):
+		project = 'openSUSE:Slowroll'
 	elif name == 'openSUSE Leap':
 		if use_releasever_variable:
 			project = 'openSUSE:Leap:$releasever'
