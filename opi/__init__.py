@@ -94,17 +94,18 @@ def get_distribution(prefix=False, use_releasever_variable=False):
 		project = 'openSUSE.org:' + project
 	return project
 
-def get_version():
+def get_version() -> str:
 	os_release = get_os_release()
 	version = os_release.get('VERSION') # VERSION is not set for TW
 	return version
 
-def expand_releasever(s: str) -> str:
+def expand_vars(s: str) -> str:
 	s = s.replace('${releasever}', get_version() or '${releasever}')
 	s = s.replace('$releasever', get_version() or '$releasever')
 	s = s.replace('${basearch}', get_cpu_arch() or '${basearch}')
 	s = s.replace('$basearch', get_cpu_arch() or '$basearch')
 	return s
+
 
 ###############
 ### PACKMAN ###
@@ -161,6 +162,23 @@ def install_packman_packages(packages, **kwargs):
 ### ZYPP/DNF ###
 ################
 
+class Repository:
+	def __init__(self, alias: str, name: str, url: str, auto_refresh: bool, gpgkey: str = None, filename: str = None):
+		self.alias = alias
+		self.name = name
+		self.url = url
+		self.auto_refresh = auto_refresh
+		self.gpgkey = gpgkey
+		self.filename = filename or alias
+
+	def name_expanded(self):
+		""" Return name with all supported vars expanded """
+		return expand_vars(self.name)
+
+	def url_expanded(self):
+		""" Return url with all supported vars expanded """
+		return expand_vars(self.url)
+
 def search_local_repos(package):
 	"""
 		Search local default repos
@@ -181,7 +199,7 @@ def search_local_repos(package):
 			# 104 ZYPPER_EXIT_INF_CAP_NOT_FOUND is returned if there are no results
 			raise # TODO: don't exit program, use exception that will be handled in repo_query except block
 
-	repos_by_name = {expand_releasever(repo['name']): repo for repo in get_repos()}
+	repos_by_name = {repo.name_expanded(): repo for repo in get_repos()}
 	local_installables = []
 	for repo_name, installables in search_results.items():
 		# get the newest package for each repo
@@ -191,20 +209,19 @@ def search_local_repos(package):
 			# rpm 4.14 needs a tuple of (epoch, version, release) - rpm 4.18 can handle a string
 			installables.sort(key=lambda p: cmp_to_key(rpm.labelCompare)(['1', p['version'], p['release']]))
 		installable = installables[-1]
+
 		installable['repository'] = repos_by_name[repo_name]
 		installable['name'] = package
-		installable['obs_instance'] = 'LOCAL_REPO'
-		installable['project'] = expand_releasever(installable['repository']['name'])
 		# filter out OBS/Packman repos as they are already searched via OBS/Packman API
-		if 'download.opensuse.org/repositories' in installable['repository']['url']:
+		if 'download.opensuse.org/repositories' in installable['repository'].url:
 			continue
-		if installable['repository']['filename'] == 'packman':
+		if installable['repository'].filename == 'packman':
 			continue
-		local_installables.append(installable)
+		local_installables.append(LocalPackage(**installable))
 	return local_installables
 
 def url_normalize(url):
-	return expand_releasever(re.sub(r'^https?', '', url).rstrip('/'))
+	return expand_vars(re.sub(r'^https?', '', url).rstrip('/'))
 
 def get_repos():
 	for repo_file in os.listdir(REPO_DIR):
@@ -225,13 +242,13 @@ def get_repos():
 			}
 			if cp.has_option(mainsec, 'gpgkey'):
 				repo['gpgkey'] = cp[mainsec].get('gpgkey')
-			yield repo
+			yield Repository(**repo)
 		except Exception as e:
 			print(f"Error parsing '{repo_file}': {e}")
 
 def get_enabled_repo_by_url(url):
 	for repo in get_repos():
-		if url_normalize(repo['url']) == url_normalize(url):
+		if url_normalize(repo.url) == url_normalize(url):
 			return repo
 
 def add_repo(filename, name, url, enabled=True, gpgcheck=True, gpgkey=None, repo_type='rpm-md', auto_import_keys=False, auto_refresh=False, priority=None):
@@ -255,7 +272,7 @@ def add_repo(filename, name, url, enabled=True, gpgcheck=True, gpgkey=None, repo
 	tf.file.close()
 	refresh_repos(auto_import_keys=auto_import_keys)
 
-def refresh_repos(repo=None, auto_import_keys=False):
+def refresh_repos(repo_alias=None, auto_import_keys=False):
 	refresh_cmd = []
 	if get_backend() == BackendConstants.zypp:
 		refresh_cmd = ['sudo', 'zypper']
@@ -264,8 +281,8 @@ def refresh_repos(repo=None, auto_import_keys=False):
 		refresh_cmd.append('ref')
 	elif get_backend() == BackendConstants.dnf:
 		refresh_cmd = ['sudo', 'dnf', 'ref']
-	if repo:
-		refresh_cmd.append(repo)
+	if repo_alias:
+		refresh_cmd.append(repo_alias)
 	subprocess.call(refresh_cmd)
 
 def normalize_key(pem):
@@ -346,7 +363,126 @@ def pkgmgr_action(action, packages=[], from_repo=None, allow_vendor_change=False
 ### OBS ###
 ###########
 
-def search_published_binary(obs_instance, query):
+class Installable:
+	def __init__(self, name: str, version: str, release: str, arch: str):
+		self.name = name # e.g. MozillaFirefox
+		self.version = version # e.g. 1.2.3
+		self.release = release # e.g. 150500.1.1
+		self.arch = arch # e.g. x86_64, aarch64 or noarch
+
+	def install(self):
+		raise NotImplemented()
+
+	def name_with_arch(self):
+		return f'{self.name}.{self.arch}'
+
+	def _install_from_existing_repo(self, repo: Repository):
+		# Install from existing repos (don't add a repo)
+		print(f"Installing from existing repo '{repo.name_expanded()}'")
+		# ensure that this repo is up to date if no auto_refresh is configured
+		if not repo.auto_refresh:
+			refresh_repos(repo.alias)
+		install_packages([self.name_with_arch()], from_repo=repo.alias)
+
+class OBSPackage(Installable):
+	""" Package returned from OBS API """
+	def __init__(self,
+	             name: str, version: str, release: str, arch: str,
+	             package: str, project: str, repository: str, obs_instance: str):
+		super().__init__(name, version, release, arch)
+		self.package = package # same as name unless this is a subpackage (then package is name of parent)
+		self.project = project # e.g. devel:languages:perl
+		self.repository = repository # e.g. openSUSE_Tumbleweed
+		self.obs_instance = obs_instance # openSUSE or Packman
+
+	def install(self):
+		if self.obs_instance == 'Packman':
+			# Install from Packman Repo
+			add_packman_repo()
+			install_packman_packages([self.name_with_arch()])
+			return
+
+		repo_alias = self.project.replace(':', '_')
+		project_path = self.project.replace(':', ':/')
+		repository = self.repository
+		if config.get_key_from_config('use_releasever_var'):
+			version = get_version()
+			if version:
+				# version is None on tw
+				repository = repository.replace(version, '$releasever')
+		url = f'https://download.opensuse.org/repositories/{project_path}/{repository}/'
+		gpgkey = url + 'repodata/repomd.xml.key'
+		existing_repo = get_enabled_repo_by_url(url)
+
+		if existing_repo:
+			self._install_from_existing_repo(existing_repo)
+		else:
+			print(f"Adding repo '{self.project}'")
+			add_repo(
+				filename = repo_alias,
+				name = self.project,
+				url = url,
+				gpgkey = gpgkey,
+				gpgcheck = True,
+				auto_refresh = config.get_key_from_config('new_repo_auto_refresh')
+			)
+			install_packages([self.name_with_arch()], from_repo=repo_alias,
+				allow_downgrade=True,
+				allow_arch_change=True,
+				allow_name_change=True,
+				allow_vendor_change=True
+			)
+			ask_keep_repo(repo_alias)
+
+	def weight(self):
+		weight = 0
+
+		dash_count = self.name.count('-')
+		weight += 1e5 * (0.5 ** dash_count)
+
+		weight -= 1e4 * len(self.name)
+
+		if self.is_from_official_project():
+			weight += 2e3
+		elif not self.is_from_personal_project():
+			weight += 1e3
+
+		if self.name == self.package:
+			# this rpm is the main or only subpackage
+			weight += 1e2
+
+		if not (get_cpu_arch() == 'x86_64' and self.arch == 'i586'):
+			weight += 1e1
+
+		if self.repository.startswith('openSUSE_Tumbleweed'):
+			weight += 2
+		elif self.repository.startswith('openSUSE_Factory'):
+			weight += 1
+		elif self.repository == 'standard':
+			weight += 0
+
+		return weight
+
+	def __lt__(self, other):
+		""" Note that we sort from high weight to low weight """
+		return self.weight() > other.weight()
+
+	def is_from_official_project(self):
+		return self.project.startswith('openSUSE:')
+
+	def is_from_personal_project(self):
+		return self.project.startswith('home:') or self.project.startswith('isv:')
+
+class LocalPackage(Installable):
+	""" Package found in local repo (metadata) cache """
+	def __init__(self, name: str, version: str, release: str, arch: str, repository: Repository):
+		super().__init__(name, version, release, arch)
+		self.repository = repository
+
+	def install(self):
+		self._install_from_existing_repo(self.repository)
+
+def search_published_packages(obs_instance, query):
 	distribution = get_distribution(prefix=(obs_instance != 'openSUSE'))
 	endpoint = '/search/published/binary/id'
 	url = OBS_APIROOT[obs_instance] + endpoint
@@ -361,12 +497,16 @@ def search_published_binary(obs_instance, query):
 		r.raise_for_status()
 
 		dom = lxml.etree.fromstring(r.text)
-		binaries = []
+		packages = []
 		for binary in dom.xpath('/collection/binary'):
 			binary_data = {k: v for k, v in binary.items()}
 			binary_data['obs_instance'] = obs_instance
 
-			for k in ('name', 'project', 'repository', 'version', 'release', 'arch', 'filename', 'filepath', 'baseproject', 'type'):
+			del binary_data['filename']
+			del binary_data['filepath']
+			del binary_data['baseproject']
+			del binary_data['type']
+			for k in ('name', 'project', 'repository', 'version', 'release', 'arch'):
 				assert k in binary_data, f"Key '{k}' missing"
 
 			# Filter out ghost binary
@@ -374,43 +514,45 @@ def search_published_binary(obs_instance, query):
 			if not binary_data.get('package'):
 				continue
 
+			package = OBSPackage(**binary_data)
+
 			# Filter out branch projects
-			if ':branches:' in binary_data['project']:
+			if ':branches:' in package.project:
 				continue
 
 			# Filter out Packman personal projects
-			if binary_data['obs_instance'] != 'openSUSE' and is_personal_project(binary_data['project']):
+			if package.obs_instance != 'openSUSE' and package.is_from_personal_project():
 				continue
 
 			# Filter out debuginfo, debugsource, devel, buildsymbols, lang and docs packages
 			regex = r'-(debuginfo|debugsource|buildsymbols|devel|lang|l10n|trans|doc|docs)(-.+)?$'
-			if re.match(regex, binary_data['name']):
+			if re.match(regex, package.name):
 				continue
 
 			# Filter out source packages
-			if binary_data['arch'] == 'src':
+			if package.arch == 'src':
 				continue
 
 			# Filter architecture
 			cpu_arch = get_cpu_arch()
-			if binary_data['arch'] not in (cpu_arch, 'noarch'):
+			if package.arch not in (cpu_arch, 'noarch'):
 				continue
 
 			# Filter repo architecture
-			if binary_data['repository'] == 'openSUSE_Factory' and (cpu_arch not in ('x86_64' 'i586')):
+			if package.repository == 'openSUSE_Factory' and (cpu_arch not in ('x86_64' 'i586')):
 				continue
-			elif binary_data['repository'] == 'openSUSE_Factory_ARM' and not cpu_arch.startswith('arm') and not cpu_arch == 'aarch64':
+			elif package.repository == 'openSUSE_Factory_ARM' and not cpu_arch.startswith('arm') and not cpu_arch == 'aarch64':
 				continue
-			elif binary_data['repository'] == 'openSUSE_Factory_PowerPC' and not cpu_arch.startswith('ppc'):
+			elif package.repository == 'openSUSE_Factory_PowerPC' and not cpu_arch.startswith('ppc'):
 				continue
-			elif binary_data['repository'] == 'openSUSE_Factory_zSystems' and not cpu_arch.startswith('s390'):
+			elif package.repository == 'openSUSE_Factory_zSystems' and not cpu_arch.startswith('s390'):
 				continue
-			elif binary_data['repository'] == 'openSUSE_Factory_RISCV' and not cpu_arch.startswith('risc'):
+			elif package.repository == 'openSUSE_Factory_RISCV' and not cpu_arch.startswith('risc'):
 				continue
 
-			binaries.append(binary_data)
+			packages.append(package)
 
-		return binaries
+		return packages
 	except requests.exceptions.HTTPError as e:
 		if e.response.status_code == 413:
 			print('Please use different search keywords. Some short keywords cause OBS timeout.')
@@ -418,116 +560,28 @@ def search_published_binary(obs_instance, query):
 			print('HTTPError:', e)
 		raise HTTPError()
 
-def get_binary_names(binaries):
+def get_package_names(packages: list):
+	""" return a list of package names but without duplicates """
 	names = []
-	for binary in binaries:
-		name = binary['name']
+	for pkg in packages:
+		name = pkg.name
 		if name not in names:
 			names.append(name)
 	return names
 
-def sort_uniq_binaries(binaries):
-	""" sort -u for binaries; sort by weight and keep only the one with the best repo """
-	binaries = sorted(binaries, key=get_binary_weight, reverse=True)
-	new_binaries = []
-	added_binaries = set()
-	for binary in binaries:
-		# only select the first binary for each name/project combination
+def sort_uniq_packages(packages: list):
+	""" sort -u for packages; sort by weight and keep only the one with the best repo """
+	packages = sorted(packages)
+	new_packages = []
+	added_packages = set()
+	for package in packages:
+		# only select the first package for each name/project combination
 		# which will be the one with the highest repo weight
-		query = (binary['name'], binary['project'])
-		if query not in added_binaries:
-			new_binaries.append(binary)
-			added_binaries.add(query)
-	return new_binaries
-
-def get_binary_weight(binary):
-	weight = 0
-
-	dash_count = binary['name'].count('-')
-	weight += 1e5 * (0.5 ** dash_count)
-
-	weight -= 1e4 * len(binary['name'])
-
-	if is_official_project(binary['project']):
-		weight += 2e3
-	elif not is_personal_project(binary['project']):
-		weight += 1e3
-
-	if binary['name'] == binary['package']:
-		weight += 1e2
-
-	if not (get_cpu_arch() == 'x86_64' and binary['arch'] == 'i586'):
-		weight += 1e1
-
-	if binary['repository'].startswith('openSUSE_Tumbleweed'):
-		weight += 2
-	elif binary['repository'].startswith('openSUSE_Factory'):
-		weight += 1
-	elif binary['repository'] == 'standard':
-		weight += 0
-
-	return weight
-
-def is_official_project(project):
-	return project.startswith('openSUSE:')
-
-def is_personal_project(project):
-	return project.startswith('home:') or project.startswith('isv:')
-
-def get_binaries_by_name(name, binaries):
-	return [binary for binary in binaries if binary['name'] == name]
-
-def install_binary(binary):
-	name = binary['name']
-	obs_instance = binary['obs_instance']
-	arch = binary['arch']
-	project = binary['project']
-	repository = binary['repository']
-	name_with_arch = f'{name}.{arch}'
-
-	if obs_instance == 'Packman':
-		# Install from Packman Repo
-		add_packman_repo()
-		install_packman_packages([name_with_arch])
-	else:
-		if binary['obs_instance'] == 'LOCAL_REPO':
-			existing_repo = repository
-		else:
-			repo_alias = project.replace(':', '_')
-			project_path = project.replace(':', ':/')
-			if config.get_key_from_config('use_releasever_var'):
-				version = get_version()
-				if version:
-					# version is None on tw
-					repository = repository.replace(version, '$releasever')
-			url = f'https://download.opensuse.org/repositories/{project_path}/{repository}/'
-			gpgkey = url + 'repodata/repomd.xml.key'
-			existing_repo = get_enabled_repo_by_url(url)
-		if existing_repo:
-			# Install from existing repos (don't add a repo)
-			print(f"Installing from existing repo '{expand_releasever(existing_repo['name'])}'")
-			# ensure that this repo is up to date if no auto_refresh is configured
-			if not existing_repo['auto_refresh']:
-				refresh_repos(existing_repo['alias'])
-			install_packages([name_with_arch], from_repo=existing_repo['alias'])
-		else:
-			print(f"Adding repo '{project}'")
-			add_repo(
-				filename = repo_alias,
-				name = project,
-				url = url,
-				gpgkey = gpgkey,
-				gpgcheck = True,
-				auto_refresh = config.get_key_from_config('new_repo_auto_refresh')
-			)
-			install_packages([name_with_arch], from_repo=repo_alias,
-				allow_downgrade=True,
-				allow_arch_change=True,
-				allow_name_change=True,
-				allow_vendor_change=True
-			)
-			ask_keep_repo(repo_alias)
-
+		query = (package.name, package.project)
+		if query not in added_packages:
+			new_packages.append(package)
+			added_packages.add(query)
+	return new_packages
 
 ########################
 ### User Interaction ###
@@ -595,7 +649,7 @@ def ask_for_option(options, question='Pick a number (0 to quit):', option_filter
 		return options[num - 1]
 
 def ask_import_key(keyurl):
-	keys = requests.get(expand_releasever(keyurl)).text
+	keys = requests.get(expand_vars(keyurl)).text
 	db_keys = get_keys_from_rpmdb()
 	for key in split_keys(keys):
 		for line in subprocess.check_output(['gpg', '--quiet', '--show-keys', '--with-colons', '-'], input=key.encode()).decode().strip().split('\n'):
@@ -611,28 +665,28 @@ def ask_import_key(keyurl):
 				subprocess.call(['sudo', 'rpm', '--import', tf.name])
 				tf.file.close()
 
-def ask_keep_key(keyurl, repo_name=None):
+def ask_keep_key(keyurl, repo_alias=None):
 	"""
 		Ask to remove the key given by url to key file.
-		Warns about all repos still using the key except the repo given by repo_name param.
+		Warns about all repos still using the key except the repo given by repo_alias param.
 	"""
-	urlkeys = split_keys(requests.get(expand_releasever(keyurl)).text)
+	urlkeys = split_keys(requests.get(expand_vars(keyurl)).text)
 	urlkeys_normalized = [normalize_key(urlkey) for urlkey in urlkeys]
 	db_keys = get_keys_from_rpmdb()
 	keys_to_ask_user = [key for key in db_keys if key['pubkey'] in urlkeys_normalized]
 	for key in keys_to_ask_user:
 		repos_using_this_key = []
 		for repo in get_repos():
-			if repo_name and repo['filename'] == repo_name:
+			if repo_alias and repo.filename == repo_alias:
 				continue
-			if repo.get('gpgkey'):
-				repokey = normalize_key(requests.get(repo['gpgkey']).text)
+			if repo.gpgkey:
+				repokey = normalize_key(requests.get(repo.gpgkey).text)
 				if repokey == key['pubkey']:
 					repos_using_this_key.append(repo)
 		if repos_using_this_key:
 			default_answer = 'y'
 			print('This key is still in use by the following remaining repos - removal is NOT recommended:')
-			print(' - ' + '\n - '.join([repo['filename'] for repo in repos_using_this_key]))
+			print(' - ' + '\n - '.join([repo.filename for repo in repos_using_this_key]))
 		else:
 			default_answer = 'n'
 			print('This key is not in use by any remaining repos.')
@@ -640,37 +694,40 @@ def ask_keep_key(keyurl, repo_name=None):
 		if not ask_yes_or_no(f"Keep package signing key '{key['name']}'?", default_answer):
 			subprocess.call(['sudo', 'rpm', '-e', key['kid']])
 
-def ask_keep_repo(repo):
-	if not ask_yes_or_no(f"Do you want to keep the repo '{repo}'?"):
-		repo_info = next((r for r in get_repos() if r['filename'] == repo))
+def ask_keep_repo(repo_alias):
+	if not ask_yes_or_no(f"Do you want to keep the repo '{repo_alias}'?"):
+		repo = next((r for r in get_repos() if r.filename == repo_alias))
 		if get_backend() == BackendConstants.zypp:
-			subprocess.call(['sudo', 'zypper', 'rr', repo])
+			subprocess.call(['sudo', 'zypper', 'rr', repo_alias])
 		if get_backend() == BackendConstants.dnf:
-			subprocess.call(['sudo', 'rm', os.path.join(REPO_DIR, f'{repo}.repo')])
-		if repo_info.get('gpgkey'):
-			ask_keep_key(repo_info['gpgkey'], repo)
+			subprocess.call(['sudo', 'rm', os.path.join(REPO_DIR, f'{repo_alias}.repo')])
+		if repo.gpgkey:
+			ask_keep_key(repo.gpgkey, repo)
 
-def format_binary_option(binary, table=True):
-	if binary['obs_instance'] == 'LOCAL_REPO':
+def format_pkg_option(package, table=True):
+	if isinstance(package, LocalPackage):
 		color = 'green'
 		symbol = '+'
-	elif is_official_project(binary['project']):
+	elif package.is_from_official_project():
 		color = 'yellow'
 		symbol = '-'
-	elif is_personal_project(binary['project']):
+	elif package.is_from_personal_project():
 		color = 'red'
 		symbol = '!'
 	else:
 		color = 'cyan'
 		symbol = '?'
 
-	project = binary['project']
-	if binary['obs_instance'] not in ('openSUSE', 'LOCAL_REPO'):
-		project = f"{binary['obs_instance']} {project}"
+	if isinstance(package, LocalPackage):
+		project = package.repository.name_expanded()
+	else:
+		project = package.project
+		if package.obs_instance != 'openSUSE':
+			project = f"{package.obs_instance} {project}"
 
 	colored_name = colored(f'{project[:39]} {symbol}', color)
 
 	if table:
-		return f"{colored_name:50} | {binary['version'][:25]:25} | {binary['arch']}"
+		return f"{colored_name:50} | {package.version[:25]:25} | {package.arch}"
 	else:
-		return f"{colored_name} | {binary['version']} | {binary['arch']}"
+		return f"{colored_name} | {package.version} | {package.arch}"

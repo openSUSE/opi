@@ -68,46 +68,47 @@ def repo_query(query):
 	try:
 		print(f'Searching repos for: {(" ".join(query) if isinstance(query, list) else query)}')
 
-		binaries = []
-		binaries.extend(opi.search_published_binary('openSUSE', query))
-		binaries.extend(opi.search_published_binary('Packman', query))
-		binaries = opi.sort_uniq_binaries(binaries)
-		if len(binaries) == 0:
+		packages = []
+		packages.extend(opi.search_published_packages('openSUSE', query))
+		packages.extend(opi.search_published_packages('Packman', query))
+		packages = opi.sort_uniq_packages(packages)
+		if len(packages) == 0:
 			print('No package found.')
 			return
 
 		# Print and select a package name option
-		binary_names = opi.get_binary_names(binaries)
-		selected_name = opi.ask_for_option(binary_names)
-		print('You have selected package name:', selected_name)
+		package_names = opi.get_package_names(packages)
+		selected_pkg_name = opi.ask_for_option(package_names)
+		print('You have selected package name:', selected_pkg_name)
 
-		# Inject binaries from local repos
-		binaries = opi.search_local_repos(selected_name) + binaries
+		# Inject packages from local repos
+		packages = opi.search_local_repos(selected_pkg_name) + packages
 
-		binary_options = opi.get_binaries_by_name(selected_name, binaries)
+		instable_pkg_options = [pkg for pkg in packages if pkg.name == selected_pkg_name]
 
-		# Print and select a binary package option
-		selected_binary = opi.ask_for_option(binary_options, option_filter=opi.format_binary_option, disable_pager=True)
-		print('You have selected binary package:', opi.format_binary_option(selected_binary, table=False))
-		if opi.is_personal_project(selected_binary['project']):
-			print(colored(
-				'BE CAREFUL! The package is from a personal repository and NOT reviewed by others.\n'
-				'You can ask the author to submit the package to development projects and openSUSE:Factory.\n'
-				'Learn more at https://en.opensuse.org/openSUSE:How_to_contribute_to_Factory',
-				'red'
-			))
-		elif selected_binary['project'] == 'openSUSE:Factory':
-			print(opi.colored(
-				'BE CAREFUL! You are about to add the Factory Repository.\n'
-				'This repo contains the unreleased Tumbleweed distro before openQA tests have been run.\n'
-				'Only proceed if you know what you are doing!',
-				'yellow'
-			))
-			if not opi.ask_yes_or_no('Do you want to continue?', default_answer='n'):
-				return
+		# Print and select a package option
+		selected_pkg = opi.ask_for_option(instable_pkg_options, option_filter=opi.format_pkg_option, disable_pager=True)
+		print('You have selected package:', opi.format_pkg_option(selected_pkg, table=False))
+		if isinstance(selected_pkg, opi.OBSPackage):
+			if selected_pkg.is_from_personal_project():
+				print(colored(
+					'BE CAREFUL! The package is from a personal repository and NOT reviewed by others.\n'
+					'You can ask the author to submit the package to development projects and openSUSE:Factory.\n'
+					'Learn more at https://en.opensuse.org/openSUSE:How_to_contribute_to_Factory',
+					'red'
+				))
+			elif selected_pkg.project == 'openSUSE:Factory':
+				print(opi.colored(
+					'BE CAREFUL! You are about to add the Factory Repository.\n'
+					'This repo contains the unreleased Tumbleweed distro before openQA tests have been run.\n'
+					'Only proceed if you know what you are doing!',
+					'yellow'
+				))
+				if not opi.ask_yes_or_no('Do you want to continue?', default_answer='n'):
+					return
 
 		# Install selected package
-		opi.install_binary(selected_binary)
+		selected_pkg.install()
 	except (opi.NoOptionSelected, opi.HTTPError):
 		return
 
