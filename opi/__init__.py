@@ -121,7 +121,8 @@ def add_packman_repo(dup=False):
 		name = 'Packman',
 		url = f'https://ftp.gwdg.de/pub/linux/misc/packman/suse/{project}/',
 		auto_refresh = config.get_key_from_config('new_repo_auto_refresh'),
-		priority = 90
+		priority = 90,
+		auto_import_keys = global_state.arg_non_interactive
 	)
 
 	if dup:
