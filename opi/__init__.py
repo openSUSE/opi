@@ -128,6 +128,7 @@ def add_packman_repo(dup=False):
 
 def add_openh264_repo(dup=False):
 	project = get_os_release()['NAME']
+	project = project.replace('-Slowroll', '')
 	project = project.replace('openSUSE MicroOS', 'openSUSE Tumbleweed')
 	project = project.replace('openSUSE Leap Micro', 'openSUSE Leap')
 	project = project.replace(':', '_').replace(' ', '_')
