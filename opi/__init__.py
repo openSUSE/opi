@@ -102,6 +102,8 @@ def get_version():
 def expand_releasever(s: str) -> str:
 	s = s.replace('${releasever}', get_version() or '${releasever}')
 	s = s.replace('$releasever', get_version() or '$releasever')
+	s = s.replace('${basearch}', get_cpu_arch() or '${basearch}')
+	s = s.replace('$basearch', get_cpu_arch() or '$basearch')
 	return s
 
 ###############
