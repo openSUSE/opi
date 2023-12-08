@@ -170,11 +170,12 @@ def search_local_repos(package):
 		sr = subprocess.check_output(['zypper', '-n', '--no-refresh', 'se', '-sx', '-tpackage', package], env={'LANG': 'c'}).decode()
 		for line in re.split(r'-\+-+\n', sr, re.MULTILINE)[1].strip().split('\n'):
 			version, arch, repo_name = [s.strip() for s in line.split('|')[3:]]
+			version, release = version.split('-')
 			if arch not in (get_cpu_arch(), 'noarch'):
 				continue
 			if repo_name == '(System Packages)':
 				continue
-			search_results[repo_name].append({'version': version, 'arch': arch})
+			search_results[repo_name].append({'version': version, 'release': release, 'arch': arch})
 	except subprocess.CalledProcessError as e:
 		if e.returncode != 104:
 			# 104 ZYPPER_EXIT_INF_CAP_NOT_FOUND is returned if there are no results
@@ -183,11 +184,12 @@ def search_local_repos(package):
 	repos_by_name = {expand_releasever(repo['name']): repo for repo in get_repos()}
 	local_installables = []
 	for repo_name, installables in search_results.items():
+		# get the newest package for each repo
 		try:
-			installables.sort(key=lambda p: cmp_to_key(rpm.labelCompare)(p['version']))
+			installables.sort(key=lambda p: cmp_to_key(rpm.labelCompare)("%(version)s-%(release)s" % p))
 		except TypeError:
-			# rpm 4.14 needs a tuple of epoch, version, release - rpm 4.18 can handle a string
-			installables.sort(key=lambda p: cmp_to_key(rpm.labelCompare)(['1']+p['version'].split('-')))
+			# rpm 4.14 needs a tuple of (epoch, version, release) - rpm 4.18 can handle a string
+			installables.sort(key=lambda p: cmp_to_key(rpm.labelCompare)(['1', p['version'], p['release']]))
 		installable = installables[-1]
 		installable['repository'] = repos_by_name[repo_name]
 		installable['name'] = package
