@@ -231,19 +231,19 @@ def get_repos():
 		try:
 			cp = configparser.ConfigParser()
 			cp.read(os.path.join(REPO_DIR, repo_file))
-			mainsec = cp.sections()[0]
-			if not bool(int(cp.get(mainsec, 'enabled'))):
-				continue
-			repo = {
-				'alias': mainsec,
-				'filename': re.sub(r'\.repo$', '', repo_file),
-				'name': cp[mainsec].get('name', mainsec),
-				'url': cp[mainsec].get('baseurl'),
-				'auto_refresh': bool(int(cp[mainsec].get('autorefresh', '0'))),
-			}
-			if cp.has_option(mainsec, 'gpgkey'):
-				repo['gpgkey'] = cp[mainsec].get('gpgkey')
-			yield Repository(**repo)
+			for alias in cp.sections():
+				if not bool(int(cp.get(alias, 'enabled'))):
+					continue
+				repo = {
+					'alias': alias,
+					'filename': re.sub(r'\.repo$', '', repo_file),
+					'name': cp[alias].get('name', alias),
+					'url': cp[alias].get('baseurl'),
+					'auto_refresh': bool(int(cp[alias].get('autorefresh', '0'))),
+				}
+				if cp.has_option(alias, 'gpgkey'):
+					repo['gpgkey'] = cp[alias].get('gpgkey')
+				yield Repository(**repo)
 		except Exception as e:
 			print(f"Error parsing '{repo_file}': {e}")
 
