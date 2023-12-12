@@ -1,4 +1,15 @@
 -------------------------------------------------------------------
+Tue Dec 12 12:40:20 UTC 2023 - Dominik Heidler <dheidler@suse.de>
+
+- Version 4.2.0
+  * Support multiple repos defined in a single .repo file
+  * Automatically import packman key in non-interactive mode
+  * Restructure code: Add classes for Repository, OBSPackage and LocalPackage
+  * Hide package release for pkgs from local repos (same as with OBS pkgs)
+  * Use tumbleweed repo for openh264 on Slowroll
+  * Expand repovar $basearch (to e.g. x86_64 or aarch64)
+
+-------------------------------------------------------------------
 Thu Dec  7 10:30:24 UTC 2023 - Dominik Heidler <dheidler@suse.de>
 
 - Version 4.1.0
