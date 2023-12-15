@@ -138,8 +138,8 @@ def add_openh264_repo(dup=False):
 	url = f'http://codecs.opensuse.org/openh264/{project}/'
 	existing_repo = get_enabled_repo_by_url(url)
 	if existing_repo:
-		print(f"Installing from existing repo '{existing_repo['name']}'")
-		repo = existing_repo['alias']
+		print(f"Installing from existing repo '{existing_repo.name}'")
+		repo = existing_repo.alias
 	else:
 		repo = 'openh264'
 		print(f"Adding repo '{repo}'")
