@@ -3,7 +3,7 @@ from opi.plugins import BasePlugin
 
 class ResilioSync(BasePlugin):
 	main_query = 'resilio-sync'
-	description = 'Decentralized file synchronization between devices using bittorrent protocol'
+	description = 'Decentralized file sync between devices using bittorrent protocol (proprietary alternative to syncthing)'
 	queries = ['resilio-sync', 'resilio', 'rslsync']
 
 	@classmethod
