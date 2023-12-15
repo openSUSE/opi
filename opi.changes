@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Fri Dec 15 18:09:52 UTC 2023 - Dominik Heidler <dheidler@suse.de>
+
+- Version 4.3.0
+  * Hint open source alternatives
+  * Fix issue with installing from existing openh264 repo
+
+-------------------------------------------------------------------
 Tue Dec 12 12:40:20 UTC 2023 - Dominik Heidler <dheidler@suse.de>
 
 - Version 4.2.0
