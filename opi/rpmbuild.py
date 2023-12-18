@@ -17,7 +17,7 @@ def copy(src, dst):
 		link_target = os.readlink(src)
 		os.symlink(link_target, dst)
 	elif os.path.isfile(src):
-		shitil.copy2(src, dst)
+		shutil.copy2(src, dst)
 	else:
 		shutil.copytree(src, dst, copy_function=os.link, symlinks=True, ignore_dangling_symlinks=False)
 
