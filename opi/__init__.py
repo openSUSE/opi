@@ -186,23 +186,26 @@ def search_local_repos(package):
 	"""
 	search_results = defaultdict(list)
 	try:
-		sr = subprocess.check_output(['zypper', '-n', '--no-refresh', 'se', '-sx', '-tpackage', package], env={'LANG': 'c'}).decode()
+		zc = tempfile.NamedTemporaryFile('w')
+		zc.file.write(f'[main]\nshowAlias = true\n')
+		zc.file.flush()
+		sr = subprocess.check_output(['zypper', '-ntc', zc.name, '--no-refresh', 'se', '-sx', '-tpackage', package], env={'LANG': 'c'}).decode()
 		for line in re.split(r'-\+-+\n', sr, re.MULTILINE)[1].strip().split('\n'):
-			version, arch, repo_name = [s.strip() for s in line.split('|')[3:]]
+			version, arch, repo_alias = [s.strip() for s in line.split('|')[3:]]
 			version, release = version.split('-')
 			if arch not in (get_cpu_arch(), 'noarch'):
 				continue
-			if repo_name == '(System Packages)':
+			if repo_alias == '(System Packages)':
 				continue
-			search_results[repo_name].append({'version': version, 'release': release, 'arch': arch})
+			search_results[repo_alias].append({'version': version, 'release': release, 'arch': arch})
 	except subprocess.CalledProcessError as e:
 		if e.returncode != 104:
 			# 104 ZYPPER_EXIT_INF_CAP_NOT_FOUND is returned if there are no results
 			raise # TODO: don't exit program, use exception that will be handled in repo_query except block
 
-	repos_by_name = {repo.name_expanded(): repo for repo in get_repos()}
+	repos_by_alias = {repo.alias: repo for repo in get_repos()}
 	local_installables = []
-	for repo_name, installables in search_results.items():
+	for repo_alias, installables in search_results.items():
 		# get the newest package for each repo
 		try:
 			installables.sort(key=lambda p: cmp_to_key(rpm.labelCompare)("%(version)s-%(release)s" % p))
@@ -211,7 +214,7 @@ def search_local_repos(package):
 			installables.sort(key=lambda p: cmp_to_key(rpm.labelCompare)(['1', p['version'], p['release']]))
 		installable = installables[-1]
 
-		installable['repository'] = repos_by_name[repo_name]
+		installable['repository'] = repos_by_alias[repo_alias]
 		installable['name'] = package
 		# filter out OBS/Packman repos as they are already searched via OBS/Packman API
 		if 'download.opensuse.org/repositories' in installable['repository'].url:
