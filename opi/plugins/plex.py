@@ -3,7 +3,7 @@ from opi.plugins import BasePlugin
 
 class PlexMediaServer(BasePlugin):
 	main_query = 'plex'
-	description = 'Plex Media Server (proprietary alternative to jellyfin)'
+	description = 'Plex Media Server (See OSS alternative jellyfin)'
 	queries = ['plex', 'plexmediaserver']
 
 	@classmethod
