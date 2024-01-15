@@ -32,6 +32,7 @@ class PackmanCodecsPlugin(BasePlugin):
 			'gstreamer-plugins-good-extra',
 			'gstreamer-plugins-bad',
 			'gstreamer-plugins-ugly',
+			'dav1d',
 		])
 
 		if not opi.ask_yes_or_no('Do you want to install openh264 codecs from openSUSE openh264 repository?'):
