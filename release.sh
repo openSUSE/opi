@@ -20,7 +20,7 @@ sed -i -e "s/^\(Version: *\)[^ ]*$/\1${version}/" opi.spec
 osc vc -m "Version ${version}\n${changes}"
 vi opi.changes
 osc rm --force opi-*.tar.gz
-osc service dr
+osc service run
 osc add opi-*.tar.gz
 osc st
 osc diff|bat
