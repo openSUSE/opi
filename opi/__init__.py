@@ -112,18 +112,32 @@ def expand_vars(s: str) -> str:
 ###############
 
 def add_packman_repo(dup=False):
-	project = get_distribution(use_releasever_variable=config.get_key_from_config('use_releasever_var'))
-	project = project.replace(':', '_')
-	project = project.replace('Factory', 'Tumbleweed')
+	repos_by_alias = {repo.alias: repo for repo in get_repos()}
+	if 'packman' in repos_by_alias:
+		print("Installing from existing packman repo")
+	else:
+		print("Adding packman repo")
+		packman_mirrors = {
+			"ftp.fau.de                 - University of Erlangen, Germany  -  1h sync": "https://ftp.fau.de/packman/",
+			"ftp.halifax.rwth-aachen.de - University of Aachen, Germany    -  1h sync": "https://ftp.halifax.rwth-aachen.de/packman/",
+			"ftp.gwdg.de                - University of Göttingen, Germany -  4h sync": "https://ftp.gwdg.de/pub/linux/misc/packman/",
+			"mirror.karneval.cz         - TES Media, Czech Republic        -  1h sync": "https://mirror.karneval.cz/pub/linux/packman/",
+			"mirrors.aliyun.com         - Alibaba Cloud, China             - 24h sync": "https://mirrors.aliyun.com/packman/",
+		}
+		mirror = ask_for_option(list(packman_mirrors.keys()), 'Pick a mirror near your location (0 to quit):')
+		mirror = packman_mirrors[mirror]
 
-	add_repo(
-		filename = 'packman',
-		name = 'Packman',
-		url = f'https://ftp.gwdg.de/pub/linux/misc/packman/suse/{project}/',
-		auto_refresh = config.get_key_from_config('new_repo_auto_refresh'),
-		priority = 90,
-		auto_import_keys = global_state.arg_non_interactive
-	)
+		project = get_distribution(use_releasever_variable=config.get_key_from_config('use_releasever_var'))
+		project = project.replace(':', '_')
+		project = project.replace('Factory', 'Tumbleweed')
+		add_repo(
+			filename = 'packman',
+			name = 'Packman',
+			url = f'{mirror}/suse/{project}/',
+			gpgkey = f'https://ftp.fau.de/packman/suse/{project}/repodata/repomd.xml.key', # always fetch gpgkey from FAU server
+			auto_refresh = config.get_key_from_config('new_repo_auto_refresh'),
+			priority = 90
+		)
 
 	if dup:
 		dist_upgrade(from_repo='packman', allow_downgrade=True, allow_vendor_change=True)

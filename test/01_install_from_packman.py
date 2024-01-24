@@ -14,8 +14,11 @@ c.sendline('1')
 c.expect('1. .*Packman Essentials', timeout=10)
 c.sendline('1')
 
-c.expect('Do you want to reject the key', timeout=10)
-c.sendline('t')
+c.expect('Pick a mirror near your location', timeout=10)
+c.sendline('2')
+
+c.expect('Import package signing key', timeout=10)
+c.sendline('y')
 
 c.expect('Overall download size', timeout=60)
 c.expect('Continue', timeout=60)
