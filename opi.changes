@@ -1,4 +1,14 @@
 -------------------------------------------------------------------
+Thu Feb  1 09:41:57 UTC 2024 - Dominik Heidler <dheidler@suse.de>
+
+- Version 5.0.0
+  * Allow selecting mirror 1st time when adding packman repo
+  * Add Plugin for SoftMaker Freeoffice
+  * Use new osc service run cmd syntax
+  * Codecs: Install AV1 decoder for mpv
+  * Bump .NET SDK plugin to .NET 8.0
+
+-------------------------------------------------------------------
 Tue Jan  2 13:54:28 UTC 2024 - Dominik Heidler <dheidler@suse.de>
 
 - Version 4.4.0
