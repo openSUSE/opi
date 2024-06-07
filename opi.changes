@@ -1,4 +1,12 @@
 -------------------------------------------------------------------
+Fri Jun  7 13:17:38 UTC 2024 - Dominik Heidler <dheidler@suse.de>
+
+- Version 5.1.0
+  * Use checkout@v4 for CI
+  * Update issue templates
+  * Increase prio from 90 to 70 for packman/openh264 repos
+
+-------------------------------------------------------------------
 Thu Feb  1 09:41:57 UTC 2024 - Dominik Heidler <dheidler@suse.de>
 
 - Version 5.0.0
