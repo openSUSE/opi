@@ -136,7 +136,7 @@ def add_packman_repo(dup=False):
 			url = f'{mirror}/suse/{project}/',
 			gpgkey = f'https://ftp.fau.de/packman/suse/{project}/repodata/repomd.xml.key', # always fetch gpgkey from FAU server
 			auto_refresh = config.get_key_from_config('new_repo_auto_refresh'),
-			priority = 90
+			priority = 70
 		)
 
 	if dup:
@@ -163,7 +163,7 @@ def add_openh264_repo(dup=False):
 			url = url,
 			gpgkey = f"{url.replace('http://', 'https://')}repodata/repomd.xml.key",
 			auto_refresh = config.get_key_from_config('new_repo_auto_refresh'),
-			priority = 90
+			priority = 70
 		)
 
 	if dup:
