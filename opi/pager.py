@@ -2,7 +2,7 @@ import sys
 
 import curses
 
-def ask_number_with_pager(text, question='Pick a number (0 to quit):'):
+def ask_number_with_pager(text, question='Pick a number (0 to quit):', start_at_bottom=False):
 	try:
 		stdscr = curses.initscr()
 		curses.noecho()
@@ -12,7 +12,7 @@ def ask_number_with_pager(text, question='Pick a number (0 to quit):'):
 		max_top_line = text_len_lines - (curses.LINES - 2)
 		scrollarea = curses.newpad(text_len_lines, curses.COLS)
 		scrollarea.addstr(0, 0, text)
-		scrollarea_topline_ptr = 0
+		scrollarea_topline_ptr = max_top_line if start_at_bottom else 0
 		def ensure_scrollarea_bounds(scrollarea_topline_ptr):
 			scrollarea_topline_ptr = max(scrollarea_topline_ptr, 0)
 			scrollarea_topline_ptr = min(scrollarea_topline_ptr, max_top_line)
