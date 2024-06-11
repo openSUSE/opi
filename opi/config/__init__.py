@@ -5,6 +5,7 @@ default_config = {
 	'backend': 'zypp',
 	'use_releasever_var': True,
 	'new_repo_auto_refresh': True,
+	'list_in_reverse': False,
 }
 
 class ConfigError(Exception):
@@ -24,5 +25,6 @@ def get_key_from_config(key: str):
 				'backend': ocfg.get('backend'),
 				'use_releasever_var': ocfg.getboolean('use_releasever_var'),
 				'new_repo_auto_refresh': ocfg.getboolean('new_repo_auto_refresh'),
+				'list_in_reverse': ocfg.getboolean('list_in_reverse'),
 			})
 	return config_cache[key]

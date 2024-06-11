@@ -646,6 +646,8 @@ def ask_for_option(options, question='Pick a number (0 to quit):', option_filter
 				numbered_option = ' ' * len(number) + numbered_option[terminal_width:]
 		numbered_options.append(numbered_option)
 		i += 1
+	if config.get_key_from_config('list_in_reverse'):
+		numbered_options.reverse()
 	text = '\n'.join(numbered_options)
 	if global_state.arg_non_interactive:
 		input_string = '1' # default to first option in the list
@@ -655,7 +657,7 @@ def ask_for_option(options, question='Pick a number (0 to quit):', option_filter
 		print(text)
 		input_string = input(question + ' ')
 	else:
-		input_string = pager.ask_number_with_pager(text, question)
+		input_string = pager.ask_number_with_pager(text, question, start_at_bottom=config.get_key_from_config('list_in_reverse'))
 
 	input_string = input_string.strip() or '0'
 	num = int(input_string) if input_string.isdecimal() else -1
