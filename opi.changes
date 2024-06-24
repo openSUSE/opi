@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Mon Jun 24 09:04:47 UTC 2024 - Dominik Heidler <dheidler@suse.de>
+
+- Version 5.2.1
+  * Update freeoffice.py: Install version 2024
+
+-------------------------------------------------------------------
 Tue Jun 11 14:12:30 UTC 2024 - Dominik Heidler <dheidler@suse.de>
 
 - Version 5.2.0
