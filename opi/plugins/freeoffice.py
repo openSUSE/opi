@@ -18,5 +18,5 @@ class SoftMakerFreeOffice(BasePlugin):
 			gpgkey = 'https://shop.softmaker.com/repo/linux-repo-public.key'
 		)
 
-		opi.install_packages(['softmaker-freeoffice-2021'])
+		opi.install_packages(['softmaker-freeoffice-2024'])
 		opi.ask_keep_repo('SoftMaker')
