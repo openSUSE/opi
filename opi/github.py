@@ -27,14 +27,14 @@ def get_release_asset(release, filters=[]):
 		assets = [r for r in assets if f(r)]
 	return assets[0] if assets else None
 
-def install_rpm_release(org, repo, allow_unsigned=False):
+def install_rpm_release(org, repo, filters=[lambda a: a['name'].endswith('.rpm')], allow_unsigned=False):
 	latest_release = get_latest_release(org, repo)
 	if not latest_release:
 		print(f'No release found for {org}/{repo}')
 		return
 	if not opi.ask_yes_or_no(f"Do you want to install {repo} release {latest_release['tag_name']} RPM from {org} github repo?"):
 		return
-	asset = get_release_asset(latest_release, filters=[lambda a: a['name'].endswith('.rpm')])
+	asset = get_release_asset(latest_release, filters=filters)
 	if not asset:
 		print(f"No RPM asset found for {org}/{repo} release {latest_release['tag_name']}")
 		return
