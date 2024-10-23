@@ -3,6 +3,7 @@
 import sys
 import pexpect
 import subprocess
+import time
 
 c = pexpect.spawn('./bin/opi x265', logfile=sys.stdout.buffer, echo=False)
 
@@ -20,8 +21,9 @@ c.sendline('2')
 c.expect('Import package signing key', timeout=10)
 c.sendline('y')
 
-c.expect('Overall download size', timeout=60)
+c.expect('Package install size change', timeout=60)
 c.expect('Continue', timeout=60)
+time.sleep(3)
 c.sendline('y')
 c.interact()
 c.wait()

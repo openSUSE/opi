@@ -11,7 +11,7 @@ c.expect('Pick a number')
 
 c.expect('1. .*Packman Essentials', timeout=10)
 
-c.expect('Overall download size', timeout=60)
+c.expect('Package install size change', timeout=60)
 c.interact()
 c.wait()
 c.close()
