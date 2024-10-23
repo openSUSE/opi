@@ -118,11 +118,11 @@ def add_packman_repo(dup=False):
 	else:
 		print("Adding packman repo")
 		packman_mirrors = {
-			"ftp.fau.de                 - University of Erlangen, Germany  -  1h sync": "https://ftp.fau.de/packman/",
-			"ftp.halifax.rwth-aachen.de - University of Aachen, Germany    -  1h sync": "https://ftp.halifax.rwth-aachen.de/packman/",
-			"ftp.gwdg.de                - University of Göttingen, Germany -  4h sync": "https://ftp.gwdg.de/pub/linux/misc/packman/",
-			"mirror.karneval.cz         - TES Media, Czech Republic        -  1h sync": "https://mirror.karneval.cz/pub/linux/packman/",
-			"mirrors.aliyun.com         - Alibaba Cloud, China             - 24h sync": "https://mirrors.aliyun.com/packman/",
+			"ftp.fau.de                 - University of Erlangen, Germany  -  1h sync": "https://ftp.fau.de/packman",
+			"ftp.halifax.rwth-aachen.de - University of Aachen, Germany    -  1h sync": "https://ftp.halifax.rwth-aachen.de/packman",
+			"ftp.gwdg.de                - University of Göttingen, Germany -  4h sync": "https://ftp.gwdg.de/pub/linux/misc/packman",
+			"mirror.karneval.cz         - TES Media, Czech Republic        -  1h sync": "https://mirror.karneval.cz/pub/linux/packman",
+			"mirrors.aliyun.com         - Alibaba Cloud, China             - 24h sync": "https://mirrors.aliyun.com/packman",
 		}
 		mirror = ask_for_option(list(packman_mirrors.keys()), 'Pick a mirror near your location (0 to quit):')
 		mirror = packman_mirrors[mirror]
