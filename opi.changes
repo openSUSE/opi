@@ -1,4 +1,12 @@
 -------------------------------------------------------------------
+Fri Oct 25 12:03:28 UTC 2024 - Dominik Heidler <dheidler@suse.de>
+
+- Version 5.3.0
+  * Fix tests for new zypper version
+  * fix doblue slash in packman repo url
+  * Add Plugin to install Libation
+
+-------------------------------------------------------------------
 Mon Jun 24 09:04:47 UTC 2024 - Dominik Heidler <dheidler@suse.de>
 
 - Version 5.2.1
