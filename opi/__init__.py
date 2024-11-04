@@ -321,7 +321,7 @@ def split_keys(keys):
 
 def get_keys_from_rpmdb():
 	s = subprocess.check_output(['rpm', '-q', 'gpg-pubkey', '--qf',
-	    '%{NAME}-%{VERSION}-%{RELEASE}\n%{PACKAGER}\n%{DESCRIPTION}\nOPI-SPLIT-TOKEN-TO-TELL-KEY-PACKAGES-APART\n'])
+	    '%{NAME}-%{VERSION}\n%{PACKAGER}\n%{DESCRIPTION}\nOPI-SPLIT-TOKEN-TO-TELL-KEY-PACKAGES-APART\n'])
 	keys = []
 	for raw_kpkg in s.decode().strip().split('OPI-SPLIT-TOKEN-TO-TELL-KEY-PACKAGES-APART'):
 		raw_kpkg = raw_kpkg.strip()
@@ -675,10 +675,12 @@ def ask_import_key(keyurl):
 		for line in subprocess.check_output(['gpg', '--quiet', '--show-keys', '--with-colons', '-'], input=key.encode()).decode().strip().split('\n'):
 			if line.startswith('uid:'):
 				key_info = line.split(':')[9].replace('\\x3a', ':')
+			elif line.startswith('pub:'):
+				kid = f"gpg-pubkey-{line.split(':')[4][-8:].lower()}"
 		if [db_key for db_key in db_keys if normalize_key(key) in normalize_key(db_key['pubkey'])]:
-			print(f"Package signing key '{key_info}' is already present.")
+			print(f"Package signing key {kid} ('{key_info}) is already present.")
 		else:
-			if ask_yes_or_no(f"Import package signing key '{key_info}'"):
+			if ask_yes_or_no(f"Import package signing key {kid} ({key_info})"):
 				tf = tempfile.NamedTemporaryFile('w')
 				tf.file.write(key)
 				tf.file.flush()
@@ -711,7 +713,7 @@ def ask_keep_key(keyurl, repo_alias=None):
 			default_answer = 'n'
 			print('This key is not in use by any remaining repos.')
 		print('Keeping the key will allow additional packages signed by this key to be installed in the future without further warning.')
-		if not ask_yes_or_no(f"Keep package signing key '{key['name']}'?", default_answer):
+		if not ask_yes_or_no(f"Keep package signing key {key['kid']} ({key['name']})?", default_answer):
 			subprocess.call(['sudo', 'rpm', '-e', key['kid']])
 
 def ask_keep_repo(repo_alias):
