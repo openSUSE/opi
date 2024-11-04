@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Mon Nov  4 12:13:42 UTC 2024 - Dominik Heidler <dheidler@suse.de>
+
+- Version 5.4.0
+  * Show key ID when importing or deleting package signing keys
+  * Add option to install google-chrome-canary
+
+-------------------------------------------------------------------
 Fri Oct 25 12:03:28 UTC 2024 - Dominik Heidler <dheidler@suse.de>
 
 - Version 5.3.0
