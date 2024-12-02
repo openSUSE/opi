@@ -126,11 +126,14 @@ Also these queries (provided by plugins) can be used to install packages from va
   chrome            Google Chrome web browser
   codecs            Media Codecs from Packman and official repo
   dotnet            Microsoft .NET framework
+  freeoffice        Office suite from SoftMaker
   jami              Jami p2p messenger
+  libation          Tool for managing audible audiobooks
   maptool           Virtual Tabletop for playing roleplaying games
   megasync          Mega Desktop App
   msedge            Microsoft Edge web browser
   ocenaudio         Audio Editor
+  orcaslicer        Slicer and controller for Bamu and other 3D printers
   plex              Plex Media Server
   resilio-sync      Decentralized file synchronization between devices using bittorrent protocol
   skype             Microsoft Skype
