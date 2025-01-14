@@ -20,4 +20,4 @@ class collabora(BasePlugin):
 		)
 
 		opi.install_packages(['collaboraoffice-desktop'])
-		opi.ask_keep_repo('Collabora Office 24.04 Snapshot')
+		opi.ask_keep_repo('collabora-office')
