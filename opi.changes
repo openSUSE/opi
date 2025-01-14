@@ -1,4 +1,17 @@
 -------------------------------------------------------------------
+Tue Jan 14 15:35:14 UTC 2025 - Dominik Heidler <dheidler@suse.de>
+
+- Version 5.5.0
+  * Update opi/plugins/collabora.py
+  * add collabora office desktop
+  * Omit unsupported cli args on leap in 99_install_opi.py
+  * Switch to PEP517 install
+  * Fix 09_install_with_multi_repos_in_single_file_non_interactive.py
+  * Fix 07_install_multiple.py on tumbleweed
+  * Fix test suite on tumbleweed
+  * Update available apps in opi - README.md
+
+-------------------------------------------------------------------
 Mon Nov  4 12:13:42 UTC 2024 - Dominik Heidler <dheidler@suse.de>
 
 - Version 5.4.0
