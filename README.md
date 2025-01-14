@@ -105,12 +105,9 @@ Search and install almost all packages available for openSUSE and SLE:
   3. Popular packages for various vendors
 
 positional arguments:
-  query          can be any package name or part of it and will be searched
-                 for both at the openSUSE Build Service and Packman.
-                 If multiple query arguments are provided only results
-                 matching all of them are returned.
-                 Please use the -m option if you want to use the query
-                 arguments as individual package queries.
+  query          can be any package name or part of it and will be searched for both at the openSUSE Build Service and Packman.
+                 If multiple query arguments are provided only results matching all of them are returned.
+                 Please use the -m option if you want to use the query arguments as individual package queries.
 
 options:
   -h, --help     show this help message and exit
@@ -125,19 +122,21 @@ Also these queries (provided by plugins) can be used to install packages from va
   brave             Brave web browser
   chrome            Google Chrome web browser
   codecs            Media Codecs from Packman and official repo
+  collabora         Collabora desktop office
   dotnet            Microsoft .NET framework
-  freeoffice        Office suite from SoftMaker
+  freeoffice        Office suite from SoftMaker (See OSS alternative libreoffice)
   jami              Jami p2p messenger
   libation          Tool for managing audible audiobooks
   maptool           Virtual Tabletop for playing roleplaying games
   megasync          Mega Desktop App
   msedge            Microsoft Edge web browser
   ocenaudio         Audio Editor
-  orcaslicer        Slicer and controller for Bamu and other 3D printers
-  plex              Plex Media Server
-  resilio-sync      Decentralized file synchronization between devices using bittorrent protocol
+  orcaslicer        Slicer and controller for Bambu and other 3D printers
+  plex              Plex Media Server (See OSS alternative jellyfin)
+  resilio-sync      Decentralized file sync between devices using bittorrent protocol (See OSS alternative syncthing)
   skype             Microsoft Skype
   slack             Slack messenger
+  spotify           Listen to music for a monthly fee
   sublime           Editor for code, markup and prose
   teams-for-linux   Unofficial Microsoft Teams for Linux client
   teamviewer        TeamViewer remote access
