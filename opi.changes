@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Thu Jan 23 13:53:06 UTC 2025 - Dominik Heidler <dheidler@suse.de>
+
+- Version 5.6.0
+  * Add plugin to install vagrant from hashicorp repo
+
+-------------------------------------------------------------------
 Tue Jan 14 15:35:14 UTC 2025 - Dominik Heidler <dheidler@suse.de>
 
 - Version 5.5.0
