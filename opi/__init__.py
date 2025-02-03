@@ -206,7 +206,13 @@ def search_local_repos(package):
 		os.chmod(zc.name, 0o644)
 		# ensure to run as non-root as this allows the cmd to run even if rpmdb is locked
 		user = None if os.getuid() else 'nobody'
-		sr = subprocess.check_output(['zypper', '-ntc', zc.name, '--no-refresh', 'se', '-sx', '-tpackage', package], env={'LANG': 'c'}, user=user).decode()
+		cmd = ['zypper', '-ntc', zc.name, '--no-refresh', 'se', '-sx', '-tpackage', package]
+		env = {'LANG': 'c'}
+		try:
+			sr = subprocess.check_output(cmd, env=env, user=user).decode()
+		except TypeError:
+			# no user arg on old python versions
+			sr = subprocess.check_output(cmd, env=env).decode()
 		for line in re.split(r'-\+-+\n', sr, re.MULTILINE)[1].strip().split('\n'):
 			version, arch, repo_alias = [s.strip() for s in line.split('|')[3:]]
 			version, release = version.split('-')
