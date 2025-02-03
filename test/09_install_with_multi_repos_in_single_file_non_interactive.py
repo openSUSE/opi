@@ -23,16 +23,16 @@ assert c.exitstatus == 0, f'Exit code: {c.exitstatus}'
 subprocess.check_call(['rpm', '-qi', 'tmux'])
 
 
-c = pexpect.spawn('./bin/opi -n zfs', logfile=sys.stdout.buffer, echo=False)
+c = pexpect.spawn('./bin/opi -n helloworld-opi-tests', logfile=sys.stdout.buffer, echo=False)
 
-c.expect(r'([0-9]+)\. zfs', timeout=10)
+c.expect(r'([0-9]+)\. helloworld-opi-tests', timeout=10)
 c.expect('Pick a number')
-c.expect(r'([0-9]+)\. [^ ]*(filesystems)', timeout=10)
-c.expect('Adding repo \'filesystems\'', timeout=10)
+c.expect(r'([0-9]+)\. [^ ]*(home:dheidler:opitests)', timeout=10)
+c.expect('Adding repo \'home:dheidler:opitests\'', timeout=10)
 c.expect('Continue?', timeout=60)
 c.interact()
 c.wait()
 c.close()
 print()
 assert c.exitstatus == 0, f'Exit code: {c.exitstatus}'
-subprocess.check_call(['rpm', '-qi', 'zfs'])
+subprocess.check_call(['rpm', '-qi', 'helloworld-opi-tests'])
