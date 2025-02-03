@@ -203,7 +203,10 @@ def search_local_repos(package):
 		zc = tempfile.NamedTemporaryFile('w')
 		zc.file.write(f'[main]\nshowAlias = true\n')
 		zc.file.flush()
-		sr = subprocess.check_output(['zypper', '-ntc', zc.name, '--no-refresh', 'se', '-sx', '-tpackage', package], env={'LANG': 'c'}).decode()
+		os.chmod(zc.name, 0o644)
+		# ensure to run as non-root as this allows the cmd to run even if rpmdb is locked
+		user = None if os.getuid() else 'nobody'
+		sr = subprocess.check_output(['zypper', '-ntc', zc.name, '--no-refresh', 'se', '-sx', '-tpackage', package], env={'LANG': 'c'}, user=user).decode()
 		for line in re.split(r'-\+-+\n', sr, re.MULTILINE)[1].strip().split('\n'):
 			version, arch, repo_alias = [s.strip() for s in line.split('|')[3:]]
 			version, release = version.split('-')
@@ -215,6 +218,9 @@ def search_local_repos(package):
 	except subprocess.CalledProcessError as e:
 		if e.returncode != 104:
 			# 104 ZYPPER_EXIT_INF_CAP_NOT_FOUND is returned if there are no results
+			if e.returncode == 7:
+				# 7 ZYPPER_EXIT_ZYPP_LOCKED - error is already printed by zypper
+				sys.exit(1)
 			raise # TODO: don't exit program, use exception that will be handled in repo_query except block
 
 	repos_by_alias = {repo.alias: repo for repo in get_repos()}
