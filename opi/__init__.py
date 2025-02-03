@@ -351,14 +351,6 @@ def pkgmgr_action(action, packages=[], from_repo=None, allow_vendor_change=False
 		args.append(action)
 		if from_repo:
 			args.extend(['--from', from_repo])
-	elif get_backend() == BackendConstants.dnf:
-		args = ['sudo', 'dnf']
-		if global_state.arg_non_interactive:
-			args.append('-y')
-		args.append(action)
-		if from_repo:
-			args.extend(['--repo', from_repo])
-	if get_backend() == BackendConstants.zypp:
 		if allow_downgrade:
 			args.append('--allow-downgrade')
 		if allow_arch_change:
@@ -367,12 +359,22 @@ def pkgmgr_action(action, packages=[], from_repo=None, allow_vendor_change=False
 			args.append('--allow-name-change')
 		if allow_vendor_change:
 			args.append('--allow-vendor-change')
+		if action == 'in':
+			args.append('--oldpackage')
 	elif get_backend() == BackendConstants.dnf:
+		args = ['sudo', 'dnf']
+		if global_state.arg_non_interactive:
+			args.append('-y')
+		args.append(action)
+		if from_repo:
+			args.extend(['--repo', from_repo])
 		# allow_downgrade and allow_name_change are default in DNF
 		if allow_vendor_change:
 			args.append('--setopt=allow_vendor_change=True')
 		if allow_unsigned:
 			args.append('--nogpgcheck')
+	else:
+		raise Exception(f"Unknown Backend: {get_backend()}")
 	args.extend(packages)
 	subprocess.call(args)
 
