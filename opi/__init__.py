@@ -42,6 +42,9 @@ class HTTPError(Exception):
 
 cpu_arch = None
 def get_cpu_arch():
+	"""
+		returns e.g. x86_64, aarch64
+	"""
 	global cpu_arch
 	if not cpu_arch:
 		cpu_arch = os.uname().machine
