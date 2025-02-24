@@ -9,7 +9,7 @@ class MullvadBrowser(BasePlugin):
 
 	@classmethod
 	def run(cls, query):
-		if not opi.ask_yes_or_no('Do you want to install Mullvad-browser from Mullvad repository?'):
+		if not opi.ask_yes_or_no('Do you want to install mullvad-browser from Mullvad repository?'):
 			return
 
 		opi.add_repo(
