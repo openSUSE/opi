@@ -20,6 +20,5 @@ class MullvadBrowser(BasePlugin):
                         gpgcheck = 1
 		)
 
-
 		opi.install_packages(['mullvad-browser'])
 		opi.ask_keep_repo('mullvad')
