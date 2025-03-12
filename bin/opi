@@ -24,7 +24,7 @@ class PreserveWhiteSpaceWrapRawTextHelpFormatter(argparse.RawTextHelpFormatter):
 	def _split_lines(self, text, width):
 		textRows = text.splitlines()
 		for idx,line in enumerate(textRows):
-			search = re.search('\s*[\d\-]*\.?\s*', line)
+			search = re.search(r'\s*[\d\-]*\.?\s*', line)
 			if line.strip() == '':
 				textRows[idx] = ' '
 			elif search:
