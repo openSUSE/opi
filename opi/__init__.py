@@ -11,7 +11,7 @@ import requests
 import lxml.etree
 import rpm
 
-from termcolor import colored
+from termcolor import colored, cprint
 
 from opi.backends import get_backend, BackendConstants
 from opi import pager
@@ -225,11 +225,17 @@ def search_local_repos(package):
 				continue
 			search_results[repo_alias].append({'version': version, 'release': release, 'arch': arch})
 	except subprocess.CalledProcessError as e:
-		if e.returncode != 104:
+		if e.returncode == 104:
 			# 104 ZYPPER_EXIT_INF_CAP_NOT_FOUND is returned if there are no results
-			if e.returncode == 7:
-				# 7 ZYPPER_EXIT_ZYPP_LOCKED - error is already printed by zypper
-				sys.exit(1)
+			pass
+		elif e.returncode == 7:
+			# 7 ZYPPER_EXIT_ZYPP_LOCKED - error is already printed by zypper
+			sys.exit(1)
+		elif e.returncode == 106:
+			# 106 - ZYPPER_EXIT_INF_REPOS_SKIPPED - some repos have no cache
+			cprint("Warning: The repos listed above have no local cache and will be ignored for this query.", 'yellow')
+			cprint("         Run 'zypper refresh' as root to fix this.", 'yellow')
+		else:
 			raise # TODO: don't exit program, use exception that will be handled in repo_query except block
 
 	repos_by_alias = {repo.alias: repo for repo in get_repos()}
