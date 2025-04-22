@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Tue Apr 22 08:08:34 UTC 2025 - Dominik Heidler <dheidler@suse.de>
+
+- Version 5.8.2
+  * Warn about adding staging repos
+  * Gracefully handle zypper exit code 106 (repos without cache present)
+
+-------------------------------------------------------------------
 Wed Mar 12 11:07:52 UTC 2025 - Dominik Heidler <dheidler@suse.de>
 
 - Version 5.8.1
