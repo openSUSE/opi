@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Tue Apr 22 11:55:07 UTC 2025 - Dominik Heidler <dheidler@suse.de>
+
+- Version 5.8.3
+  * Install dependencies rpm-build and squashfs at runtime if needed
+  * Drop DNF support
+
+-------------------------------------------------------------------
 Tue Apr 22 08:08:34 UTC 2025 - Dominik Heidler <dheidler@suse.de>
 
 - Version 5.8.2
