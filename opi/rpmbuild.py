@@ -4,6 +4,8 @@ import re
 import subprocess
 import glob
 import shutil
+from shutil import which
+from opi import install_packages
 
 def copy(src, dst):
 	"""
@@ -53,6 +55,10 @@ class RPMBuild:
 
 		os.mkdir(self.buildroot)
 		os.mkdir(self.rpm_out_dir)
+
+		if not which('rpmbuild'):
+			print("Installing requirement: rpm-build")
+			install_packages(['rpm-build'], no_recommends=True, non_interactive=True)
 
 	def mkspec(self):
 		nl = "\n"

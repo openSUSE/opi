@@ -358,9 +358,9 @@ def install_packages(packages, **kwargs):
 def dist_upgrade(**kwargs):
 	pkgmgr_action('dup', **kwargs)
 
-def pkgmgr_action(action, packages=[], from_repo=None, allow_vendor_change=False, allow_arch_change=False, allow_downgrade=False, allow_name_change=False, allow_unsigned=False):
+def pkgmgr_action(action, packages=[], from_repo=None, allow_vendor_change=False, allow_arch_change=False, allow_downgrade=False, allow_name_change=False, allow_unsigned=False, no_recommends=False, non_interactive=False):
 	args = ['sudo', 'zypper']
-	if global_state.arg_non_interactive:
+	if global_state.arg_non_interactive or non_interactive:
 		args.append('-n')
 	if allow_unsigned:
 		args.append('--no-gpg-checks')
@@ -377,6 +377,8 @@ def pkgmgr_action(action, packages=[], from_repo=None, allow_vendor_change=False
 		args.append('--allow-vendor-change')
 	if action == 'in':
 		args.append('--oldpackage')
+		if no_recommends:
+			args.append('--no-recommends')
 	args.extend(packages)
 	subprocess.call(args)
 
