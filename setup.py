@@ -16,6 +16,6 @@ setup(
     author='Guo Yunhe, Dominik Heidler, KaratekHD',
     author_email='i@guoyunhe.me, dheidler@suse.de, karatek@karatek.net',
     install_requires=['lxml', 'requests', 'termcolor', 'curses'],
-    packages=['opi', 'opi.plugins', 'opi.config', 'opi.backends'],
+    packages=['opi', 'opi.plugins', 'opi.config'],
     scripts=['bin/opi'],
 )

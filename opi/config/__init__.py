@@ -2,7 +2,6 @@ import os
 import configparser
 
 default_config = {
-	'backend': 'zypp',
 	'use_releasever_var': True,
 	'new_repo_auto_refresh': True,
 	'list_in_reverse': False,
@@ -22,7 +21,6 @@ def get_key_from_config(key: str):
 			cp.read(path)
 			ocfg = cp['opi']
 			config_cache.update({
-				'backend': ocfg.get('backend'),
 				'use_releasever_var': ocfg.getboolean('use_releasever_var'),
 				'new_repo_auto_refresh': ocfg.getboolean('new_repo_auto_refresh'),
 				'list_in_reverse': ocfg.getboolean('list_in_reverse'),

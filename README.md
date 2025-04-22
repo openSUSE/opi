@@ -61,16 +61,6 @@ Demo:
 
 Change the config by editing the content of `/etc/opi.cfg`.
 
-#### Using DNF instead of Zypper
-
-If you want to, you can use [DNF](https://en.opensuse.org/SDB:DNF) instead of Zypper.
-
-```cfg
-backend = dnf
-```
-
-If you want to go back to Zypper, just change the value of `backend` back to `zypp`.
-
 #### Disabling auto-refresh for new repositories
 
 If you want to, you can disable auto-refreshing of new repositories.

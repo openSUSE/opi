@@ -13,7 +13,6 @@ import rpm
 
 from termcolor import colored, cprint
 
-from opi.backends import get_backend, BackendConstants
 from opi import pager
 from opi import config
 from opi.state import global_state
@@ -313,13 +312,10 @@ def add_repo(filename, name, url, enabled=True, gpgcheck=True, gpgkey=None, repo
 
 def refresh_repos(repo_alias=None, auto_import_keys=False):
 	refresh_cmd = []
-	if get_backend() == BackendConstants.zypp:
-		refresh_cmd = ['sudo', 'zypper']
-		if auto_import_keys:
-			refresh_cmd.append('--gpg-auto-import-keys')
-		refresh_cmd.append('ref')
-	elif get_backend() == BackendConstants.dnf:
-		refresh_cmd = ['sudo', 'dnf', 'ref']
+	refresh_cmd = ['sudo', 'zypper']
+	if auto_import_keys:
+		refresh_cmd.append('--gpg-auto-import-keys')
+	refresh_cmd.append('ref')
 	if repo_alias:
 		refresh_cmd.append(repo_alias)
 	subprocess.call(refresh_cmd)
@@ -363,39 +359,24 @@ def dist_upgrade(**kwargs):
 	pkgmgr_action('dup', **kwargs)
 
 def pkgmgr_action(action, packages=[], from_repo=None, allow_vendor_change=False, allow_arch_change=False, allow_downgrade=False, allow_name_change=False, allow_unsigned=False):
-	if get_backend() == BackendConstants.zypp:
-		args = ['sudo', 'zypper']
-		if global_state.arg_non_interactive:
-			args.append('-n')
-		if allow_unsigned:
-			args.append('--no-gpg-checks')
-		args.append(action)
-		if from_repo:
-			args.extend(['--from', from_repo])
-		if allow_downgrade:
-			args.append('--allow-downgrade')
-		if allow_arch_change:
-			args.append('--allow-arch-change')
-		if allow_name_change:
-			args.append('--allow-name-change')
-		if allow_vendor_change:
-			args.append('--allow-vendor-change')
-		if action == 'in':
-			args.append('--oldpackage')
-	elif get_backend() == BackendConstants.dnf:
-		args = ['sudo', 'dnf']
-		if global_state.arg_non_interactive:
-			args.append('-y')
-		args.append(action)
-		if from_repo:
-			args.extend(['--repo', from_repo])
-		# allow_downgrade and allow_name_change are default in DNF
-		if allow_vendor_change:
-			args.append('--setopt=allow_vendor_change=True')
-		if allow_unsigned:
-			args.append('--nogpgcheck')
-	else:
-		raise Exception(f"Unknown Backend: {get_backend()}")
+	args = ['sudo', 'zypper']
+	if global_state.arg_non_interactive:
+		args.append('-n')
+	if allow_unsigned:
+		args.append('--no-gpg-checks')
+	args.append(action)
+	if from_repo:
+		args.extend(['--from', from_repo])
+	if allow_downgrade:
+		args.append('--allow-downgrade')
+	if allow_arch_change:
+		args.append('--allow-arch-change')
+	if allow_name_change:
+		args.append('--allow-name-change')
+	if allow_vendor_change:
+		args.append('--allow-vendor-change')
+	if action == 'in':
+		args.append('--oldpackage')
 	args.extend(packages)
 	subprocess.call(args)
 
@@ -742,10 +723,7 @@ def ask_keep_key(keyurl, repo_alias=None):
 def ask_keep_repo(repo_alias):
 	if not ask_yes_or_no(f"Do you want to keep the repo '{repo_alias}'?"):
 		repo = next((r for r in get_repos() if r.filename == repo_alias))
-		if get_backend() == BackendConstants.zypp:
-			subprocess.call(['sudo', 'zypper', 'rr', repo_alias])
-		if get_backend() == BackendConstants.dnf:
-			subprocess.call(['sudo', 'rm', os.path.join(REPO_DIR, f'{repo_alias}.repo')])
+		subprocess.call(['sudo', 'zypper', 'rr', repo_alias])
 		if repo.gpgkey:
 			ask_keep_key(repo.gpgkey, repo)
 
