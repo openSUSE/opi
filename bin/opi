@@ -6,7 +6,7 @@ import re
 import argparse
 import textwrap
 import subprocess
-from termcolor import colored
+from termcolor import colored, cprint
 
 sys.path.insert(0, os.path.abspath(os.path.dirname(__file__) + '/..'))
 import opi
@@ -91,19 +91,28 @@ def repo_query(query):
 		print('You have selected package:', opi.format_pkg_option(selected_pkg, table=False))
 		if isinstance(selected_pkg, opi.OBSPackage):
 			if selected_pkg.is_from_personal_project():
-				print(colored(
+				cprint(
 					'BE CAREFUL! The package is from a personal repository and NOT reviewed by others.\n'
 					'You can ask the author to submit the package to development projects and openSUSE:Factory.\n'
 					'Learn more at https://en.opensuse.org/openSUSE:How_to_contribute_to_Factory',
 					'red'
-				))
+				)
 			elif selected_pkg.project == 'openSUSE:Factory':
-				print(opi.colored(
+				cprint(
 					'BE CAREFUL! You are about to add the Factory Repository.\n'
 					'This repo contains the unreleased Tumbleweed distro before openQA tests have been run.\n'
 					'Only proceed if you know what you are doing!',
 					'yellow'
-				))
+				)
+				if not opi.ask_yes_or_no('Do you want to continue?', default_answer='n'):
+					return
+			elif selected_pkg.project.startswith('openSUSE:Factory:Staging'):
+				cprint(
+					'BE CAREFUL! You are about to add a Factory Staging Repository.\n'
+					'This repo is used to test submissions to the Factory repo (the unreleased Tumbleweed distro before openQA tests have been run).\n'
+					'Only proceed if you know what you are doing!',
+					'yellow'
+				)
 				if not opi.ask_yes_or_no('Do you want to continue?', default_answer='n'):
 					return
 
