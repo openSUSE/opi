@@ -32,10 +32,11 @@ def install_rpm_release(org, repo, filters=[lambda a: a['name'].endswith('.rpm')
 	if not latest_release:
 		print(f'No release found for {org}/{repo}')
 		return
-	if not opi.ask_yes_or_no(f"Do you want to install {repo} release {latest_release['tag_name']} RPM from {org} github repo?"):
-		return
 	asset = get_release_asset(latest_release, filters=filters)
 	if not asset:
 		print(f"No RPM asset found for {org}/{repo} release {latest_release['tag_name']}")
+		return
+	print(f"Found: {asset['url']}")
+	if not opi.ask_yes_or_no(f"Do you want to install {repo} release {latest_release['tag_name']} RPM from {org} github repo?"):
 		return
 	opi.install_packages([asset['url']], allow_unsigned=allow_unsigned)
