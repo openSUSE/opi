@@ -18,5 +18,5 @@ class MSDotnet(BasePlugin):
 			gpgkey = 'https://packages.microsoft.com/keys/microsoft.asc'
 		)
 
-		opi.install_packages(['dotnet-sdk-8.0'])
+		opi.install_packages(['dotnet-sdk-9.0'])
 		opi.ask_keep_repo('dotnet')
