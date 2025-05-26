@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Mon May 26 10:40:34 UTC 2025 - Dominik Heidler <dheidler@suse.de>
+
+- Version 5.8.4
+  * Use arm64 rpm for libation on aarch64
+
+-------------------------------------------------------------------
 Tue Apr 22 11:55:07 UTC 2025 - Dominik Heidler <dheidler@suse.de>
 
 - Version 5.8.3
