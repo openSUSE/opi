@@ -4,7 +4,7 @@ from opi import github
 
 class NetBeans(BasePlugin):
 	main_query = 'netbeans'
-	description = 'Development Environment, Tooling Platform and Application Framework'
+	description = 'Development environment, tooling platform and application framework'
 	queries = ['netbeans', 'NetBeans']
 
 	@classmethod
