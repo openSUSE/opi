@@ -4,7 +4,7 @@ from opi import github
 
 class RustDesk(BasePlugin):
 	main_query = 'rustdesk'
-	description = 'An open-source remote desktop application'
+	description = 'Open Source remote desktop application'
 	queries = ['rustdesk', 'RustDesk']
 
 	@classmethod
