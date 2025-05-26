@@ -9,7 +9,7 @@ class Libation(BasePlugin):
 
 	@classmethod
 	def run(cls, query):
-		arch = opi.get_cpu_arch().replace('aarch64', 'amd64').replace('x86_64', 'amd64')
+		arch = opi.get_cpu_arch().replace('aarch64', 'arm64').replace('x86_64', 'amd64')
 		github.install_rpm_release('rmcrackan', 'Libation',
 			filters=[lambda a: a['name'].endswith(f'{arch}.rpm')],
 			allow_unsigned=True # no key available
