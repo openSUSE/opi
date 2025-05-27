@@ -271,6 +271,11 @@ def get_repos():
 			for alias in cp.sections():
 				if not bool(int(cp.get(alias, 'enabled'))):
 					continue
+				url = cp[alias].get('baseurl')
+				if not url:
+					url = cp[alias].get('mirrorlist')
+					if url:
+						url = re.sub(r"\?mirrorlist$", "", url)
 				repo = {
 					'alias': alias,
 					'filename': re.sub(r'\.repo$', '', repo_file),
@@ -293,7 +298,14 @@ def add_repo(filename, name, url, enabled=True, gpgcheck=True, gpgkey=None, repo
 	tf = tempfile.NamedTemporaryFile('w')
 	tf.file.write(f'[{filename}]\n')
 	tf.file.write(f'name={name}\n')
-	tf.file.write(f'baseurl={url}\n')
+	if url.startswith('https://download.opensuse.org') or url.startswith('https://cdn.opensuse.org'):
+		# These servers support the /?mirrorlist suffix
+		# see https://lists.opensuse.org/archives/list/factory@lists.opensuse.org/thread/JR725AXWDZYLJ3PKIKYAYQQAXE6OWQMM/
+		if not url.endswith('/'):
+			url = f"{url}/"
+		tf.file.write(f'mirrorlist={url}?mirrorlist\n')
+	else:
+		tf.file.write(f'baseurl={url}\n')
 	tf.file.write(f'enabled={enabled:d}\n')
 	tf.file.write(f'type={repo_type}\n')
 	tf.file.write(f'gpgcheck={gpgcheck:d}\n')
