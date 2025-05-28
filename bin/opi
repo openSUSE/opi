@@ -35,6 +35,12 @@ class PreserveWhiteSpaceWrapRawTextHelpFormatter(argparse.RawTextHelpFormatter):
 
 
 def setup_argparser(plugin_manager):
+	extras = plugin_manager.get_plugin_string(' ' * 2, 'extras')
+	if extras:
+		extras = textwrap.dedent('''\
+			\nThese queries are provided by plugins that are not part of the opi package:
+		''') + extras
+
 	ap = argparse.ArgumentParser(
 		formatter_class=PreserveWhiteSpaceWrapRawTextHelpFormatter,
 		description=textwrap.dedent('''\
@@ -49,7 +55,7 @@ def setup_argparser(plugin_manager):
 		'''),
 		epilog=textwrap.dedent('''\
 			Also these queries (provided by plugins) can be used to install packages from various other vendors:
-		''') + plugin_manager.get_plugin_string(' ' * 2))
+		''') + plugin_manager.get_plugin_string(' ' * 2) + extras)
 
 	ap.add_argument('query', nargs='*', type=str, help=textwrap.dedent('''\
 		can be any package name or part of it and will be searched for both at the openSUSE Build Service and Packman.
