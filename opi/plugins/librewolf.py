@@ -3,7 +3,7 @@ from opi.plugins import BasePlugin
 
 class librewolf(BasePlugin):
 	main_query = 'librewolf'
-	description = 'librewolf'
+	description = 'Librewolf is a custom version of Firefox, focused on privacy, security and freedom.'
 	queries = ['librewolf', 'Librewolf', 'LibreWolf']
 
 	@classmethod
