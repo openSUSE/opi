@@ -1,4 +1,14 @@
 -------------------------------------------------------------------
+Mon Jun  2 10:16:26 UTC 2025 - Dominik Heidler <dheidler@suse.de>
+
+- Version 5.8.5
+  * add librewolf plugin (#205)
+  * Install .NET 9
+  * Add verbose mode
+  * Change the order of the process in the github module
+  * Add rustdesk plugin
+
+-------------------------------------------------------------------
 Mon May 26 10:40:34 UTC 2025 - Dominik Heidler <dheidler@suse.de>
 
 - Version 5.8.4
