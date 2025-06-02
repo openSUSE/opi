@@ -305,9 +305,12 @@ def add_repo(filename, name, url, enabled=True, gpgcheck=True, gpgkey=None, repo
 	if priority:
 		tf.file.write(f'priority={priority}\n')
 	tf.file.flush()
-	subprocess.call(['sudo', 'cp', tf.name, os.path.join(REPO_DIR, f'{filename}.repo')])
-	subprocess.call(['sudo', 'chmod', '644', os.path.join(REPO_DIR, f'{filename}.repo')])
+	repo_file = os.path.join(REPO_DIR, f'{filename}.repo')
+	subprocess.call(['sudo', 'cp', tf.name, repo_file])
+	subprocess.call(['sudo', 'chmod', '644', repo_file])
 	tf.file.close()
+	if global_state.arg_verbose_mode:
+		print(f"Wrote {repo_file}:\n{'-'*8}\n{open(repo_file).read()}{'-'*8}")
 	refresh_repos(auto_import_keys=auto_import_keys)
 
 def refresh_repos(repo_alias=None, auto_import_keys=False):
