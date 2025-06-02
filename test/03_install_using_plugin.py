@@ -4,7 +4,7 @@ import sys
 import pexpect
 import subprocess
 
-c = pexpect.spawn('./bin/opi resilio-sync', logfile=sys.stdout.buffer, echo=False)
+c = pexpect.spawn('./bin/opi -v resilio-sync', logfile=sys.stdout.buffer, echo=False)
 
 c.expect('Do you want to install')
 c.sendline('y')

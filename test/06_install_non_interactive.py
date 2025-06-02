@@ -4,7 +4,7 @@ import sys
 import pexpect
 import subprocess
 
-c = pexpect.spawn('./bin/opi -n bottom', logfile=sys.stdout.buffer, echo=False)
+c = pexpect.spawn('./bin/opi -v -n bottom', logfile=sys.stdout.buffer, echo=False)
 
 c.expect(r'([0-9]+)\. bottom', timeout=20)
 c.expect('Pick a number')
@@ -19,7 +19,7 @@ assert c.exitstatus == 0, f'Exit code: {c.exitstatus}'
 subprocess.check_call(['rpm', '-qi', 'bottom'])
 
 
-c = pexpect.spawn('./bin/opi -n helloworld-opi-tests', logfile=sys.stdout.buffer, echo=False)
+c = pexpect.spawn('./bin/opi -v -n helloworld-opi-tests', logfile=sys.stdout.buffer, echo=False)
 
 c.expect(r'([0-9]+)\. helloworld-opi-tests', timeout=20)
 c.expect('Pick a number')

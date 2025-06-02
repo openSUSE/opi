@@ -4,7 +4,7 @@ import sys
 import pexpect
 import subprocess
 
-c = pexpect.spawn('./bin/opi rtl8812au', logfile=sys.stdout.buffer, echo=False)
+c = pexpect.spawn('./bin/opi -v rtl8812au', logfile=sys.stdout.buffer, echo=False)
 
 c.expect('1. rtl8812au\r\n')
 c.sendline('q')
