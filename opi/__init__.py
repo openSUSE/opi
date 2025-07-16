@@ -271,6 +271,11 @@ def get_repos():
 			for alias in cp.sections():
 				if not bool(int(cp.get(alias, 'enabled'))):
 					continue
+				url = cp[alias].get('baseurl')
+				if not url:
+					url = cp[alias].get('mirrorlist')
+					if url:
+						url = re.sub(r"\?mirrorlist$", "", url)
 				repo = {
 					'alias': alias,
 					'filename': re.sub(r'\.repo$', '', repo_file),
