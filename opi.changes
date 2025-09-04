@@ -1,4 +1,15 @@
 -------------------------------------------------------------------
+Thu Sep  4 09:23:19 UTC 2025 - Dominik Heidler <dheidler@suse.de>
+
+- Version 5.8.7
+  * Fix ocenaudio url
+  * Add LocalSend plugin
+  * Run all tests in verbose mode
+  * Print written repo files in verbose mode
+  * Increase timeouts in test/06_install_non_interactive.py
+  * Remove DNF references from README.md
+
+-------------------------------------------------------------------
 Mon Jun  2 10:16:26 UTC 2025 - Dominik Heidler <dheidler@suse.de>
 
 - Version 5.8.5
