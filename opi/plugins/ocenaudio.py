@@ -11,4 +11,4 @@ class Ocenaudio(BasePlugin):
 		if not opi.ask_yes_or_no('Do you want to install ocenaudio from ocenaudio.com?'):
 			return
 
-		opi.install_packages(['https://www.ocenaudio.com/downloads/index.php/ocenaudio_opensuse.rpm'], allow_unsigned=True) # rpm is unsigned
+		opi.install_packages(['https://www.ocenaudio.com/downloads/index.php/ocenaudio_opensuse15.rpm'], allow_unsigned=True) # rpm is unsigned
