@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Mon Oct  6 08:34:17 UTC 2025 - Dominik Heidler <dheidler@suse.de>
+
+- Version 5.8.9
+  * Fix VERSION KeyError in Tumbleweed
+
+-------------------------------------------------------------------
 Tue Sep 30 12:08:54 UTC 2025 - Dominik Heidler <dheidler@suse.de>
 
 - Version 5.8.8
