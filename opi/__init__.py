@@ -149,7 +149,8 @@ def add_openh264_repo(dup=False):
 	project = project.replace('-Slowroll', '')
 	project = project.replace('openSUSE MicroOS', 'openSUSE Tumbleweed')
 	project = project.replace('openSUSE Leap Micro', 'openSUSE Leap')
-	if int(float(get_version())) == 16:
+	version = get_version()
+	if version and int(float(version)) == 16:
 		project = project.replace('openSUSE Leap', 'openSUSE Leap 16')
 	project = project.replace(':', '_').replace(' ', '_')
 
