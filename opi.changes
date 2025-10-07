@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Tue Oct  7 22:08:09 UTC 2025 - Dominik Heidler <dheidler@suse.de>
+
+- Version 5.8.10
+  * Fix handling of None version on Tumbleweed
+
+-------------------------------------------------------------------
 Mon Oct  6 08:34:17 UTC 2025 - Dominik Heidler <dheidler@suse.de>
 
 - Version 5.8.9
