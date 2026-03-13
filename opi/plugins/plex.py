@@ -12,8 +12,8 @@ class PlexMediaServer(BasePlugin):
 			return
 
 		opi.add_repo(
-			filename = 'plex',
-			name = 'PlexTv',
+			filename = 'PlexRepo',
+			name = 'PlexRepo',
 			url = 'https://repo.plex.tv/rpm/',
 			gpgkey = 'https://downloads.plex.tv/plex-keys/PlexSign.v2.key'
 		)
