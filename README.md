@@ -16,11 +16,6 @@ Search and install almost all packages available for openSUSE and SLE:
 - python3-lxml
 - python3-termcolor
 
-If you want to use dnf instead of zypper, you also need:
-
-- dnf
-- libdnf-repo-config-zypp
-
 ## Install
 
 ### openSUSE Tumbleweed and Leap

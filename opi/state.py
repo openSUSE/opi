@@ -1,6 +1,7 @@
 class GlobalState:
 	default_state = {
 		'arg_non_interactive': False,
+		'arg_verbose_mode': False,
 	}
 	state = {
 	}

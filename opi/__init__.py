@@ -149,12 +149,15 @@ def add_openh264_repo(dup=False):
 	project = project.replace('-Slowroll', '')
 	project = project.replace('openSUSE MicroOS', 'openSUSE Tumbleweed')
 	project = project.replace('openSUSE Leap Micro', 'openSUSE Leap')
+	version = get_version()
+	if version and int(float(version)) == 16:
+		project = project.replace('openSUSE Leap', 'openSUSE Leap 16')
 	project = project.replace(':', '_').replace(' ', '_')
 
-	url = f'http://codecs.opensuse.org/openh264/{project}/'
+	url = f'https://codecs.opensuse.org/openh264/{project}/'
 	existing_repo = get_enabled_repo_by_url(url)
 	if existing_repo:
-		print(f"Installing from existing repo '{existing_repo.name}'")
+		print(f"Installing from existing repo '{existing_repo.name_expanded()}'")
 		repo = existing_repo.alias
 	else:
 		repo = 'openh264'
@@ -305,9 +308,12 @@ def add_repo(filename, name, url, enabled=True, gpgcheck=True, gpgkey=None, repo
 	if priority:
 		tf.file.write(f'priority={priority}\n')
 	tf.file.flush()
-	subprocess.call(['sudo', 'cp', tf.name, os.path.join(REPO_DIR, f'{filename}.repo')])
-	subprocess.call(['sudo', 'chmod', '644', os.path.join(REPO_DIR, f'{filename}.repo')])
+	repo_file = os.path.join(REPO_DIR, f'{filename}.repo')
+	subprocess.call(['sudo', 'cp', tf.name, repo_file])
+	subprocess.call(['sudo', 'chmod', '644', repo_file])
 	tf.file.close()
+	if global_state.arg_verbose_mode:
+		print(f"Wrote {repo_file}:\n{'-'*8}\n{open(repo_file).read()}{'-'*8}")
 	refresh_repos(auto_import_keys=auto_import_keys)
 
 def refresh_repos(repo_alias=None, auto_import_keys=False):

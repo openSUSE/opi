@@ -7,6 +7,27 @@ ExecStart=/usr/bin/gunicorn -b [::]:80 opi_proxy:app -k gevent -u nobody -g nogr
 Environment=CONFIG=/etc/opi-proxy.json
 Restart=always
 Type=simple
+# Filesystem isolation
+ProtectSystem=strict
+ProtectHome=yes
+PrivateTmp=yes
+# Device access
+PrivateDevices=yes
+DevicePolicy=closed
+# Syscall filtering
+SystemCallFilter=@system-service
+# Kernel/system protection
+ProtectKernelTunables=yes
+ProtectKernelModules=yes
+ProtectKernelLogs=yes
+ProtectControlGroups=yes
+ProtectClock=yes
+ProtectHostname=yes
+RestrictNamespaces=yes
+RestrictRealtime=yes
+RestrictSUIDSGID=yes
+LockPersonality=yes
+MemoryDenyWriteExecute=yes
 
 [Install]
 WantedBy=multi-user.target

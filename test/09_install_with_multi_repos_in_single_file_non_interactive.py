@@ -8,7 +8,7 @@ subprocess.check_call("cat /etc/zypp/repos.d/*.repo > /tmp/singlefile.repo", she
 subprocess.check_call("rm -v /etc/zypp/repos.d/*.repo", shell=True)
 subprocess.check_call("mv -v /tmp/singlefile.repo /etc/zypp/repos.d/", shell=True)
 
-c = pexpect.spawn('./bin/opi -n tmux', logfile=sys.stdout.buffer, echo=False)
+c = pexpect.spawn('./bin/opi -v -n tmux', logfile=sys.stdout.buffer, echo=False)
 
 c.expect(r'([0-9]+)\. tmux', timeout=10)
 c.expect('Pick a number')
@@ -23,7 +23,7 @@ assert c.exitstatus == 0, f'Exit code: {c.exitstatus}'
 subprocess.check_call(['rpm', '-qi', 'tmux'])
 
 
-c = pexpect.spawn('./bin/opi -n helloworld-opi-tests', logfile=sys.stdout.buffer, echo=False)
+c = pexpect.spawn('./bin/opi -v -n helloworld-opi-tests', logfile=sys.stdout.buffer, echo=False)
 
 c.expect(r'([0-9]+)\. helloworld-opi-tests', timeout=10)
 c.expect('Pick a number')

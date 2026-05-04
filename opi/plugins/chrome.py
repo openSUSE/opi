@@ -22,7 +22,7 @@ class GoogleChrome(BasePlugin):
 		opi.add_repo(
 			filename = 'google-chrome',
 			name = 'google-chrome',
-			url = 'http://dl.google.com/linux/chrome/rpm/stable/x86_64',
+			url = 'https://dl.google.com/linux/chrome/rpm/stable/x86_64',
 			gpgkey = 'https://dl.google.com/linux/linux_signing_key.pub'
 		)
 
