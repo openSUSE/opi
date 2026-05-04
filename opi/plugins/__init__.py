@@ -7,6 +7,7 @@ class BasePlugin:
 	main_query = ''
 	description = ''
 	queries = []
+	group = ''
 
 	@classmethod
 	def matches(cls, query):
@@ -38,9 +39,11 @@ class PluginManager:
 					pass
 				return True
 
-	def get_plugin_string(self, indent=''):
+	def get_plugin_string(self, indent='', group=''):
 		plugins = ''
 		for plugin in self.plugins:
+			if group != 'all' and plugin.group != group:
+				continue
 			description = plugin.description.replace('\n', '\n' + (' ' * 16) + '  ')
 			plugins += f'{indent}{plugin.main_query:16}  {description}\n'
 		return plugins
