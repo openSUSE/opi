@@ -3,7 +3,7 @@
 import sys
 import pexpect
 
-c = pexpect.spawn('./bin/opi htop', logfile=sys.stdout.buffer, echo=False)
+c = pexpect.spawn('./bin/opi -v htop', logfile=sys.stdout.buffer, echo=False)
 
 c.expect(r'([0-9]+)\. htop', timeout=10)
 entry_id = c.match.groups()[0]

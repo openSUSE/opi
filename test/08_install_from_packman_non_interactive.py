@@ -4,7 +4,7 @@ import sys
 import pexpect
 import subprocess
 
-c = pexpect.spawn('./bin/opi -n x265', logfile=sys.stdout.buffer, echo=False)
+c = pexpect.spawn('./bin/opi -v -n x265', logfile=sys.stdout.buffer, echo=False)
 
 c.expect('1. x265\r\n')
 c.expect('Pick a number')

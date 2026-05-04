@@ -5,7 +5,7 @@ import pexpect
 import subprocess
 import time
 
-c = pexpect.spawn('./bin/opi x265', logfile=sys.stdout.buffer, echo=False)
+c = pexpect.spawn('./bin/opi -v x265', logfile=sys.stdout.buffer, echo=False)
 
 c.expect('1. x265\r\n')
 c.sendline('q')

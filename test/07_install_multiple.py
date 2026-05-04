@@ -4,7 +4,7 @@ import sys
 import pexpect
 import subprocess
 
-c = pexpect.spawn('./bin/opi -nm helloworld-opi-tests resilio-sync tmux', logfile=sys.stdout.buffer, echo=False)
+c = pexpect.spawn('./bin/opi -v -nm helloworld-opi-tests resilio-sync tmux', logfile=sys.stdout.buffer, echo=False)
 
 # plugins are installed first
 c.expect('Do you want to install')

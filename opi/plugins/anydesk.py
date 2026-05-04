@@ -14,7 +14,7 @@ class AnyDesk(BasePlugin):
         opi.add_repo(
             filename = 'anydesk',
             name = 'anydesk',
-            url = 'http://rpm.anydesk.com/opensuse/$basearch/',
+            url = 'https://rpm.anydesk.com/opensuse/$basearch/',
             gpgkey = 'https://keys.anydesk.com/repos/RPM-GPG-KEY'
         )
 

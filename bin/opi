@@ -56,10 +56,11 @@ def setup_argparser(plugin_manager):
 		If multiple query arguments are provided only results matching all of them are returned.
 		Please use the -m option if you want to use the query arguments as individual package queries.
 	'''))
-	ap.add_argument('-v', '--version', action='version', version=f'opi version {__version__}')
+	ap.add_argument('-V', '--version', action='version', version=f'opi version {__version__}')
 	ap.add_argument('-n', dest='non_interactive', action='store_true', help='run in non interactive mode')
 	ap.add_argument('-P', dest='no_plugins', action='store_true', help="don't run any plugins - only search repos, OBS and Packman")
 	ap.add_argument('-m', dest='multi_install', action='store_true', help='use query args as space separated package queries')
+	ap.add_argument('-v', '--verbose', dest='verbose_mode', action='store_true', help='make the operation more talkative')
 
 	return ap
 
@@ -131,6 +132,9 @@ if __name__ == '__main__':
 		if not args.query:
 			ap.print_help()
 			sys.exit()
+
+		if args.verbose_mode:
+			global_state.arg_verbose_mode = True
 
 		if args.non_interactive:
 			global_state.arg_non_interactive = True
