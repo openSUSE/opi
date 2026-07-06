@@ -16,8 +16,19 @@ def get_releases(org, repo, filter_prereleases=True, filters=[]):
 	return releases
 
 def get_latest_release(org, repo, filter_prereleases=True, filters=[]):
-	releases = get_releases(org, repo, filter_prereleases, filters)
-	return releases[0] if releases else None
+    if filter_prereleases:
+        try:
+            release = http_get_json(
+                f"https://api.github.com/repos/{org}/{repo}/releases/latest"
+            )
+        except requests.HTTPError:
+            return None
+        for f in filters:
+            if not f(release):
+                return None
+        return release
+    releases = get_releases(org, repo, False, filters)
+    return releases[0] if releases else None
 
 def get_release_assets(release):
 	return [{'name': a['name'], 'url': a['browser_download_url']} for a in http_get_json(release['assets_url'])]
