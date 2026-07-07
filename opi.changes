@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Tue Jul  7 08:41:14 UTC 2026 - Dominik Heidler <dheidler@suse.de>
+
+- Version 5.14.0
+  * Use GitHub latest release endpoint for stable releases
+
+-------------------------------------------------------------------
 Thu Jun 11 08:54:00 UTC 2026 - Dominik Heidler <dheidler@suse.de>
 
 - Version 5.13.0
