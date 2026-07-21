@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Tue Jul 21 12:18:33 UTC 2026 - Dominik Heidler <dheidler@suse.de>
+
+- Version 5.15.0
+  * OrcaSlicer: Load binary with correct architecture (fixes #222)
+
+-------------------------------------------------------------------
 Tue Jul  7 08:41:14 UTC 2026 - Dominik Heidler <dheidler@suse.de>
 
 - Version 5.14.0
