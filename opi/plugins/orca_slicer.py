@@ -21,7 +21,11 @@ class OrcaSlicer(BasePlugin):
 		version = latest_release['tag_name'].lstrip('v').replace('-', '_')
 		if not opi.ask_yes_or_no(f"Do you want to install {repo} release {version} from {org} github repo?"):
 			return
-		asset = github.get_release_asset(latest_release, filters=[lambda a: a['name'].endswith('.AppImage')])
+		filters = [lambda a: a['name'].endswith('.AppImage')]
+		cpu_arch = opi.get_cpu_arch()
+		if cpu_arch != 'aarch64':
+			 filters.append(lambda a: 'aarch64' not in a['name'])
+		asset = github.get_release_asset(latest_release, filters=filters)
 		if not asset:
 			print(f"No asset found for {org}/{repo} release {version}")
 			return
@@ -30,7 +34,7 @@ class OrcaSlicer(BasePlugin):
 		binary_path = 'usr/bin/OrcaSlicer'
 		icon_path = 'usr/share/pixmaps/OrcaSlicer.svg'
 
-		rpm = rpmbuild.RPMBuild('OrcaSlicer', version, cls.description, "x86_64", files=[
+		rpm = rpmbuild.RPMBuild('OrcaSlicer', version, cls.description, cpu_arch, files=[
 			f"/{binary_path}",
 			f"/{icon_path}"
 		])
