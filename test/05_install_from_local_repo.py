@@ -11,7 +11,7 @@ print(f'PEXPECT: Found entry id {entry_id!r}')
 c.expect('Pick a number')
 c.sendline(entry_id)
 
-c.expect(r'([0-9]+)\. [^ ]*(openSUSE-Tumbleweed-Oss|Main Repository)', timeout=10)
+c.expect(r'([0-9]+)\. [^ ]*(openSUSE-Tumbleweed-Oss|Main Repository|repo-oss)', timeout=10)
 entry_id = c.match.groups()[0]
 print(f'PEXPECT: Found entry id {entry_id!r}')
 c.sendline(entry_id)

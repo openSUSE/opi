@@ -12,7 +12,7 @@ c = pexpect.spawn('./bin/opi -v -n tmux', logfile=sys.stdout.buffer, echo=False)
 
 c.expect(r'([0-9]+)\. tmux', timeout=10)
 c.expect('Pick a number')
-c.expect(r'([0-9]+)\. [^ ]*(openSUSE-Tumbleweed-Oss|Main Repository)', timeout=10)
+c.expect(r'([0-9]+)\. [^ ]*(openSUSE-Tumbleweed-Oss|Main Repository|repo-oss)', timeout=10)
 c.expect('Installing from existing repo', timeout=10)
 c.expect('Continue?', timeout=60)
 c.interact()

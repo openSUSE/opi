@@ -8,7 +8,7 @@ c = pexpect.spawn('./bin/opi -v -n bottom', logfile=sys.stdout.buffer, echo=Fals
 
 c.expect(r'([0-9]+)\. bottom', timeout=20)
 c.expect('Pick a number')
-c.expect(r'([0-9]+)\. [^ ]*(openSUSE-Tumbleweed-Oss|Main Repository)', timeout=20)
+c.expect(r'([0-9]+)\. [^ ]*(openSUSE-Tumbleweed-Oss|Main Repository|repo-oss)', timeout=20)
 c.expect('Installing from existing repo', timeout=20)
 c.expect('Continue?', timeout=60)
 c.interact()
