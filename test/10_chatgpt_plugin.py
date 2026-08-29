@@ -14,19 +14,17 @@ assert chatgpt.RPM_URLS['x86_64'].endswith('chatgpt.x86_64.rpm')
 assert chatgpt.RPM_URLS['aarch64'].endswith('chatgpt.aarch64.rpm')
 
 
-with patch.object(chatgpt.opi, 'get_os_release', return_value={'NAME': 'openSUSE Leap'}), \
+with patch.object(chatgpt.opi, 'get_cpu_arch', return_value='x86_64'), \
+	 patch.object(chatgpt.opi, 'ask_yes_or_no', return_value=False) as ask:
+	chatgpt.ChatGPT.run('chatgpt')
+	ask.assert_called_once()
+
+with patch.object(chatgpt.opi, 'get_cpu_arch', return_value='ppc64le'), \
 	 patch.object(chatgpt.opi, 'ask_yes_or_no') as ask:
 	chatgpt.ChatGPT.run('chatgpt')
 	ask.assert_not_called()
 
-with patch.object(chatgpt.opi, 'get_os_release', return_value={'NAME': 'openSUSE Tumbleweed'}), \
-	 patch.object(chatgpt.opi, 'get_cpu_arch', return_value='ppc64le'), \
-	 patch.object(chatgpt.opi, 'ask_yes_or_no') as ask:
-	chatgpt.ChatGPT.run('chatgpt')
-	ask.assert_not_called()
-
-with patch.object(chatgpt.opi, 'get_os_release', return_value={'NAME': 'openSUSE Tumbleweed'}), \
-	 patch.object(chatgpt.opi, 'get_cpu_arch', return_value='x86_64'), \
+with patch.object(chatgpt.opi, 'get_cpu_arch', return_value='x86_64'), \
 	 patch.object(chatgpt.opi, 'ask_yes_or_no', return_value=False), \
 	 patch.object(chatgpt, 'cprint') as cprint:
 	chatgpt.ChatGPT.run('chatgpt')
@@ -38,7 +36,6 @@ with patch.object(chatgpt.opi, 'get_os_release', return_value={'NAME': 'openSUSE
 
 builder = MagicMock()
 with patch.object(chatgpt, 'RPMBuild', return_value=builder) as rpm_build, \
-	 patch.object(chatgpt.opi, 'get_os_release', return_value={'NAME': 'openSUSE Tumbleweed'}), \
 	 patch.object(chatgpt.opi, 'get_cpu_arch', return_value='aarch64'), \
 	 patch.object(chatgpt.opi, 'ask_yes_or_no', return_value=True), \
 	 patch.object(chatgpt.opi, 'install_packages') as install_packages:

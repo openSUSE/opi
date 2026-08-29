@@ -14,14 +14,11 @@ COMPAT_PACKAGE = 'chatgpt-opensuse-compat'
 
 class ChatGPT(BasePlugin):
 	main_query = 'chatgpt'
-	description = 'Official ChatGPT desktop app (unsupported community integration for openSUSE Tumbleweed)'
+	description = 'Official ChatGPT desktop app (unsupported community integration for openSUSE)'
 	queries = ['chatgpt']
 
 	@classmethod
 	def run(cls, query):
-		if opi.get_os_release().get('NAME') != 'openSUSE Tumbleweed':
-			cprint('The ChatGPT OPI plugin currently supports openSUSE Tumbleweed only.', 'red')
-			return
 		arch = opi.get_cpu_arch()
 		if arch not in RPM_URLS:
 			cprint(f'The ChatGPT OPI plugin does not support architecture {arch}.', 'red')
