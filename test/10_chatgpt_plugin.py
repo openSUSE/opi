@@ -22,16 +22,6 @@ with patch.object(chatgpt.opi, 'get_cpu_arch', return_value='ppc64le'), \
 	chatgpt.ChatGPT.run('chatgpt')
 	ask.assert_not_called()
 
-with patch.object(chatgpt.opi, 'get_cpu_arch', return_value='x86_64'), \
-	 patch.object(chatgpt.opi, 'ask_yes_or_no', return_value=False), \
-	 patch.object(chatgpt, 'cprint') as cprint:
-	chatgpt.ChatGPT.run('chatgpt')
-	assert any(
-		'unmodified official package' in call.args[0]
-		for call in cprint.call_args_list
-	)
-
-
 builder = MagicMock()
 with patch.object(chatgpt, 'RPMBuild', return_value=builder) as rpm_build, \
 	 patch.object(chatgpt.opi, 'get_cpu_arch', return_value='aarch64'), \

@@ -58,7 +58,7 @@ def install_file(contents, destination):
 
 class ChatGPT(BasePlugin):
 	main_query = 'chatgpt'
-	description = 'Official ChatGPT desktop app (unsupported community integration for openSUSE)'
+	description = 'Official ChatGPT desktop app'
 	queries = ['chatgpt']
 
 	@classmethod
@@ -67,11 +67,6 @@ class ChatGPT(BasePlugin):
 		if arch not in SUPPORTED_ARCHITECTURES:
 			cprint(f'The ChatGPT OPI plugin does not support architecture {arch}.', 'red')
 			return
-		cprint(
-			'OpenAI does not officially support openSUSE. This community integration '
-			'installs the unmodified official package.',
-			'yellow',
-		)
 		if not opi.ask_yes_or_no('Do you want to install ChatGPT from the official OpenAI repository?'):
 			return
 
