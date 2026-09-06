@@ -1,4 +1,5 @@
 import os
+import platform
 import sys
 import subprocess
 import re
@@ -55,17 +56,7 @@ os_release = {}
 def get_os_release():
 	global os_release
 	if not os_release:
-		with open('/etc/os-release') as f:
-			for line in f.readlines():
-				line = line.strip()
-				if line.startswith('#') or '=' not in line:
-					continue
-				key, value = line.split('=', 1)
-				key = key.strip()
-				value = value.strip()
-				if '"' in value:
-					value = value.split('"', 1)[1].split('"', 1)[0]
-				os_release[key] = value
+		os_release = platform.freedesktop_os_release()
 	return os_release
 
 def get_distribution(prefix=False, use_releasever_variable=False):
