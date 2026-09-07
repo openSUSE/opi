@@ -665,7 +665,10 @@ def ask_for_option(options, question='Pick a number (0 to quit):', option_filter
 		return options[num - 1]
 
 def ask_import_key(keyurl):
-	keys = requests.get(expand_vars(keyurl)).text
+	if keyurl.startswith('file://'):
+		keys = open(expand_vars(keyurl[7:])).read()
+	else:
+		keys = requests.get(expand_vars(keyurl)).text
 	db_keys = get_keys_from_rpmdb()
 	for key in split_keys(keys):
 		for line in subprocess.check_output(['gpg', '--quiet', '--show-keys', '--with-colons', '-'], input=key.encode()).decode().strip().split('\n'):
