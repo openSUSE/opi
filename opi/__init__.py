@@ -52,15 +52,8 @@ def get_cpu_arch():
 			cpu_arch = 'i586'
 	return cpu_arch
 
-os_release = {}
-def get_os_release():
-	global os_release
-	if not os_release:
-		os_release = platform.freedesktop_os_release()
-	return os_release
-
 def get_distribution(prefix=False, use_releasever_variable=False):
-	os_release = get_os_release()
+	os_release = platform.freedesktop_os_release()
 	name = os_release['NAME']
 	version = os_release.get('VERSION') # VERSION is not set for TW
 	if version:
@@ -88,7 +81,7 @@ def get_distribution(prefix=False, use_releasever_variable=False):
 	return project
 
 def get_version() -> str:
-	os_release = get_os_release()
+	os_release = platform.freedesktop_os_release()
 	version = os_release.get('VERSION') # VERSION is not set for TW
 	return version
 
@@ -136,7 +129,7 @@ def add_packman_repo(dup=False):
 		dist_upgrade(from_repo='packman', allow_downgrade=True, allow_vendor_change=True)
 
 def add_openh264_repo(dup=False):
-	project = get_os_release()['NAME']
+	project = platform.freedesktop_os_release()['NAME']
 	project = project.replace('-Slowroll', '')
 	project = project.replace('openSUSE MicroOS', 'openSUSE Tumbleweed')
 	project = project.replace('openSUSE Leap Micro', 'openSUSE Leap')
