@@ -82,7 +82,6 @@ class ChatGPT(BasePlugin):
 		opi.install_packages([compat.rpmfile_path], allow_unsigned=True)
 
 		install_file(REPO_KEY, REPO_KEY_PATH)
-		subprocess.check_call(['sudo', 'rpm', '--import', REPO_KEY_PATH])
 		install_file('repo_add_once="false"\n', DEFAULTS_PATH)
 
 		opi.add_repo(
