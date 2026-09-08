@@ -88,6 +88,7 @@ class ChatGPT(BasePlugin):
 			filename=REPO_ALIAS,
 			name='ChatGPT',
 			url=REPO_URL,
+			gpgkey=f"file://{REPO_KEY_PATH}",
 		)
 		opi.install_packages(['chatgpt'])
 		opi.ask_keep_repo(REPO_ALIAS)
