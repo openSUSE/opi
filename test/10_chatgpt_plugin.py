@@ -41,11 +41,11 @@ with patch.object(chatgpt, 'RPMBuild', return_value=builder) as rpm_build, \
 	assert install_packages.call_args_list[0].kwargs == {'allow_unsigned': True}
 	install_file.assert_any_call(chatgpt.REPO_KEY, chatgpt.REPO_KEY_PATH)
 	install_file.assert_any_call('repo_add_once="false"\n', chatgpt.DEFAULTS_PATH)
-	check_call.assert_called_once_with(['sudo', 'rpm', '--import', chatgpt.REPO_KEY_PATH])
 	add_repo.assert_called_once_with(
 		filename=chatgpt.REPO_ALIAS,
 		name='ChatGPT',
 		url=chatgpt.REPO_URL,
+		gpgkey=f"file://{chatgpt.REPO_KEY_PATH}",
 	)
 	assert install_packages.call_args_list[1].args == (['chatgpt'],)
 	assert install_packages.call_args_list[1].kwargs == {}
