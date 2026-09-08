@@ -12,7 +12,7 @@ SUPPORTED_ARCHITECTURES = {'x86_64', 'aarch64'}
 COMPAT_PACKAGE = 'chatgpt-opensuse-compat'
 REPO_ALIAS = 'openai-chatgpt'
 REPO_URL = 'https://persistent.oaistatic.com/codex-app-prod/linux/rpm/$basearch'
-REPO_KEY_PATH = '/etc/pki/rpm-gpg/RPM-GPG-KEY-chatgpt'
+REPO_KEY_PATH = '/etc/pki/rpm-gpg/RPM-GPG-KEY-chatgpt-3BFA0E4AE8B8CC16A2D9BA684A3B4A566C4660E4.asc'
 DEFAULTS_PATH = '/etc/default/chatgpt'
 # Extracted from the official ChatGPT RPM. Fingerprint:
 # 3BFA 0E4A E8B8 CC16 A2D9 BA68 4A3B 4A56 6C46 60E4
