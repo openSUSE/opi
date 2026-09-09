@@ -1,4 +1,14 @@
 -------------------------------------------------------------------
+Wed Sep  9 09:19:44 UTC 2026 - Dominik Heidler <dheidler@suse.de>
+
+- Version 5.16.0
+  * Fix 10_chatgpt_plugin.py
+  * Add ChatGPT desktop app plugin (#223)
+  * Allow repos with local gpgkey
+  * refactor: use python built-in for os-release (#224)
+  * Fix testsuite for Leap 16.0
+
+-------------------------------------------------------------------
 Tue Jul 21 12:18:33 UTC 2026 - Dominik Heidler <dheidler@suse.de>
 
 - Version 5.15.0
