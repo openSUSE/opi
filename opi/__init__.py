@@ -664,11 +664,16 @@ def ask_for_option(options, question='Pick a number (0 to quit):', option_filter
 	else:
 		return options[num - 1]
 
-def ask_import_key(keyurl):
+def fetch_keys(keyurl):
+	""" Return the contents of a gpgkey url (http(s):// or file://) with all supported vars expanded """
+	keyurl = expand_vars(keyurl)
 	if keyurl.startswith('file://'):
-		keys = open(expand_vars(keyurl[7:])).read()
-	else:
-		keys = requests.get(expand_vars(keyurl)).text
+		with open(keyurl[7:]) as f:
+			return f.read()
+	return requests.get(keyurl).text
+
+def ask_import_key(keyurl):
+	keys = fetch_keys(keyurl)
 	db_keys = get_keys_from_rpmdb()
 	for key in split_keys(keys):
 		for line in subprocess.check_output(['gpg', '--quiet', '--show-keys', '--with-colons', '-'], input=key.encode()).decode().strip().split('\n'):
@@ -691,7 +696,7 @@ def ask_keep_key(keyurl, repo_alias=None):
 		Ask to remove the key given by url to key file.
 		Warns about all repos still using the key except the repo given by repo_alias param.
 	"""
-	urlkeys = split_keys(requests.get(expand_vars(keyurl)).text)
+	urlkeys = split_keys(fetch_keys(keyurl))
 	urlkeys_normalized = [normalize_key(urlkey) for urlkey in urlkeys]
 	db_keys = get_keys_from_rpmdb()
 	keys_to_ask_user = [key for key in db_keys if key['pubkey'] in urlkeys_normalized]
@@ -701,7 +706,7 @@ def ask_keep_key(keyurl, repo_alias=None):
 			if repo_alias and repo.filename == repo_alias:
 				continue
 			if repo.gpgkey:
-				repokey = normalize_key(requests.get(repo.gpgkey).text)
+				repokey = normalize_key(fetch_keys(repo.gpgkey))
 				if repokey == key['pubkey']:
 					repos_using_this_key.append(repo)
 		if repos_using_this_key:
