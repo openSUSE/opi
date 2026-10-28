@@ -5,6 +5,7 @@ import subprocess
 import re
 import tempfile
 import configparser
+import glob
 from functools import cmp_to_key
 from collections import defaultdict
 
@@ -25,6 +26,8 @@ OBS_APIROOT = {
 PROXY_URL = 'https://opi-proxy.opensuse.org/'
 
 REPO_DIR = '/etc/zypp/repos.d/'
+ZYPP_CONFIG_DIR = '/etc/zypp'
+ZYPP_VENDOR_CONFIG_DIR = '/usr/etc/zypp'
 
 ##################
 ### Exceptions ###
@@ -85,12 +88,48 @@ def get_version() -> str:
 	version = os_release.get('VERSION') # VERSION is not set for TW
 	return version
 
+def get_repo_vars() -> dict:
+	"""Read custom repository variables using zypp's configuration precedence."""
+	if 'ZYPP_CONF' in os.environ:
+		config_files = [os.environ['ZYPP_CONF']]
+	else:
+		# System files mask vendor files with the same relative name.
+		files = {}
+		for directory in (ZYPP_VENDOR_CONFIG_DIR, ZYPP_CONFIG_DIR):
+			for path in [os.path.join(directory, 'zypp.conf')] + glob.glob(os.path.join(directory, 'zypp.conf.d', '*.conf')):
+				if os.path.exists(path):
+					files[os.path.relpath(path, directory)] = path
+		config_files = [files[name] for name in sorted(files)]
+	cp = configparser.ConfigParser(interpolation=None, strict=False)
+	cp.optionxform = str
+	cp.read(config_files)
+	configdir = cp.get('main', 'configdir', fallback=ZYPP_CONFIG_DIR)
+	varsdir = cp.get('main', 'varsdir', fallback=os.path.join(configdir, 'vars.d'))
+	variables = {}
+	try:
+		with os.scandir(varsdir) as entries:
+			for entry in entries:
+				if not re.fullmatch(r'[a-zA-Z0-9_]+', entry.name) or not entry.is_file():
+					continue
+				try:
+					with open(entry.path) as f:
+						variables[entry.name] = f.readline().rstrip('\n')
+				except OSError:
+					continue
+	except OSError:
+		pass
+	return variables
+
+
 def expand_vars(s: str) -> str:
-	s = s.replace('${releasever}', get_version() or '${releasever}')
-	s = s.replace('$releasever', get_version() or '$releasever')
-	s = s.replace('${basearch}', get_cpu_arch() or '${basearch}')
-	s = s.replace('$basearch', get_cpu_arch() or '$basearch')
-	return s
+	variables = get_repo_vars()
+	if 'releasever' not in variables and get_version():
+		variables['releasever'] = get_version()
+	if not variables.get('basearch') and get_cpu_arch():
+		variables['basearch'] = get_cpu_arch()
+	# Match whole names, so $repo cannot consume the prefix of $repo_extra.
+	return re.sub(r'\$(?:\{([a-zA-Z0-9_]+)\}|([a-zA-Z0-9_]+))',
+		lambda m: variables.get(m[1] or m[2], m[0]), s)
 
 
 ###############
