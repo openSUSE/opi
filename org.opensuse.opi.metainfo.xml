@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="console-application">
+  <id>org.opensuse.opi</id>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>GPL-3.0-or-later</project_license>
+  <name>OPI</name>
+  <summary>openSUSE Package Installer</summary>
+  <description>
+    <p>
+      OPI is a command line tool that searches and installs almost every package
+      available for openSUSE and SLE, without the need to manually add or manage
+      repositories and GPG keys.
+    </p>
+    <p>The following sources are supported:</p>
+    <ul>
+      <li>openSUSE Build Service</li>
+      <li>Packman Build Service</li>
+      <li>Popular packages from Microsoft and other vendors</li>
+    </ul>
+  </description>
+  <developer id="org.opensuse">
+    <name>openSUSE</name>
+  </developer>
+  <content_rating type="oars-1.1"/>
+  <provides>
+    <binary>opi</binary>
+  </provides>
+  <url type="homepage">https://github.com/openSUSE/opi</url>
+  <url type="bugtracker">https://github.com/openSUSE/opi/issues</url>
+  <url type="vcs-browser">https://github.com/openSUSE/opi</url>
+  <url type="help">https://github.com/openSUSE/opi</url>
+  <releases>
+    <release version="5.16.0" date="2026-09-09">
+      <description>
+        <ul>
+          <li>Fix 10_chatgpt_plugin.py</li>
+          <li>Add ChatGPT desktop app plugin (#223)</li>
+          <li>Allow repos with local gpgkey</li>
+          <li>Use python built-in for os-release (#224)</li>
+          <li>Fix testsuite for Leap 16.0</li>
+        </ul>
+      </description>
+    </release>
+    <release version="5.15.0" date="2026-07-21">
+      <description>
+        <ul>
+          <li>OrcaSlicer: Load binary with correct architecture</li>
+        </ul>
+      </description>
+    </release>
+    <release version="5.14.0" date="2026-07-07">
+      <description>
+        <ul>
+          <li>Use GitHub latest release endpoint for stable releases</li>
+        </ul>
+      </description>
+    </release>
+  </releases>
+</component>
