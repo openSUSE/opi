@@ -6,7 +6,7 @@ import re
 import tempfile
 import configparser
 import glob
-from functools import cmp_to_key
+from functools import cmp_to_key, lru_cache
 from collections import defaultdict
 
 import requests
@@ -88,8 +88,9 @@ def get_version() -> str:
 	version = os_release.get('VERSION') # VERSION is not set for TW
 	return version
 
+@lru_cache(maxsize=1)
 def get_repo_vars() -> dict:
-	"""Read custom repository variables using zypp's configuration precedence."""
+	"""Load custom and builtin repository variables once per process."""
 	if 'ZYPP_CONF' in os.environ:
 		config_files = [os.environ['ZYPP_CONF']]
 	else:
@@ -109,7 +110,7 @@ def get_repo_vars() -> dict:
 	try:
 		with os.scandir(varsdir) as entries:
 			for entry in entries:
-				if not re.fullmatch(r'[a-zA-Z0-9_]+', entry.name) or not entry.is_file():
+				if not (re.fullmatch(r'[a-zA-Z0-9_]+', entry.name) and entry.is_file()):
 					continue
 				try:
 					with open(entry.path) as f:
@@ -118,15 +119,16 @@ def get_repo_vars() -> dict:
 					continue
 	except OSError:
 		pass
+	if 'releasever' not in variables and (version := get_version()):
+		variables['releasever'] = version
+	# Like libzypp, an empty custom basearch falls back to the system value.
+	if not variables.get('basearch') and (basearch := get_cpu_arch()):
+		variables['basearch'] = basearch
 	return variables
 
 
 def expand_vars(s: str) -> str:
 	variables = get_repo_vars()
-	if 'releasever' not in variables and get_version():
-		variables['releasever'] = get_version()
-	if not variables.get('basearch') and get_cpu_arch():
-		variables['basearch'] = get_cpu_arch()
 	# Match whole names, so $repo cannot consume the prefix of $repo_extra.
 	return re.sub(r'\$(?:\{([a-zA-Z0-9_]+)\}|([a-zA-Z0-9_]+))',
 		lambda m: variables.get(m[1] or m[2], m[0]), s)

@@ -5,7 +5,7 @@ from pathlib import Path
 import sys
 import tempfile
 import unittest
-from unittest.mock import patch
+from unittest.mock import call, patch
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 import opi
@@ -13,6 +13,8 @@ import opi
 
 class RepoVariableTests(unittest.TestCase):
 	def setUp(self):
+		opi.get_repo_vars.cache_clear()
+		self.addCleanup(opi.get_repo_vars.cache_clear)
 		self.temp = tempfile.TemporaryDirectory()
 		self.addCleanup(self.temp.cleanup)
 		self.root = Path(self.temp.name)
@@ -80,7 +82,10 @@ class RepoVariableTests(unittest.TestCase):
 	def test_custom_builtin_overrides(self):
 		self.write(self.vars / 'releasever', '99.0')
 		self.write(self.vars / 'basearch', 'custom_arch')
-		self.assertEqual(opi.expand_vars('$releasever/$basearch'), '99.0/custom_arch')
+		with patch.object(opi, 'get_version') as version, patch.object(opi, 'get_cpu_arch') as arch:
+			self.assertEqual(opi.expand_vars('$releasever/$basearch'), '99.0/custom_arch')
+			version.assert_not_called()
+			arch.assert_not_called()
 
 	def test_empty_releasever_override_and_basearch_fallback(self):
 		self.write(self.vars / 'releasever', '')
@@ -95,7 +100,29 @@ class RepoVariableTests(unittest.TestCase):
 		self.write(self.vars / 'repo.backup', 'not a variable')
 		self.write(self.vars / '.hidden', 'not a variable')
 		(self.vars / 'directory').mkdir()
-		self.assertEqual(opi.get_repo_vars(), {})
+		self.assertEqual(opi.get_repo_vars(), {'releasever': '16.0', 'basearch': 'x86_64'})
+
+	def test_repeated_expansions_load_variables_and_defaults_once(self):
+		self.write(self.vars / 'channel', 'stable')
+		with patch.object(opi.os, 'scandir', wraps=os.scandir) as scandir, \
+				patch.object(opi, 'get_version', return_value='16.0') as version, \
+				patch.object(opi, 'get_cpu_arch', return_value='x86_64') as arch:
+			self.assertEqual(opi.expand_vars('Repo $channel'), 'Repo stable')
+			self.assertEqual(opi.expand_vars('https://example/$releasever/$basearch'),
+				'https://example/16.0/x86_64')
+			self.assertEqual(opi.expand_vars('https://example/$channel/key.gpg'),
+				'https://example/stable/key.gpg')
+			self.assertEqual(scandir.call_args_list.count(call(str(self.vars))), 1)
+			version.assert_called_once_with()
+			arch.assert_called_once_with()
+
+	def test_cache_clear_reloads_custom_values(self):
+		self.write(self.vars / 'channel', 'stable')
+		self.assertEqual(opi.expand_vars('$channel'), 'stable')
+		self.write(self.vars / 'channel', 'testing')
+		self.assertEqual(opi.expand_vars('$channel'), 'stable')
+		opi.get_repo_vars.cache_clear()
+		self.assertEqual(opi.expand_vars('$channel'), 'testing')
 
 	def test_missing_vars_directory(self):
 		self.vars.rmdir()
